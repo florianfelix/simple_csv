@@ -1,31 +1,22 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{
-    layout::Rect,
+    layout::{Constraint, Direction, Layout, Rect},
     style::Style,
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
+use transaction::Transaction;
 
 use crate::{
     app::{App, AppMode, AppResult},
     handler::base_key_events,
 };
 
+pub mod transaction;
+
 #[derive(Debug)]
 pub enum TaField {
     Name,
-}
-
-#[derive(Debug)]
-pub struct Transaction {
-    pub name: String,
-}
-impl Default for Transaction {
-    fn default() -> Self {
-        Self {
-            name: String::from("Transaction Name"),
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -55,6 +46,11 @@ impl Default for MainScreen {
 
 impl MainScreen {
     pub fn render(app: &mut App, frame: &mut Frame, area: Rect) {
+        let [left, right] = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .areas(area);
+
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
@@ -62,7 +58,12 @@ impl MainScreen {
 
         let t = app.main_screen.name.clone();
         let text = Paragraph::new(t).block(block);
-        frame.render_widget(text, area);
+        frame.render_widget(text, left);
+
+        if let Some(ta) = app.main_screen.current_ta.clone() {
+            ta.render_self(frame, right);
+            // frame.render_widget(ta, right);
+        }
     }
 
     pub fn key_handler_edit(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
