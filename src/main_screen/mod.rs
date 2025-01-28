@@ -36,7 +36,7 @@ pub enum MainScreenMode {
 
 #[derive(Debug)]
 pub struct MainScreen {
-    pub mode: MainScreenMode,
+    pub buffer: String,
     pub name: String,
     pub current_ta: Option<Transaction>,
     pub editing: Option<TaField>,
@@ -45,7 +45,7 @@ pub struct MainScreen {
 impl Default for MainScreen {
     fn default() -> Self {
         Self {
-            mode: MainScreenMode::Editing,
+            buffer: String::from(""),
             name: String::from("Main Screen"),
             current_ta: Some(Transaction::default()),
             editing: Some(TaField::Name),
