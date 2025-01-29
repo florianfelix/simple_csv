@@ -1,3 +1,6 @@
+#![feature(arbitrary_self_types_pointers)]
+#![feature(arbitrary_self_types)]
+
 use std::io;
 
 use ratatui::{backend::CrosstermBackend, Terminal};
