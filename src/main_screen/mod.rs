@@ -12,9 +12,7 @@ use tracing::info;
 use transaction::Transaction;
 
 use crate::{
-    app::{App, AppResult},
-    handler::base_key_events,
-    utils::layout_helpers::triple_pane_percantages,
+    app::App, handler::base_key_events, utils::layout_helpers::triple_pane_percantages, AppResult,
 };
 
 pub mod object;

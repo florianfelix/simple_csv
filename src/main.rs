@@ -7,13 +7,15 @@ use ratatui::{backend::CrosstermBackend, Terminal};
 use tracing::info;
 
 use crate::{
-    app::{App, AppResult},
+    app::App,
     event::{Event, EventHandler},
     handler::handle_key_events,
     tui::Tui,
 };
+pub use error::{AppError, AppResult};
 
 pub mod app;
+mod error;
 pub mod event;
 pub mod handler;
 pub mod main_screen;

@@ -1,6 +1,7 @@
 use crate::{
-    app::{App, AppResult},
+    app::App,
     main_screen::{MainScreen, Mode},
+    AppResult,
 };
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
