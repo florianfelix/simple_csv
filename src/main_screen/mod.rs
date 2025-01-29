@@ -3,6 +3,7 @@ use helpers::triple_pane;
 use ratatui::{
     layout::Rect,
     style::Style,
+    text::Line,
     widgets::{Block, Borders, Paragraph},
     Frame,
 };
@@ -50,7 +51,7 @@ impl Default for MainScreen {
 }
 
 impl MainScreen {
-    pub fn render(app: &mut App, frame: &mut Frame, area: Rect) {
+    pub fn render_body(app: &mut App, frame: &mut Frame, area: Rect) {
         let data = &mut app.main_screen;
         let [_left, center, right] = triple_pane(20, 40, 40, area);
 
@@ -61,11 +62,17 @@ impl MainScreen {
             // frame.render_widget(ta, right);
         }
     }
+    pub fn render_header(app: &mut App, frame: &mut Frame, area: Rect) {
+        let text = format!("AppMode: {:?}", app.app_mode);
+        let line = Line::from(text);
+        frame.render_widget(line, area);
+    }
     fn render_buffer(&mut self, frame: &mut Frame, area: Rect) {
+        let title = format!("{:} - {:?}", self.buffer, self.editing);
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
-            .title("Buffer");
+            .title(title);
 
         let text = Paragraph::new(self.buffer.as_str()).block(block);
         frame.render_widget(text, area);

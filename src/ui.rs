@@ -20,6 +20,7 @@ pub fn render(app: &mut App, frame: &mut Frame) {
         .areas(frame_area);
 
     app.render_screen(frame, body);
+    app.render_header(frame, _header);
 
     frame.render_widget(
         Paragraph::new(format!(

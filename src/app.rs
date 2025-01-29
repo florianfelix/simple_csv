@@ -28,9 +28,7 @@ pub enum AppMode {
 /// Application.
 #[derive(Debug)]
 pub struct App {
-    /// Is the application running?
     pub running: bool,
-    /// counter
     pub counter: u8,
     pub app_mode: AppMode,
     pub main_screen: MainScreen,
@@ -50,7 +48,12 @@ impl Default for App {
 impl App {
     pub fn render_screen(&mut self, frame: &mut Frame, area: Rect) {
         match self.app_mode {
-            AppMode::Main(_) => MainScreen::render(self, frame, area),
+            AppMode::Main(_) => MainScreen::render_body(self, frame, area),
+        }
+    }
+    pub fn render_header(&mut self, frame: &mut Frame, area: Rect) {
+        match self.app_mode {
+            AppMode::Main(_) => MainScreen::render_header(self, frame, area),
         }
     }
 }
