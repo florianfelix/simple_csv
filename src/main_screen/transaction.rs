@@ -1,9 +1,8 @@
 use ratatui::{
     buffer::Buffer,
-    layout::Rect,
+    layout::{Constraint, Rect},
     style::{Color, Style},
-    text::Line,
-    widgets::{Block, Borders, Paragraph, Widget},
+    widgets::{Block, Borders, Row, Table, Widget},
     Frame,
 };
 
@@ -31,18 +30,25 @@ impl Widget for Transaction {
     }
 }
 impl Transaction {
-    pub fn render_self(&self, frame: &mut Frame, area: Rect) {
+    pub fn render_as_table(&self, frame: &mut Frame, area: Rect) {
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
             .title("Current Transaction");
 
-        let lines = vec![
-            Line::from(self.name.clone()),
-            Line::from(self.amount.to_string()),
-        ];
-        let p = Paragraph::new(lines).block(block);
+        let widths = [Constraint::Percentage(15), Constraint::Percentage(85)];
 
-        frame.render_widget(p, area);
+        let table = Table::new(self.as_rows(), widths).block(block);
+
+        frame.render_widget(table, area);
+    }
+
+    fn as_rows(&self) -> Vec<Row> {
+        let name = Row::new(["Name", self.name.as_str()]);
+        let amount: Row = Row::new(["Amount".to_string(), self.amount.to_string()]);
+
+        let rows = vec![name, amount];
+
+        rows
     }
 }

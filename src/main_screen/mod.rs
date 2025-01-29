@@ -1,6 +1,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
+use helpers::triple_pane;
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Rect},
+    layout::Rect,
     style::Style,
     widgets::{Block, Borders, Paragraph},
     Frame,
@@ -12,11 +13,13 @@ use crate::{
     handler::base_key_events,
 };
 
+pub mod helpers;
 pub mod transaction;
 
 #[derive(Debug)]
 pub enum TaField {
     Name,
+    Amount,
 }
 
 #[derive(Debug)]
@@ -29,6 +32,7 @@ pub enum MainScreenMode {
 pub struct MainScreen {
     pub buffer: String,
     pub name: String,
+    pub transactions: Vec<Transaction>,
     pub current_ta: Option<Transaction>,
     pub editing: Option<TaField>,
 }
@@ -36,8 +40,9 @@ pub struct MainScreen {
 impl Default for MainScreen {
     fn default() -> Self {
         Self {
-            buffer: String::from(""),
+            buffer: String::from("Buffer"),
             name: String::from("Main Screen"),
+            transactions: vec![],
             current_ta: Some(Transaction::default()),
             editing: Some(TaField::Name),
         }
@@ -46,29 +51,29 @@ impl Default for MainScreen {
 
 impl MainScreen {
     pub fn render(app: &mut App, frame: &mut Frame, area: Rect) {
-        let [left, right] = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
-            .areas(area);
+        let data = &mut app.main_screen;
+        let [_left, center, right] = triple_pane(20, 40, 40, area);
 
+        data.render_buffer(frame, center);
+
+        if let Some(ta) = data.current_ta.clone() {
+            ta.render_as_table(frame, right);
+            // frame.render_widget(ta, right);
+        }
+    }
+    fn render_buffer(&mut self, frame: &mut Frame, area: Rect) {
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
-            .title("Editing");
+            .title("Buffer");
 
-        let t = app.main_screen.name.clone();
-        let text = Paragraph::new(t).block(block);
-        frame.render_widget(text, left);
-
-        if let Some(ta) = app.main_screen.current_ta.clone() {
-            ta.render_self(frame, right);
-            // frame.render_widget(ta, right);
-        }
+        let text = Paragraph::new(self.buffer.as_str()).block(block);
+        frame.render_widget(text, area);
     }
 
     pub fn key_handler_edit(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
         if let crossterm::event::KeyEventKind::Press = key_event.kind {
-            let edit = &mut app.main_screen.name;
+            let edit = &mut app.main_screen.buffer;
 
             match key_event.code {
                 KeyCode::Char(c) => edit.push(c),
