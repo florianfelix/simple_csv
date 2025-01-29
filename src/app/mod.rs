@@ -32,16 +32,10 @@ impl Default for App {
 impl App {
     pub fn render(&mut self, frame: &mut Frame) {
         let [header, body, footer] = header_body_footer_areas(1, 6, frame.area());
-
+        // TODO: move into main_screen
         self.render_header(frame, header);
         self.render_body(frame, body);
-        frame.render_widget(tmp::original(self), footer)
-    }
-
-    pub fn render_body(&mut self, frame: &mut Frame, area: Rect) {
-        match self.app_mode {
-            AppMode::Main => self.main_screen.render_body(frame, area),
-        }
+        self.render_footer(frame, footer);
     }
 
     pub fn render_header(&mut self, frame: &mut Frame, area: Rect) {
@@ -51,6 +45,18 @@ impl App {
                 let line = Line::from(text);
                 frame.render_widget(line, area);
             }
+        }
+    }
+
+    pub fn render_body(&mut self, frame: &mut Frame, area: Rect) {
+        match self.app_mode {
+            AppMode::Main => self.main_screen.render_body(frame, area),
+        }
+    }
+
+    pub fn render_footer(&mut self, frame: &mut Frame, area: Rect) {
+        match self.app_mode {
+            AppMode::Main => frame.render_widget(tmp::original(self), area),
         }
     }
 }
