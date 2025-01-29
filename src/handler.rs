@@ -1,20 +1,17 @@
 use crate::{
     app::{App, AppResult},
-    main_screen::{MainScreen, MainScreenMode},
+    main_screen::{MainScreen, Mode},
 };
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 /// Handles the key events and updates the state of [`App`].
 pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
     match app.app_mode {
-        crate::app::AppMode::Main(MainScreenMode::Editing) => {
-            MainScreen::key_handler_edit(key_event, app)?
-        }
-        crate::app::AppMode::Main(MainScreenMode::Normal) => {
-            MainScreen::key_handler_normal(key_event, app)?
-        }
+        crate::app::AppMode::Main => match app.main_screen.mode {
+            Mode::Normal => MainScreen::key_handler_normal(key_event, app)?,
+            Mode::Editing => MainScreen::key_handler_edit(key_event, app)?,
+        },
     }
-
     Ok(())
 }
 

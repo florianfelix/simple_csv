@@ -1,9 +1,9 @@
 use std::error;
 
 use derive_more::derive::From;
-use ratatui::{layout::Rect, Frame};
+use ratatui::{layout::Rect, text::Line, Frame};
 
-use crate::main_screen::{MainScreen, MainScreenMode};
+use crate::main_screen::MainScreen;
 
 /// Application result type.
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
@@ -22,7 +22,7 @@ impl std::fmt::Display for AppError {
 
 #[derive(Debug)]
 pub enum AppMode {
-    Main(MainScreenMode),
+    Main,
 }
 
 /// Application.
@@ -39,7 +39,7 @@ impl Default for App {
         Self {
             running: true,
             counter: 0,
-            app_mode: AppMode::Main(MainScreenMode::Editing),
+            app_mode: AppMode::Main,
             main_screen: MainScreen::default(),
         }
     }
@@ -48,12 +48,17 @@ impl Default for App {
 impl App {
     pub fn render_screen(&mut self, frame: &mut Frame, area: Rect) {
         match self.app_mode {
-            AppMode::Main(_) => MainScreen::render_body(self, frame, area),
+            AppMode::Main => self.main_screen.render_body(frame, area),
+            // AppMode::Main(_) => MainScreen::render_body(self, frame, area),
         }
     }
     pub fn render_header(&mut self, frame: &mut Frame, area: Rect) {
         match self.app_mode {
-            AppMode::Main(_) => MainScreen::render_header(self, frame, area),
+            AppMode::Main => {
+                let text = format!("AppMode: {:?}", self.app_mode);
+                let line = Line::from(text);
+                frame.render_widget(line, area);
+            }
         }
     }
 }

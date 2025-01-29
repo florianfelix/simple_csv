@@ -13,7 +13,7 @@ use tracing::info;
 use transaction::Transaction;
 
 use crate::{
-    app::{App, AppMode, AppResult},
+    app::{App, AppResult},
     handler::base_key_events,
 };
 
@@ -28,13 +28,14 @@ pub enum TaField {
 }
 
 #[derive(Debug)]
-pub enum MainScreenMode {
+pub enum Mode {
     Normal,
     Editing,
 }
 
 #[derive(Debug)]
 pub struct MainScreen {
+    pub mode: Mode,
     pub buffer: String,
     pub name: String,
     pub fields: Fields,
@@ -46,6 +47,7 @@ pub struct MainScreen {
 impl Default for MainScreen {
     fn default() -> Self {
         Self {
+            mode: Mode::Normal,
             buffer: String::from("Buffer"),
             name: String::from("Main Screen"),
             fields: Fields::default(),
@@ -57,17 +59,14 @@ impl Default for MainScreen {
 }
 
 impl MainScreen {
-    pub fn render_body(app: &mut App, frame: &mut Frame, area: Rect) {
-        let data = &mut app.main_screen;
+    pub fn render_body(&mut self, frame: &mut Frame, area: Rect) {
         let [left, center, right] = triple_pane(20, 40, 40, area);
 
-        data.render_buffer(frame, center);
+        self.render_fields(frame, left);
+        self.render_buffer(frame, center);
 
-        data.render_fields(frame, left);
-
-        if let Some(ta) = data.current_ta.clone() {
+        if let Some(ta) = self.current_ta.clone() {
             ta.render_as_table(frame, right);
-            // frame.render_widget(ta, right);
         }
     }
     fn render_fields(&mut self, frame: &mut Frame, area: Rect) {
@@ -80,11 +79,6 @@ impl MainScreen {
 
         let w = Paragraph::new(lines);
         frame.render_widget(w, area);
-    }
-    pub fn render_header(app: &mut App, frame: &mut Frame, area: Rect) {
-        let text = format!("AppMode: {:?}", app.app_mode);
-        let line = Line::from(text);
-        frame.render_widget(line, area);
     }
     fn render_buffer(&mut self, frame: &mut Frame, area: Rect) {
         let title = format!("{:} - {:?}", self.buffer, self.editing);
@@ -107,7 +101,7 @@ impl MainScreen {
                     edit.pop();
                 }
 
-                KeyCode::Esc => app.app_mode = AppMode::Main(MainScreenMode::Normal),
+                KeyCode::Esc => app.main_screen.mode = Mode::Normal,
                 _ => base_key_events(key_event, app)?,
             }
         }
@@ -119,7 +113,7 @@ impl MainScreen {
             // let edit = &mut app.main_screen.name;
 
             match key_event.code {
-                KeyCode::Char('e') => app.app_mode = AppMode::Main(MainScreenMode::Editing),
+                KeyCode::Char('e') => app.main_screen.mode = Mode::Editing,
                 KeyCode::Char('j') => info!("\n{:#?}", app.main_screen.fields.to_json()),
                 _ => base_key_events(key_event, app)?,
             }
