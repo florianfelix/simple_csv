@@ -1,5 +1,4 @@
 use crossterm::event::{KeyCode, KeyEvent};
-use helpers::triple_pane;
 use itertools::Itertools;
 use object::Fields;
 use ratatui::{
@@ -15,9 +14,9 @@ use transaction::Transaction;
 use crate::{
     app::{App, AppResult},
     handler::base_key_events,
+    utils::layout_helpers::triple_pane_percantages,
 };
 
-pub mod helpers;
 pub mod object;
 pub mod transaction;
 
@@ -60,7 +59,7 @@ impl Default for MainScreen {
 
 impl MainScreen {
     pub fn render_body(&mut self, frame: &mut Frame, area: Rect) {
-        let [left, center, right] = triple_pane(20, 40, 40, area);
+        let [left, center, right] = triple_pane_percantages(20, 40, 40, area);
 
         self.render_fields(frame, left);
         self.render_buffer(frame, center);

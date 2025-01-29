@@ -18,7 +18,6 @@ pub mod event;
 pub mod handler;
 pub mod main_screen;
 pub mod tui;
-pub mod ui;
 pub mod utils;
 
 #[tokio::main]

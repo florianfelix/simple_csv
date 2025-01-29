@@ -1,9 +1,15 @@
 use std::error;
 
 use derive_more::derive::From;
-use ratatui::{layout::Rect, text::Line, Frame};
+use ratatui::{
+    layout::{Alignment, Rect},
+    style::{Color, Style},
+    text::Line,
+    widgets::{Block, BorderType, Paragraph},
+    Frame,
+};
 
-use crate::main_screen::MainScreen;
+use crate::{main_screen::MainScreen, utils::layout_helpers::header_body_footer_areas};
 
 /// Application result type.
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
@@ -46,6 +52,31 @@ impl Default for App {
 }
 
 impl App {
+    pub fn render(&mut self, frame: &mut Frame) {
+        let [_header, body, footer] = header_body_footer_areas(1, 6, frame.area());
+
+        self.render_screen(frame, body);
+        self.render_header(frame, _header);
+
+        frame.render_widget(
+            Paragraph::new(format!(
+                "This is a tui template.\n\
+                    Press `Esc`, `Ctrl-C` or `q` to stop running.\n\
+                    Press left and right to increment and decrement the counter respectively.\n\
+                    Counter: {}",
+                self.counter
+            ))
+            .block(
+                Block::bordered()
+                    .title("Template")
+                    .title_alignment(Alignment::Center)
+                    .border_type(BorderType::Rounded),
+            )
+            .style(Style::default().fg(Color::Cyan).bg(Color::Black))
+            .centered(),
+            footer,
+        )
+    }
     pub fn render_screen(&mut self, frame: &mut Frame, area: Rect) {
         match self.app_mode {
             AppMode::Main => self.main_screen.render_body(frame, area),
