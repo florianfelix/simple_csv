@@ -1,9 +1,11 @@
 use indexmap::IndexMap;
 use itertools::Itertools;
-use ratatui::{style::Style, widgets};
+use ratatui::{layout::Constraint, style::Style, widgets};
+use tracing::info;
 
 use super::data_cell::DataCell;
 
+#[derive(Default, Debug, Clone)]
 pub struct DataRow {
     fields: IndexMap<String, DataCell>,
     style: Style,
@@ -22,6 +24,10 @@ impl DataRow {
             .map(|d| widgets::Cell::new(d.1.to_string()))
             .collect_vec()
     }
+    // fn equal_widths(&self) -> Vec<Constraint> {
+    //     let num_col = self.fields.len();
+
+    // }
 }
 
 impl DataRow {
@@ -61,5 +67,14 @@ impl DataRow {
             records.push(record);
         }
         records
+    }
+}
+
+impl DataRow {
+    pub fn examples() -> Vec<DataRow> {
+        let input = include_str!("sample.csv");
+        let s = Self::from_csv_string(input, ';');
+        info!("{:#?}", &s);
+        s
     }
 }

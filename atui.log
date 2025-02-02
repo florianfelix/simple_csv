@@ -1,1 +1,20 @@
+ INFO tui_data_entry::main_screen::table_data::data_row: src/main_screen/table_data/data_row.rs:77: [
+    DataRow {
+        fields: {
+            "Name": DataCell {
+                column_name: "Name",
+                value: "Bob",
+            },
+            "Age": DataCell {
+                column_name: "Age",
+                value: "42",
+            },
+            "Occupation": DataCell {
+                column_name: "Occupation",
+                value: "Student",
+            },
+        },
+        style: Style::new(),
+    },
+]
  INFO tui_data_entry: src/main.rs:39: "Starting main loop"

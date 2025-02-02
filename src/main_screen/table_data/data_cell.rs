@@ -1,3 +1,4 @@
+#[derive(Default, Debug, Clone)]
 pub struct DataCell {
     column_name: String,
     value: String,
