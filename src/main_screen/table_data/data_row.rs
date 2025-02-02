@@ -24,6 +24,9 @@ impl DataRow {
             .map(|d| widgets::Cell::new(d.1.to_string()))
             .collect_vec()
     }
+    pub fn len(&self) -> usize {
+        self.fields.len()
+    }
     // fn equal_widths(&self) -> Vec<Constraint> {
     //     let num_col = self.fields.len();
 
