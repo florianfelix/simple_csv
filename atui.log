@@ -1,4 +1,4 @@
- INFO tui_data_entry::main_screen::table_data::data_row: src/main_screen/table_data/data_row.rs:89: [
+ INFO tui_data_entry::main_screen::table_data::data_row: src/main_screen/table_data/data_row.rs:92: [
     DataRow {
         fields: {
             "Name": DataCell {
@@ -34,4 +34,4 @@
         style: Style::new(),
     },
 ]
- INFO tui_data_entry: src/main.rs:39: "Starting main loop"
+ INFO tui_data_entry: src/main.rs:42: "Starting main loop"

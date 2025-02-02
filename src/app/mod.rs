@@ -1,6 +1,9 @@
 use ratatui::{layout::Rect, text::Line, Frame};
+use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{main_screen::MainScreen, utils::layout_helpers::header_body_footer_areas};
+use crate::{
+    event::Action, main_screen::MainScreen, utils::layout_helpers::header_body_footer_areas,
+};
 
 mod tmp;
 
@@ -12,22 +15,23 @@ pub enum AppMode {
 /// Application.
 #[derive(Debug)]
 pub struct App {
+    pub action_sender: UnboundedSender<Action>,
     pub running: bool,
     pub counter: u8,
     pub app_mode: AppMode,
     pub main_screen: MainScreen,
 }
 
-impl Default for App {
-    fn default() -> Self {
-        Self {
-            running: true,
-            counter: 0,
-            app_mode: AppMode::Main,
-            main_screen: MainScreen::default(),
-        }
-    }
-}
+// impl Default for App {
+//     fn default() -> Self {
+//         Self {
+//             running: true,
+//             counter: 0,
+//             app_mode: AppMode::Main,
+//             main_screen: MainScreen::default(),
+//         }
+//     }
+// }
 
 impl App {
     pub fn render(&mut self, frame: &mut Frame) {
@@ -63,8 +67,14 @@ impl App {
 
 impl App {
     /// Constructs a new instance of [`App`].
-    pub fn new() -> Self {
-        Self::default()
+    pub fn new(action_sender: UnboundedSender<Action>) -> Self {
+        Self {
+            action_sender,
+            running: true,
+            counter: 0,
+            app_mode: AppMode::Main,
+            main_screen: MainScreen::default(),
+        }
     }
 
     /// Handles the tick event of the terminal.

@@ -27,6 +27,9 @@ impl DataRow {
     pub fn len(&self) -> usize {
         self.fields.len()
     }
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
     // fn equal_widths(&self) -> Vec<Constraint> {
     //     let num_col = self.fields.len();
 

@@ -1,8 +1,8 @@
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{layout::Rect, Frame};
 use table_data::data_table::DataTable;
 
-use crate::{app::App, utils::layout_helpers::triple_pane_percantages};
+use crate::{app::App, event::Action, utils::layout_helpers::triple_pane_percantages};
 
 pub mod table_data;
 
@@ -47,13 +47,11 @@ impl MainScreen {
     pub fn key_handler(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
         let is_editing = app.main_screen.data_table.editing.is_some();
 
-        let maybe_event = if is_editing {
+        if is_editing {
             Self::key_consumer_edit(key_event, app)
         } else {
             Self::key_consumer_normal(key_event, app)
-        };
-
-        maybe_event
+        }
     }
 
     fn key_consumer_normal(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
@@ -63,6 +61,13 @@ impl MainScreen {
             KeyCode::Right => app.main_screen.data_table.select_cell_next(),
             KeyCode::Left => app.main_screen.data_table.select_cell_previous(),
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
+            KeyCode::Char('s') => {
+                if key_event.modifiers == KeyModifiers::CONTROL {
+                    app.action_sender
+                        .send(Action::SaveToFile(String::new()))
+                        .expect("Action Receiver Closed. Quitting");
+                }
+            }
             _ => return Some(key_event),
         }
         None

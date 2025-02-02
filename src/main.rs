@@ -3,7 +3,9 @@
 
 use std::io;
 
+use event::Action;
 use ratatui::{backend::CrosstermBackend, Terminal};
+use tokio::sync::mpsc;
 use tracing::info;
 
 use crate::{
@@ -26,12 +28,13 @@ pub mod utils;
 async fn main() -> AppResult<()> {
     utils::logging::EzLog::init()?;
     // Create an application.
-    let mut app = App::new();
+    let (action_sender, action_receiver) = mpsc::unbounded_channel::<Action>();
+    let mut app = App::new(action_sender);
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stdout());
     let terminal = Terminal::new(backend)?;
-    let events = EventHandler::new(250);
+    let events = EventHandler::new(250, action_receiver);
     let mut tui = Tui::new(terminal, events);
     tui.init()?;
 

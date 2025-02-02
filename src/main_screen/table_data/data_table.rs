@@ -1,9 +1,7 @@
-use std::usize;
-
 use itertools::Itertools;
 use ratatui::{
     layout::{Constraint, Position, Rect},
-    style::{Style, Stylize},
+    style::{Color, Style, Stylize},
     widgets::{Block, Borders, Table, TableState},
     Frame,
 };
@@ -41,7 +39,7 @@ impl DataTable {
         let table = Table::new(rows, widths)
             .block(block)
             .row_highlight_style(Style::new().reversed())
-            .cell_highlight_style(Style::new().bold().red());
+            .cell_highlight_style(Style::new().bold().fg(Color::DarkGray).bg(Color::LightCyan));
 
         frame.render_stateful_widget(table, area, &mut self.table_state);
     }
