@@ -1,11 +1,8 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::{layout::Rect, Frame};
 use table_data::data_table::DataTable;
-use tracing::info;
 
-use crate::{
-    app::App, handler::base_key_events, utils::layout_helpers::triple_pane_percantages, AppResult,
-};
+use crate::{app::App, utils::layout_helpers::triple_pane_percantages};
 
 pub mod table_data;
 
@@ -47,54 +44,45 @@ impl MainScreen {
         self.data_table.render_table(frame, area);
     }
 
-    pub fn key_handler(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
-        // let data_table = &mut app.main_screen.data_table;
+    pub fn key_handler(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
+        let is_editing = app.main_screen.data_table.editing.is_some();
 
+        let maybe_event = if is_editing {
+            Self::key_consumer_edit(key_event, app)
+        } else {
+            Self::key_consumer_normal(key_event, app)
+        };
+
+        maybe_event
+    }
+
+    fn key_consumer_normal(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
         match key_event.code {
-            // KeyCode::Char('e') => app.main_screen.mode = Mode::Editing,
             KeyCode::Down => app.main_screen.data_table.table_state.select_next(),
             KeyCode::Up => app.main_screen.data_table.table_state.select_previous(),
             KeyCode::Right => app.main_screen.data_table.select_cell_next(),
             KeyCode::Left => app.main_screen.data_table.select_cell_previous(),
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
-            _ => base_key_events(key_event, app)?,
+            _ => return Some(key_event),
         }
-        info!("{:#?}", app.main_screen.data_table.editing);
-        Ok(())
+        // info!("Normal {:#?}", app.main_screen.data_table.editing);
+        None
     }
 
-    pub fn key_handler_edit(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
-        if let crossterm::event::KeyEventKind::Press = key_event.kind {
-            let edit = &mut app.main_screen.data_table.buffer;
+    fn key_consumer_edit(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
+        // let edit = &mut app.main_screen.name;
+        let buffer = &mut app.main_screen.data_table.buffer;
 
-            match key_event.code {
-                KeyCode::Char(c) => edit.push(c),
-                KeyCode::Backspace => {
-                    edit.pop();
-                }
-
-                KeyCode::Esc => app.main_screen.mode = Mode::Normal,
-                _ => base_key_events(key_event, app)?,
+        match key_event.code {
+            KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
+            KeyCode::Char(c) => buffer.push(c),
+            KeyCode::Backspace => {
+                buffer.pop();
             }
-        }
-        Ok(())
-    }
 
-    pub fn key_handler_normal(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
-        if let crossterm::event::KeyEventKind::Press = key_event.kind {
-            // let edit = &mut app.main_screen.name;
-            match key_event.code {
-                KeyCode::Char('e') => app.main_screen.mode = Mode::Editing,
-                KeyCode::Down => app.main_screen.data_table.table_state.select_next(),
-                KeyCode::Up => app.main_screen.data_table.table_state.select_previous(),
-                KeyCode::Right => app.main_screen.data_table.select_cell_next(),
-                KeyCode::Left => app.main_screen.data_table.select_cell_previous(),
-                KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
-                // KeyCode::Char('j') => info!("\n{:#?}", app.main_screen.fields.to_json()),
-                _ => base_key_events(key_event, app)?,
-            }
-            info!("{:#?}", app.main_screen.data_table.editing);
+            KeyCode::Esc => app.main_screen.mode = Mode::Normal,
+            _ => return Some(key_event),
         }
-        Ok(())
+        None
     }
 }
