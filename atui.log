@@ -1,4 +1,4 @@
- INFO tui_data_entry::main_screen::table_data::data_row: src/main_screen/table_data/data_row.rs:80: [
+ INFO tui_data_entry::main_screen::table_data::data_row: src/main_screen/table_data/data_row.rs:89: [
     DataRow {
         fields: {
             "Name": DataCell {
@@ -24,7 +24,7 @@
             },
             "Age": DataCell {
                 column_name: "Age",
-                value: "44",
+                value: "44.5",
             },
             "Occupation": DataCell {
                 column_name: "Occupation",
@@ -35,101 +35,3 @@
     },
 ]
  INFO tui_data_entry: src/main.rs:39: "Starting main loop"
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: Some(
-    (
-        0,
-        0,
-    ),
-)
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None
- INFO tui_data_entry::main_screen: src/main_screen/mod.rs:80: None

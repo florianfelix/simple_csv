@@ -47,6 +47,22 @@ impl MainScreen {
         self.data_table.render_table(frame, area);
     }
 
+    pub fn key_handler(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
+        // let data_table = &mut app.main_screen.data_table;
+
+        match key_event.code {
+            // KeyCode::Char('e') => app.main_screen.mode = Mode::Editing,
+            KeyCode::Down => app.main_screen.data_table.table_state.select_next(),
+            KeyCode::Up => app.main_screen.data_table.table_state.select_previous(),
+            KeyCode::Right => app.main_screen.data_table.select_cell_next(),
+            KeyCode::Left => app.main_screen.data_table.select_cell_previous(),
+            KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
+            _ => base_key_events(key_event, app)?,
+        }
+        info!("{:#?}", app.main_screen.data_table.editing);
+        Ok(())
+    }
+
     pub fn key_handler_edit(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
         if let crossterm::event::KeyEventKind::Press = key_event.kind {
             let edit = &mut app.main_screen.data_table.buffer;

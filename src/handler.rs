@@ -1,17 +1,16 @@
-use crate::{
-    app::App,
-    main_screen::{MainScreen, Mode},
-    AppResult,
-};
+use crate::{app::App, main_screen::MainScreen, AppResult};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 /// Handles the key events and updates the state of [`App`].
 pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> AppResult<()> {
-    match app.app_mode {
-        crate::app::AppMode::Main => match app.main_screen.mode {
-            Mode::Normal => MainScreen::key_handler_normal(key_event, app)?,
-            Mode::Editing => MainScreen::key_handler_edit(key_event, app)?,
-        },
+    if let crossterm::event::KeyEventKind::Press = key_event.kind {
+        match app.app_mode {
+            // crate::app::AppMode::Main => match app.main_screen.mode {
+            //     Mode::Normal => MainScreen::key_handler_normal(key_event, app)?,
+            //     Mode::Editing => MainScreen::key_handler_edit(key_event, app)?,
+            // },
+            crate::app::AppMode::Main => MainScreen::key_handler(key_event, app)?,
+        }
     }
     Ok(())
 }

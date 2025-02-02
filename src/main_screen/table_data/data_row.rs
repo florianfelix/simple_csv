@@ -40,6 +40,15 @@ impl DataRow {
             self.fields.insert(column.to_string(), cell);
         }
     }
+    pub fn set_idx(&mut self, idx: usize, value: &str) {
+        if idx <= self.len() {
+            let cell = self.fields.get_index_mut(idx).unwrap().1;
+            cell.set(value);
+        }
+    }
+    pub fn get_idx(&self, idx: usize) -> String {
+        self.fields.get_index(idx).unwrap().1.to_string()
+    }
 }
 
 impl DataRow {
