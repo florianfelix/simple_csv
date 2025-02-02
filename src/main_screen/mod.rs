@@ -16,6 +16,7 @@ use crate::{
 };
 
 pub mod object;
+pub mod table_data;
 pub mod transaction;
 
 #[derive(Debug)]
