@@ -65,19 +65,37 @@ impl MainScreen {
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
             _ => return Some(key_event),
         }
-        // info!("Normal {:#?}", app.main_screen.data_table.editing);
         None
     }
 
     fn key_consumer_edit(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
-        // let edit = &mut app.main_screen.name;
         let buffer = &mut app.main_screen.data_table.buffer;
 
         match key_event.code {
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
+            KeyCode::Tab => {
+                app.main_screen.data_table.toggle_edit();
+                app.main_screen.data_table.select_cell_next();
+            }
             KeyCode::Char(c) => buffer.push(c),
             KeyCode::Backspace => {
                 buffer.pop();
+            }
+            KeyCode::Up => {
+                app.main_screen.data_table.toggle_edit();
+                app.main_screen.data_table.table_state.select_previous();
+            }
+            KeyCode::Down => {
+                app.main_screen.data_table.toggle_edit();
+                app.main_screen.data_table.table_state.select_next();
+            }
+            KeyCode::Right => {
+                app.main_screen.data_table.toggle_edit();
+                app.main_screen.data_table.select_cell_next();
+            }
+            KeyCode::Left => {
+                app.main_screen.data_table.toggle_edit();
+                app.main_screen.data_table.select_cell_previous();
             }
 
             KeyCode::Esc => app.main_screen.mode = Mode::Normal,
