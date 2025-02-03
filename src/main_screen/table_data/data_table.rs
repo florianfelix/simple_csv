@@ -7,7 +7,7 @@ use ratatui::{
     Frame,
 };
 
-use super::io::headers_rows_from_csv_string;
+use super::{io::headers_rows_from_csv_string, popup::Popup};
 
 #[derive(Default, Debug, Clone)]
 pub struct DataTable {
@@ -80,22 +80,53 @@ impl DataTable {
             .title(format!("Table - {} - {:?}", self.buffer, self.editing));
         let table = self.rat_table().block(block);
         frame.render_stateful_widget(table, area, &mut self.table_state);
+
+        if let Some(popup) = self.popup() {
+            let popup_area = Rect {
+                x: area.width / 4,
+                y: area.height / 3,
+                width: area.width / 2,
+                height: 5,
+            };
+            frame.render_widget(popup, popup_area);
+        }
     }
-    fn cell_set_col_row(&mut self, cell_col_row: (usize, usize), content: &str) {
-        let (y, x) = cell_col_row;
+    fn popup(&self) -> Option<Popup<'static>> {
+        if let Some((row, col)) = self.editing {
+            let popup = Popup::default()
+                .content(self.buffer.clone())
+                .style(Style::new().yellow())
+                .title(format!("{}", self.cell_get_header(col)))
+                .title_bottom(format!("row = {}, column = {}", row, col,))
+                .title_style(Style::new().white().bold())
+                .border_style(Style::new().red());
+            Some(popup)
+        } else {
+            None
+        }
+    }
+    fn cell_set_row_col(&mut self, cell_row_col: (usize, usize), content: &str) {
+        let (y, x) = cell_row_col;
         if x <= self.width() && y <= self.height() {
             let row = self.rows.get_mut(y).expect("row index out of bounds");
             let value = row.get_mut(x).expect("out of bounds");
             *value = String::from(content);
         }
     }
-    fn cell_get_col_row(&self, cell_col_row: (usize, usize)) -> String {
-        let (y, x) = cell_col_row;
+    fn cell_get_row_col(&self, cell_row_col: (usize, usize)) -> String {
+        let (y, x) = cell_row_col;
         let area = self.rect();
         let inside = area.contains(Position::new(x as u16, y as u16));
         if inside {
             let row = self.rows.get(y).expect("row index out of bounds");
             row.get(x).unwrap().to_owned()
+        } else {
+            String::new()
+        }
+    }
+    fn cell_get_header(&self, col: usize) -> String {
+        if col <= self.width() {
+            self.headers.get(col).unwrap().to_owned()
         } else {
             String::new()
         }
@@ -108,7 +139,7 @@ impl DataTable {
         if let Some(col_row) = self.editing {
             let buf = self.buffer.clone();
             // Set selected cell value to buffer & clear buffer
-            self.cell_set_col_row(col_row, &buf);
+            self.cell_set_row_col(col_row, &buf);
             self.editing = None;
             self.buffer = String::new();
         } else
@@ -117,7 +148,7 @@ impl DataTable {
             // Set editing to selected cell
             self.editing = self.table_state.selected_cell();
             if let Some(row_col) = self.editing {
-                self.buffer = self.cell_get_col_row(row_col)
+                self.buffer = self.cell_get_row_col(row_col)
             }
         }
     }
