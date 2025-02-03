@@ -15,6 +15,7 @@ pub struct DataTable {
     rows: Vec<Vec<String>>,
     pub table_state: TableState,
     pub buffer: String,
+    // Cell indicies (column , row)
     pub editing: Option<(usize, usize)>,
 }
 
@@ -80,16 +81,16 @@ impl DataTable {
         let table = self.rat_table().block(block);
         frame.render_stateful_widget(table, area, &mut self.table_state);
     }
-    fn set(&mut self, position: (usize, usize), content: &str) {
-        let (y, x) = position;
+    fn cell_set_col_row(&mut self, cell_col_row: (usize, usize), content: &str) {
+        let (y, x) = cell_col_row;
         if x <= self.width() && y <= self.height() {
             let row = self.rows.get_mut(y).expect("row index out of bounds");
             let value = row.get_mut(x).expect("out of bounds");
             *value = String::from(content);
         }
     }
-    fn get(&self, position: (usize, usize)) -> String {
-        let (y, x) = position;
+    fn cell_get_col_row(&self, cell_col_row: (usize, usize)) -> String {
+        let (y, x) = cell_col_row;
         let area = self.rect();
         let inside = area.contains(Position::new(x as u16, y as u16));
         if inside {
@@ -104,10 +105,10 @@ impl DataTable {
 impl DataTable {
     pub fn toggle_edit(&mut self) {
         // IF EDITING
-        if let Some(cell_position) = self.editing {
+        if let Some(col_row) = self.editing {
             let buf = self.buffer.clone();
             // Set selected cell value to buffer & clear buffer
-            self.set(cell_position, &buf);
+            self.cell_set_col_row(col_row, &buf);
             self.editing = None;
             self.buffer = String::new();
         } else
@@ -115,36 +116,36 @@ impl DataTable {
         {
             // Set editing to selected cell
             self.editing = self.table_state.selected_cell();
-            if let Some(cell_position) = self.editing {
-                self.buffer = self.get(cell_position)
+            if let Some(row_col) = self.editing {
+                self.buffer = self.cell_get_col_row(row_col)
             }
         }
     }
     pub fn select_cell_next(&mut self) {
-        if let Some((y, x)) = self.table_state.selected_cell() {
-            let x: usize = {
-                let new = x + 1;
+        if let Some((col, row)) = self.table_state.selected_cell() {
+            let row: usize = {
+                let new = row + 1;
                 if new >= self.width() {
                     0
                 } else {
                     new
                 }
             };
-            self.table_state.select_cell(Some((y, x)));
+            self.table_state.select_cell(Some((col, row)));
         } else {
             self.table_state.select_cell(Some((0, 0)));
         }
     }
     pub fn select_cell_previous(&mut self) {
-        if let Some((y, x)) = self.table_state.selected_cell() {
-            let x: usize = {
-                if x == 0 {
+        if let Some((col, row)) = self.table_state.selected_cell() {
+            let row: usize = {
+                if row == 0 {
                     self.width()
                 } else {
-                    x - 1
+                    row - 1
                 }
             };
-            self.table_state.select_cell(Some((y, x)));
+            self.table_state.select_cell(Some((col, row)));
         } else {
             self.table_state.select_cell(Some((0, 0)));
         }
