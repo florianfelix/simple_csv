@@ -45,13 +45,13 @@ impl DataTable {
     }
     fn equal_row_widths(&self) -> Vec<Constraint> {
         if !self.data_rows.is_empty() {
-            let n = self.data_rows.first().unwrap().headers().len();
-            let equal: u16 = (100 / n) as u16;
-            let mut v = vec![];
-            for _ in 0..n {
-                v.push(Constraint::Percentage(equal));
+            let num_columns = self.width();
+            let equal: u16 = (100 / num_columns) as u16;
+            let mut width_constraints = vec![];
+            for _ in 0..num_columns {
+                width_constraints.push(Constraint::Percentage(equal));
             }
-            v
+            width_constraints
         } else {
             vec![]
         }
