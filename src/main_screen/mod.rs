@@ -21,7 +21,6 @@ pub enum Mode {
 #[derive(Debug)]
 pub struct MainScreen {
     pub mode: Mode,
-    pub buffer: String,
     pub name: String,
     pub data_table: DataTable,
 }
@@ -30,7 +29,6 @@ impl Default for MainScreen {
     fn default() -> Self {
         Self {
             mode: Mode::Normal,
-            buffer: String::from("Buffer"),
             name: String::from("Main Screen"),
             data_table: DataTable::example(),
         }
