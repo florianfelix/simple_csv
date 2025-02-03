@@ -39,7 +39,7 @@ impl MainScreen {
     pub fn render_body(&mut self, frame: &mut Frame, area: Rect) {
         let [_left, _center, _right] = triple_pane_percantages(20, 40, 40, area);
 
-        self.data_table.render_table(frame, area);
+        self.data_table.render(frame, area);
     }
 
     pub fn key_handler(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {

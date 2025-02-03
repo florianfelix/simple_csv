@@ -2,15 +2,17 @@ use itertools::Itertools;
 use ratatui::{
     layout::{Constraint, Position, Rect},
     style::{Color, Style, Stylize},
-    widgets::{Block, Borders, Table, TableState},
+    text::Text,
+    widgets::{self, Block, Borders, Table, TableState},
     Frame,
 };
 
-use super::data_row::DataRow;
+use super::io::headers_rows_from_csv_string;
 
 #[derive(Default, Debug, Clone)]
 pub struct DataTable {
-    data_rows: Vec<DataRow>,
+    headers: Vec<String>,
+    rows: Vec<Vec<String>>,
     pub table_state: TableState,
     pub buffer: String,
     pub editing: Option<(usize, usize)>,
@@ -19,9 +21,10 @@ pub struct DataTable {
 impl DataTable {
     pub fn example() -> Self {
         let input = include_str!("sample.csv");
-        let (headers, rows) = Self::from_csv_string_vec(input, ';');
+        let (headers, rows) = headers_rows_from_csv_string(input, ';');
         Self {
-            data_rows: DataRow::examples(),
+            headers,
+            rows,
             table_state: TableState::default(),
             buffer: String::new(),
             editing: None,
@@ -30,52 +33,75 @@ impl DataTable {
 }
 
 impl DataTable {
-    pub fn render_table(&mut self, frame: &mut Frame, area: Rect) {
+    pub fn rat_row_header(&self) -> widgets::Row<'static> {
+        let cells = self
+            .headers
+            .iter()
+            .map(|s| widgets::Cell::new(Text::raw(s.to_owned())))
+            .collect_vec();
+        widgets::Row::new(cells)
+    }
+    pub fn rat_rows(&self) -> Vec<widgets::Row<'static>> {
+        let mut rows = vec![];
+        for r in self.rows.iter() {
+            let cells = r
+                .iter()
+                .map(|s| widgets::Cell::new(s.to_owned()))
+                .collect_vec();
+            let row = widgets::Row::new(cells);
+            rows.push(row);
+        }
+        rows
+    }
+    pub fn rat_table(&self) -> widgets::Table<'static> {
+        let header_row = self.rat_row_header();
+        let data_rows = self.rat_rows();
+        let widths = self.equal_percentages();
+        let table = Table::new(data_rows, widths)
+            .header(header_row)
+            .row_highlight_style(Style::new().reversed())
+            .cell_highlight_style(Style::new().bold().fg(Color::DarkGray).bg(Color::LightCyan));
+        table
+    }
+    fn equal_percentages(&self) -> Vec<Constraint> {
+        let cols = self.rows.first().unwrap().len();
+        let equal: u16 = (100 / cols) as u16;
+        let mut width_constraints = vec![];
+        for _ in 0..cols {
+            width_constraints.push(Constraint::Percentage(equal));
+        }
+        width_constraints
+    }
+    pub fn render(&mut self, frame: &mut Frame, area: Rect) {
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
             .title(format!("Table - {} - {:?}", self.buffer, self.editing));
-
-        let widths = self.equal_row_widths();
-        let rows = self.data_rows.iter().map(|r| r.rat_row()).collect_vec();
-        let table = Table::new(rows, widths)
-            .block(block)
-            .row_highlight_style(Style::new().reversed())
-            .cell_highlight_style(Style::new().bold().fg(Color::DarkGray).bg(Color::LightCyan));
-
+        let table = self.rat_table().block(block);
         frame.render_stateful_widget(table, area, &mut self.table_state);
-    }
-    fn equal_row_widths(&self) -> Vec<Constraint> {
-        if !self.data_rows.is_empty() {
-            let num_columns = self.width();
-            let equal: u16 = (100 / num_columns) as u16;
-            let mut width_constraints = vec![];
-            for _ in 0..num_columns {
-                width_constraints.push(Constraint::Percentage(equal));
-            }
-            width_constraints
-        } else {
-            vec![]
-        }
     }
     fn set(&mut self, position: (usize, usize), content: &str) {
         let (y, x) = position;
         if x <= self.width() && y <= self.height() {
-            let row = self.data_rows.get_mut(y).expect("row index out of bounds");
-            row.set_idx(x, content);
+            let row = self.rows.get_mut(y).expect("row index out of bounds");
+            let value = row.get_mut(x).expect("out of bounds");
+            *value = String::from(content);
         }
     }
     fn get(&self, position: (usize, usize)) -> String {
         let (y, x) = position;
-        let r = Rect::new(0, 0, self.width() as u16, self.height() as u16);
-        let inside = r.contains(Position::new(x as u16, y as u16));
+        let area = self.rect();
+        let inside = area.contains(Position::new(x as u16, y as u16));
         if inside {
-            let row = self.data_rows.get(y).expect("row index out of bounds");
-            row.get_idx(x)
+            let row = self.rows.get(y).expect("row index out of bounds");
+            row.get(x).unwrap().to_owned()
         } else {
             String::new()
         }
     }
+}
+
+impl DataTable {
     pub fn toggle_edit(&mut self) {
         // IF EDITING
         if let Some(cell_position) = self.editing {
@@ -123,47 +149,16 @@ impl DataTable {
             self.table_state.select_cell(Some((0, 0)));
         }
     }
-    fn active(&self) {
-        if let Some(idx) = self.table_state.selected() {
-            // self.table_state.cell
-        }
-    }
     fn height(&self) -> usize {
-        self.data_rows.len()
+        self.rows.len()
     }
     fn width(&self) -> usize {
-        if self.height() == 0 {
-            return 0;
-        }
-        self.data_rows.first().unwrap().len()
+        self.headers.len()
     }
-    fn dimensions(&self) -> (usize, usize) {
-        (self.width(), self.height())
-    }
+    // fn dimensions(&self) -> (usize, usize) {
+    //     (self.width(), self.height())
+    // }
     fn rect(&self) -> Rect {
         Rect::new(0, 0, self.width() as u16, self.height() as u16)
-    }
-}
-
-impl DataTable {
-    pub fn from_csv_string_vec(input: &str, delimiter: char) -> (Vec<String>, Vec<Vec<String>>) {
-        let input: &[u8] = input.as_bytes();
-        let mut rdr = csv::ReaderBuilder::default()
-            .delimiter(delimiter as u8)
-            .trim(csv::Trim::All)
-            .has_headers(true)
-            // .flexible(true)
-            .from_reader(input);
-
-        let mut records = vec![];
-        let headers = rdr.headers().unwrap();
-        let headers = headers.iter().map(|h| h.to_string()).collect_vec();
-
-        for res in rdr.deserialize::<Vec<String>>() {
-            let record = res.unwrap();
-            // let record = DataRow::from_iter(record);
-            records.push(record);
-        }
-        (headers, records)
     }
 }

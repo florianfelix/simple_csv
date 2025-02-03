@@ -88,8 +88,7 @@ impl DataRow {
 impl DataRow {
     pub fn examples() -> Vec<DataRow> {
         let input = include_str!("sample.csv");
-        let s = Self::from_csv_string(input, ';');
+        Self::from_csv_string(input, ';')
         // info!("{:#?}", Self::from_csv_string_vec(input, ';'));
-        s
     }
 }
