@@ -35,11 +35,11 @@ pub struct App {
 
 impl App {
     pub fn render(&mut self, frame: &mut Frame) {
-        let [header, body, footer] = header_body_footer_areas(1, 6, frame.area());
+        let [_header, _body, _footer] = header_body_footer_areas(1, 6, frame.area());
         // TODO: move into main_screen
-        self.render_header(frame, header);
-        self.render_body(frame, body);
-        self.render_footer(frame, footer);
+        // self.render_header(frame, header);
+        self.render_body(frame, frame.area());
+        // self.render_footer(frame, footer);
     }
 
     pub fn render_header(&mut self, frame: &mut Frame, area: Rect) {
