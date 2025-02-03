@@ -1,5 +1,7 @@
 use itertools::Itertools;
 
+use super::data_table::DataTable;
+
 pub fn headers_rows_from_csv_string(
     input: &str,
     delimiter: char,
@@ -22,4 +24,10 @@ pub fn headers_rows_from_csv_string(
         records.push(record);
     }
     (headers, records)
+}
+
+impl DataTable {
+    // pub fn set_data(&mut self, data: (Vec<String>, Vec<Vec<String>>)) {
+    //     self.rows = data;
+    // }
 }

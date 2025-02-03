@@ -20,6 +20,10 @@ pub struct DataTable {
 }
 
 impl DataTable {
+    pub fn set_data(&mut self, data: (Vec<String>, Vec<Vec<String>>)) {
+        self.headers = data.0;
+        self.rows = data.1;
+    }
     pub fn example() -> Self {
         let input = include_str!("sample.csv");
         let (headers, rows) = headers_rows_from_csv_string(input, ';');

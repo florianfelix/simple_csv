@@ -1,14 +1,14 @@
-use std::time::Duration;
+use std::{io::Read, path::PathBuf, time::Duration};
 
 use crossterm::event::{Event as CrosstermEvent, KeyEvent, MouseEvent};
 use futures::{FutureExt, StreamExt};
 use tokio::sync::mpsc;
 use tracing::info;
 
-use crate::AppResult;
+use crate::{main_screen::table_data::io::headers_rows_from_csv_string, AppResult};
 
 /// Terminal events.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub enum Event {
     /// Terminal tick.
     Tick,
@@ -18,11 +18,13 @@ pub enum Event {
     Mouse(MouseEvent),
     /// Terminal resize.
     Resize(u16, u16),
+    TableData((Vec<String>, Vec<Vec<String>>)),
 }
 
 #[derive(Clone, Debug)]
 pub enum Action {
     SaveToFile(String),
+    LoadCsv { path: PathBuf, delim: char },
 }
 
 /// Terminal event handler.
@@ -58,6 +60,18 @@ impl EventHandler {
                   }
                   action = action_receiver.recv() => {
                       info!("{:#?}", action);
+                      if let Some(action) = action {
+                          match action {
+                              Action::LoadCsv{path, delim} => {
+                                  let mut file = std::fs::File::open(path).unwrap();
+                                  let mut buffer = String::new();
+                                  file.read_to_string(&mut buffer).unwrap();
+                                  let data = headers_rows_from_csv_string(&buffer, delim);
+                                  _event_sender.send(Event::TableData(data)).unwrap();
+                              },
+                              _ => {}
+                          }
+                      }
                       }
                   Some(Ok(evt)) = crossterm_event => {
                     match evt {
