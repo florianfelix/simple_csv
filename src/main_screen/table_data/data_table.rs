@@ -59,7 +59,7 @@ impl DataTable {
     fn set(&mut self, position: (usize, usize), content: &str) {
         let (y, x) = position;
         if x <= self.width() && y <= self.height() {
-            let row = self.data_rows.get_mut(y).unwrap();
+            let row = self.data_rows.get_mut(y).expect("row index out of bounds");
             row.set_idx(x, content);
         }
     }
@@ -68,7 +68,7 @@ impl DataTable {
         let r = Rect::new(0, 0, self.width() as u16, self.height() as u16);
         let inside = r.contains(Position::new(x as u16, y as u16));
         if inside {
-            let row = self.data_rows.get(y).unwrap();
+            let row = self.data_rows.get(y).expect("row index out of bounds");
             row.get_idx(x)
         } else {
             String::new()
@@ -135,7 +135,10 @@ impl DataTable {
         }
         self.data_rows.first().unwrap().len()
     }
-    fn diemansions(&self) -> (usize, usize) {
+    fn dimensions(&self) -> (usize, usize) {
         (self.width(), self.height())
+    }
+    fn rect(&self) -> Rect {
+        Rect::new(0, 0, self.width() as u16, self.height() as u16)
     }
 }
