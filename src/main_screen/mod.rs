@@ -59,6 +59,8 @@ impl MainScreen {
             KeyCode::Right => app.main_screen.data_table.select_cell_next(),
             KeyCode::Left => app.main_screen.data_table.select_cell_previous(),
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
+            KeyCode::PageUp => app.main_screen.data_table.table_state.select_first(),
+            KeyCode::PageDown => app.main_screen.data_table.table_state.select_last(),
             KeyCode::Char('s') => {
                 if key_event.modifiers == KeyModifiers::CONTROL {
                     app.action_sender
