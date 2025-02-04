@@ -8,7 +8,7 @@ use tokio::{
 };
 use tracing::info;
 
-use crate::AppResult;
+use crate::{main_screen::table_data::io::CsvFileDescription, AppResult};
 
 /// Terminal events.
 #[derive(Clone, Debug)]
@@ -22,11 +22,12 @@ pub enum Event {
     /// Terminal resize.
     Resize(u16, u16),
     TableData((Vec<String>, Vec<Vec<String>>)),
-    ReadCsvString {
-        data: String,
-        path: PathBuf,
-        delim: char,
-    },
+    LoadedCsv(CsvFileDescription),
+    // ReadCsvString {
+    //     data: String,
+    //     path: PathBuf,
+    //     delim: char,
+    // },
 }
 
 #[derive(Clone, Debug)]
@@ -114,11 +115,14 @@ async fn action_task(
                     Action::LoadCsv{path, delim} => {
                         let csv_str = read_to_string(&path).await.unwrap();
                         event_sender.send(
-                            Event::ReadCsvString {
-                                data: csv_str.clone(),
-                                path: path.clone(),
-                                delim,
-                            }).unwrap();
+                            Event::LoadedCsv(CsvFileDescription { path: path, data: csv_str, delim })
+                        ).unwrap();
+                        // event_sender.send(
+                        //     Event::ReadCsvString {
+                        //         data: csv_str.clone(),
+                        //         path: path.clone(),
+                        //         delim,
+                        //     }).unwrap();
                     },
                     Action::SaveCsv{path: _, data: _, delim: _} => {}
                 }

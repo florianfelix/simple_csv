@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use itertools::Itertools;
 use ratatui::{
     layout::{Constraint, Position, Rect},
@@ -7,12 +9,16 @@ use ratatui::{
     Frame,
 };
 
+#[allow(unused)]
+use tracing::info;
+
 use super::{io::headers_rows_from_csv_string, popup::Popup};
 
 #[derive(Default, Debug, Clone)]
 pub struct DataTable {
     headers: Vec<String>,
     rows: Vec<Vec<String>>,
+    pub path: Option<PathBuf>,
     pub table_state: TableState,
     pub buffer: String,
     // Cell indicies (column , row)
@@ -23,17 +29,25 @@ impl DataTable {
     pub fn set_data(&mut self, data: (Vec<String>, Vec<Vec<String>>)) {
         self.headers = data.0;
         self.rows = data.1;
+        self.table_state = TableState::default();
+        self.buffer = String::new();
+        self.editing = None;
+    }
+    pub fn set_headers(mut self, headers: Vec<String>) -> Self {
+        self.headers = headers;
+        self
+    }
+    pub fn set_rows(mut self, rows: Vec<Vec<String>>) -> Self {
+        self.rows = rows;
+        self
     }
     pub fn example() -> Self {
         let input = include_str!("sample.csv");
         let (headers, rows) = headers_rows_from_csv_string(input, ';');
-        Self {
-            headers,
-            rows,
-            table_state: TableState::default(),
-            buffer: String::new(),
-            editing: None,
-        }
+        let mut data_table = DataTable::default();
+        data_table.headers = headers;
+        data_table.rows = rows;
+        data_table
     }
 }
 
@@ -69,7 +83,7 @@ impl DataTable {
         table
     }
     fn equal_percentages(&self) -> Vec<Constraint> {
-        let cols = self.rows.first().unwrap().len();
+        let cols = self.width();
         let equal: u16 = (100 / cols) as u16;
         let mut width_constraints = vec![];
         for _ in 0..cols {
@@ -82,6 +96,7 @@ impl DataTable {
             .borders(Borders::ALL)
             .style(Style::default())
             .title(format!("Table - {} - {:?}", self.buffer, self.editing));
+
         let table = self.rat_table().block(block);
         frame.render_stateful_widget(table, area, &mut self.table_state);
 
@@ -135,6 +150,10 @@ impl DataTable {
             String::new()
         }
     }
+    pub fn append_row(&mut self) {
+        self.rows.push(vec![String::new(); self.width()]);
+        // info!("{:#?}", self);
+    }
 }
 
 impl DataTable {
@@ -185,11 +204,14 @@ impl DataTable {
             self.table_state.select_cell(Some((0, 0)));
         }
     }
-    fn height(&self) -> usize {
+    pub fn height(&self) -> usize {
         self.rows.len()
     }
-    fn width(&self) -> usize {
+    pub fn width(&self) -> usize {
         self.headers.len()
+    }
+    pub fn has_data(&self) -> bool {
+        self.height() > 0 && self.width() > 0
     }
     // fn dimensions(&self) -> (usize, usize) {
     //     (self.width(), self.height())

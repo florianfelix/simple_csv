@@ -4,6 +4,13 @@ use itertools::Itertools;
 
 use super::data_table::DataTable;
 
+#[derive(Default, Debug, Clone)]
+pub struct CsvFileDescription {
+    pub path: PathBuf,
+    pub data: String,
+    pub delim: char,
+}
+
 pub fn headers_rows_from_csv_string(
     input: &str,
     delimiter: char,

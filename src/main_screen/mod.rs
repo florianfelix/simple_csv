@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
-use ratatui::{layout::Rect, Frame};
-use table_data::data_table::DataTable;
+use ratatui::{layout::Rect, text::Line, Frame};
+use table_data::{data_table::DataTable, io::CsvFileDescription};
+use tracing::info;
 
 use crate::{app::App, event::Action, utils::layout_helpers::triple_pane_percantages};
 
@@ -32,16 +33,32 @@ impl Default for MainScreen {
         Self {
             mode: Mode::Normal,
             name: String::from("Main Screen"),
-            data_table: DataTable::example(),
+            data_table: DataTable::default(),
+            // data_table: DataTable::example(),
         }
     }
 }
 
 impl MainScreen {
+    pub fn from_csv_file(&mut self, csv_file: CsvFileDescription) {
+        info!("{:#?}", csv_file);
+        let (headers, rows) =
+            table_data::io::headers_rows_from_csv_string(&csv_file.data, csv_file.delim);
+
+        let data_table = DataTable::default().set_headers(headers).set_rows(rows);
+        info!("{:#?}", data_table);
+        self.data_table = data_table;
+    }
+}
+impl MainScreen {
     pub fn render_body(&mut self, frame: &mut Frame, area: Rect) {
         let [_left, _center, _right] = triple_pane_percantages(20, 40, 40, area);
-
-        self.data_table.render(frame, area);
+        if self.data_table.width() > 0 {
+            self.data_table.render(frame, area);
+        } else {
+            let txt = Line::from("No Data in Table");
+            frame.render_widget(txt, area);
+        }
     }
 
     pub fn key_handler(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
@@ -63,6 +80,7 @@ impl MainScreen {
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
             KeyCode::PageUp => app.main_screen.data_table.table_state.select_first(),
             KeyCode::PageDown => app.main_screen.data_table.table_state.select_last(),
+            KeyCode::Char(' ') => app.main_screen.data_table.append_row(),
             KeyCode::Char('s') => {
                 if key_event.modifiers == KeyModifiers::CONTROL {
                     app.action_sender

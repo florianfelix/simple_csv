@@ -64,10 +64,11 @@ async fn main() -> AppResult<()> {
             Event::Mouse(_) => {}
             Event::Resize(_, _) => {}
             Event::TableData(data) => app.main_screen.data_table.set_data(data),
-            Event::ReadCsvString { data, path, delim } => app
-                .main_screen
-                .data_table
-                .from_csv_string(data, path, delim),
+            Event::LoadedCsv(csv_file) => app.main_screen.from_csv_file(csv_file),
+            // Event::ReadCsvString { data, path, delim } => app
+            //     .main_screen
+            //     .data_table
+            //     .from_csv_string(data, path, delim),
         }
     }
 
