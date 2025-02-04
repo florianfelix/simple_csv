@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use itertools::Itertools;
 
 use super::data_table::DataTable;
@@ -27,6 +29,10 @@ pub fn headers_rows_from_csv_string(
 }
 
 impl DataTable {
+    pub fn from_csv_string(&mut self, data: String, _path: PathBuf, delim: char) {
+        let data = headers_rows_from_csv_string(&data, delim);
+        self.set_data(data);
+    }
     // pub fn set_data(&mut self, data: (Vec<String>, Vec<Vec<String>>)) {
     //     self.rows = data;
     // }

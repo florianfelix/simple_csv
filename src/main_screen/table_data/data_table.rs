@@ -100,7 +100,7 @@ impl DataTable {
             let popup = Popup::default()
                 .content(self.buffer.clone())
                 .style(Style::new().yellow())
-                .title(format!("{}", self.cell_get_header(col)))
+                .title(self.cell_get_header(col))
                 .title_bottom(format!("row = {}, column = {}", row, col,))
                 .title_style(Style::new().white().bold())
                 .border_style(Style::new().red());

@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{layout::Rect, Frame};
 use table_data::data_table::DataTable;
@@ -64,7 +66,11 @@ impl MainScreen {
             KeyCode::Char('s') => {
                 if key_event.modifiers == KeyModifiers::CONTROL {
                     app.action_sender
-                        .send(Action::SaveToFile(String::new()))
+                        .send(Action::SaveCsv {
+                            path: PathBuf::new(),
+                            data: String::new(),
+                            delim: ';',
+                        })
                         .expect("Action Receiver Closed. Quitting");
                 }
             }
