@@ -2,7 +2,8 @@ use ratatui::{layout::Rect, text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
-    event::Action, main_screen::MainScreen, utils::layout_helpers::header_body_footer_areas,
+    event::actions::Action, main_screen::MainScreen,
+    utils::layout_helpers::header_body_footer_areas,
 };
 
 mod tmp;

@@ -4,16 +4,11 @@
 use std::io;
 
 use clap::Parser;
-use event::Action;
+use event::{actions::Action, crossterm::Event, event_handler::EventHandler};
 use ratatui::{backend::CrosstermBackend, Terminal};
 use tracing::info;
 
-use crate::{
-    app::App,
-    event::{Event, EventHandler},
-    handler::handle_key_events,
-    tui::Tui,
-};
+use crate::{app::App, handler::handle_key_events, tui::Tui};
 pub use error::{AppError, AppResult};
 
 pub mod app;
