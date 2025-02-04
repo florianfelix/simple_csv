@@ -1,28 +1,19 @@
-use std::time::Duration;
-
 use crossterm::event::{Event as CrosstermEvent, KeyEvent, MouseEvent};
 use futures::{FutureExt, StreamExt};
+use std::time::Duration;
 use tokio::sync::mpsc;
 
-use super::csv::CsvFileDescription;
+use super::csv::CsvParseResult;
 
 #[derive(Clone, Debug)]
 pub enum Event {
-    /// Terminal tick.
     Tick,
-    /// Key press.
     Key(KeyEvent),
-    /// Mouse click/scroll.
     Mouse(MouseEvent),
-    /// Terminal resize.
     Resize(u16, u16),
-    TableData((Vec<String>, Vec<Vec<String>>)),
-    LoadedCsv(CsvFileDescription),
-    // ReadCsvString {
-    //     data: String,
-    //     path: PathBuf,
-    //     delim: char,
-    // },
+    ParsedCsv(CsvParseResult),
+    // TableData((Vec<String>, Vec<Vec<String>>)),
+    // LoadedCsv(CsvFileDescription),
 }
 
 pub async fn crossterm_task(tick_rate: Duration, event_sender: mpsc::UnboundedSender<Event>) {

@@ -1,11 +1,7 @@
-#![feature(arbitrary_self_types_pointers)]
-#![feature(arbitrary_self_types)]
-
-use std::io;
-
 use clap::Parser;
 use event::{actions::Action, crossterm::Event, event_handler::EventHandler};
 use ratatui::{backend::CrosstermBackend, Terminal};
+use std::io;
 use tracing::info;
 
 use crate::{app::App, handler::handle_key_events, tui::Tui};
@@ -24,8 +20,6 @@ pub mod utils;
 async fn main() -> AppResult<()> {
     let cli = cli::Cli::parse();
     utils::logging::EzLog::init()?;
-    // info!("CLI: \n{:#?}", cli.path.unwrap().path());
-    // info!("CLI: \n{:#?}", cli.delim);
 
     let events = EventHandler::new(250);
 
@@ -58,12 +52,7 @@ async fn main() -> AppResult<()> {
             Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
             Event::Mouse(_) => {}
             Event::Resize(_, _) => {}
-            Event::TableData(data) => app.main_screen.data_table.set_data(data),
-            Event::LoadedCsv(csv_file) => app.main_screen.from_csv_file(csv_file),
-            // Event::ReadCsvString { data, path, delim } => app
-            //     .main_screen
-            //     .data_table
-            //     .from_csv_string(data, path, delim),
+            Event::ParsedCsv(parsed) => app.main_screen.from_parsed_csv(parsed),
         }
     }
 

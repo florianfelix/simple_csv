@@ -2,12 +2,14 @@ use std::path::PathBuf;
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{layout::Rect, text::Line, Frame};
-use table_data::{data_table::DataTable, io::parse_csv};
+use table_data::data_table::DataTable;
+
+#[allow(unused)]
 use tracing::info;
 
 use crate::{
     app::App,
-    event::{actions::Action, csv::CsvFileDescription},
+    event::{actions::Action, csv::CsvParseResult},
     utils::layout_helpers::triple_pane_percantages,
 };
 
@@ -38,24 +40,15 @@ impl Default for MainScreen {
             mode: Mode::Normal,
             name: String::from("Main Screen"),
             data_table: DataTable::default(),
-            // data_table: DataTable::example(),
         }
     }
 }
 
 impl MainScreen {
-    pub fn from_csv_file(&mut self, csv_file: CsvFileDescription) {
-        // info!("{:#?}", csv_file);
-        // let (headers, rows) =
-        //     table_data::io::headers_rows_from_csv_string(&csv_file.data, csv_file.delim, true);
-        // let data_table = DataTable::default().set_headers(headers).set_rows(rows);
-        // info!("{:#?}", data_table);
-
-        let parsed = parse_csv(&csv_file.data, csv_file.delim);
-        info!("{:#?}", parsed);
+    pub fn from_parsed_csv(&mut self, data: CsvParseResult) {
         let data_table = DataTable::default()
-            .set_headers(parsed.csv_data.headers)
-            .set_rows(parsed.csv_data.rows);
+            .set_headers(data.csv_data.headers)
+            .set_rows(data.csv_data.rows);
 
         self.data_table = data_table;
     }

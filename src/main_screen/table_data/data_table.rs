@@ -12,7 +12,7 @@ use ratatui::{
 #[allow(unused)]
 use tracing::info;
 
-use super::{io::headers_rows_from_csv_string, popup::Popup};
+use super::popup::Popup;
 
 #[derive(Default, Debug, Clone)]
 pub struct DataTable {
@@ -26,13 +26,6 @@ pub struct DataTable {
 }
 
 impl DataTable {
-    pub fn set_data(&mut self, data: (Vec<String>, Vec<Vec<String>>)) {
-        self.headers = data.0;
-        self.rows = data.1;
-        self.table_state = TableState::default();
-        self.buffer = String::new();
-        self.editing = None;
-    }
     pub fn set_headers(mut self, headers: Vec<String>) -> Self {
         self.headers = headers;
         self
@@ -40,14 +33,6 @@ impl DataTable {
     pub fn set_rows(mut self, rows: Vec<Vec<String>>) -> Self {
         self.rows = rows;
         self
-    }
-    pub fn example() -> Self {
-        let input = include_str!("sample.csv");
-        let (headers, rows) = headers_rows_from_csv_string(input, ';');
-        let mut data_table = DataTable::default();
-        data_table.headers = headers;
-        data_table.rows = rows;
-        data_table
     }
 }
 
