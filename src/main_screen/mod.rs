@@ -57,11 +57,9 @@ impl MainScreen {
 
         if self.data_table.width() > 0 {
             self.data_table.render(frame, area);
-        } else {
-            if let Some(e) = &self.action_error {
-                let txt = Line::from(e.to_string());
-                frame.render_widget(txt, area);
-            }
+        } else if let Some(e) = &self.action_error {
+            let txt = Line::from(e.to_string());
+            frame.render_widget(txt, area);
         }
     }
 
