@@ -11,39 +11,6 @@ use super::{
     crossterm::{crossterm_task, Event},
 };
 
-/// Terminal events.
-// #[derive(Clone, Debug)]
-// pub enum Event {
-//     /// Terminal tick.
-//     Tick,
-//     /// Key press.
-//     Key(KeyEvent),
-//     /// Mouse click/scroll.
-//     Mouse(MouseEvent),
-//     /// Terminal resize.
-//     Resize(u16, u16),
-//     TableData((Vec<String>, Vec<Vec<String>>)),
-//     LoadedCsv(CsvFileDescription),
-//     // ReadCsvString {
-//     //     data: String,
-//     //     path: PathBuf,
-//     //     delim: char,
-//     // },
-// }
-
-// #[derive(Clone, Debug)]
-// pub enum Action {
-//     SaveCsv {
-//         path: PathBuf,
-//         data: String,
-//         delim: char,
-//     },
-//     LoadCsv {
-//         path: PathBuf,
-//         delim: char,
-//     },
-// }
-
 /// Terminal event handler.
 #[allow(dead_code)]
 #[derive(Debug)]

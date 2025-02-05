@@ -18,11 +18,13 @@ use super::popup::Popup;
 pub struct DataTable {
     headers: Vec<String>,
     rows: Vec<Vec<String>>,
-    pub path: Option<PathBuf>,
     pub table_state: TableState,
     pub buffer: String,
     // Cell indicies (column , row)
     pub editing: Option<(usize, usize)>,
+    pub path: Option<PathBuf>,
+    pub is_dirty: bool,
+    pub parse_errors: Option<Vec<String>>,
 }
 
 impl DataTable {

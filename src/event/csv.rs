@@ -4,6 +4,8 @@ use tokio::io::AsyncReadExt;
 
 use crate::AppResult;
 
+use super::{ActionError, ActionResult};
+
 #[derive(Default, Debug, Clone)]
 pub struct CsvFileDescription {
     pub path: PathBuf,
@@ -20,19 +22,18 @@ pub struct CsvData {
 #[derive(Default, Debug, Clone)]
 pub struct CsvParseResult {
     pub errors: Vec<String>,
-    pub csv_data: CsvData,
+    pub data: CsvData,
 }
 
-pub async fn load_csv(path: PathBuf, delim: char) -> CsvParseResult {
-    let csv_str = path_to_string(&path).await.unwrap();
-    parse_csv(&csv_str, delim)
-}
-
-async fn path_to_string(path: &PathBuf) -> AppResult<String> {
-    let mut file = tokio::fs::File::open(path).await?;
-    let mut buffer = String::new();
-    file.read_to_string(&mut buffer).await?;
-    Ok(buffer)
+pub async fn load_csv(path: PathBuf, delim: char) -> ActionResult<CsvParseResult> {
+    let res = path_to_string(&path).await;
+    match res {
+        Ok(res) => Ok(parse_csv(&res, delim)),
+        Err(e) => Err(ActionError::FileIo {
+            path,
+            error: e.to_string(),
+        }),
+    }
 }
 
 pub fn parse_csv(input: &str, delimiter: char) -> CsvParseResult {
@@ -63,7 +64,14 @@ pub fn parse_csv(input: &str, delimiter: char) -> CsvParseResult {
             }
         }
     }
-    let csv_data = CsvData { headers, rows };
+    let data = CsvData { headers, rows };
 
-    CsvParseResult { errors, csv_data }
+    CsvParseResult { errors, data }
+}
+
+async fn path_to_string(path: &PathBuf) -> AppResult<String> {
+    let mut file = tokio::fs::File::open(path).await?;
+    let mut buffer = String::new();
+    file.read_to_string(&mut buffer).await?;
+    Ok(buffer)
 }

@@ -31,9 +31,9 @@ pub fn parse_csv(input: &str, delimiter: char) -> CsvParseResult {
             }
         }
     }
-    let csv_data = CsvData { headers, rows };
+    let data = CsvData { headers, rows };
 
-    CsvParseResult { errors, csv_data }
+    CsvParseResult { errors, data }
 }
 
 pub fn headers_rows_from_csv_string(
