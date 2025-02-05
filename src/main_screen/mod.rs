@@ -44,6 +44,7 @@ impl MainScreen {
                     .set_path(csv.path);
             }
             Err(e) => {
+                // panic!("{}", e);
                 self.action_error = Some(e);
                 self.data_table = DataTable::default();
             }
