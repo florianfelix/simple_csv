@@ -9,7 +9,7 @@ use tracing::info;
 
 use crate::{
     app::App,
-    event::{actions::Action, csv::CsvParseResult, ActionResult},
+    event::{actions::Action, csv::CsvParseResult, ActionError, ActionResult},
     utils::layout_helpers::triple_pane_percantages,
 };
 
@@ -32,7 +32,7 @@ pub struct MainScreen {
     pub mode: Mode,
     pub name: String,
     pub data_table: DataTable,
-    pub action_error: Option<String>,
+    pub action_error: Option<ActionError>,
 }
 
 impl Default for MainScreen {
@@ -49,18 +49,17 @@ impl Default for MainScreen {
 impl MainScreen {
     pub fn from_parsed_csv(&mut self, data: ActionResult<CsvParseResult>) {
         match data {
-            Ok(data) => {
+            Ok(csv) => {
                 self.action_error = None;
-                let data_table = DataTable::default()
-                    .set_headers(data.data.headers)
-                    .set_rows(data.data.rows);
-
-                self.data_table = data_table;
+                self.data_table = DataTable::default()
+                    .set_headers(csv.data.headers)
+                    .set_rows(csv.data.rows)
+                    .set_parse_errors(csv.errors)
+                    .set_path(csv.path);
             }
             Err(e) => {
-                self.action_error = Some(e.to_string());
-                let data_table = DataTable::default();
-                self.data_table = data_table;
+                self.action_error = Some(e);
+                self.data_table = DataTable::default();
             }
         }
     }
@@ -76,7 +75,7 @@ impl MainScreen {
 
             // frame.render_widget(txt, area);
             if let Some(e) = &self.action_error {
-                let txt = Line::from(e.to_owned());
+                let txt = Line::from(e.to_string());
 
                 frame.render_widget(txt, area);
             }

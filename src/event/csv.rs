@@ -21,22 +21,23 @@ pub struct CsvData {
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvParseResult {
-    pub errors: Vec<String>,
+    pub errors: Option<Vec<String>>,
     pub data: CsvData,
+    pub path: Option<PathBuf>,
 }
 
 pub async fn load_csv(path: PathBuf, delim: char) -> ActionResult<CsvParseResult> {
     let res = path_to_string(&path).await;
     match res {
-        Ok(res) => Ok(parse_csv(&res, delim)),
         Err(e) => Err(ActionError::FileIo {
             path,
             error: e.to_string(),
         }),
+        Ok(res) => Ok(parse_csv(path, &res, delim)),
     }
 }
 
-pub fn parse_csv(input: &str, delimiter: char) -> CsvParseResult {
+pub fn parse_csv(path: PathBuf, input: &str, delimiter: char) -> CsvParseResult {
     let input: &[u8] = input.as_bytes();
     let mut rdr = csv::ReaderBuilder::default()
         .delimiter(delimiter as u8)
@@ -66,7 +67,16 @@ pub fn parse_csv(input: &str, delimiter: char) -> CsvParseResult {
     }
     let data = CsvData { headers, rows };
 
-    CsvParseResult { errors, data }
+    let errors = match errors.is_empty() {
+        true => None,
+        false => Some(errors),
+    };
+
+    CsvParseResult {
+        errors,
+        data,
+        path: Some(path),
+    }
 }
 
 async fn path_to_string(path: &PathBuf) -> AppResult<String> {

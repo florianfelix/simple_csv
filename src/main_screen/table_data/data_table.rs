@@ -36,6 +36,42 @@ impl DataTable {
         self.rows = rows;
         self
     }
+    pub fn set_parse_errors(mut self, parse_errors: Option<Vec<String>>) -> Self {
+        self.parse_errors = parse_errors;
+        self
+    }
+    pub fn set_path(mut self, path: Option<PathBuf>) -> Self {
+        self.path = path;
+        self
+    }
+}
+
+impl DataTable {
+    pub fn render(&mut self, frame: &mut Frame, area: Rect) {
+        let bottom_title = match !self.is_dirty && self.parse_errors.is_some() {
+            true => String::from("Parsed with errors"),
+            false => String::new(),
+        };
+
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .style(Style::default())
+            .title_bottom(bottom_title)
+            .title(format!("Table - {} - {:?}", self.buffer, self.editing));
+
+        let table = self.rat_table().block(block);
+        frame.render_stateful_widget(table, area, &mut self.table_state);
+
+        if let Some(popup) = self.popup() {
+            let popup_area = Rect {
+                x: area.width / 4,
+                y: area.height / 3,
+                width: area.width / 2,
+                height: 5,
+            };
+            frame.render_widget(popup, popup_area);
+        }
+    }
 }
 
 impl DataTable {
@@ -78,25 +114,7 @@ impl DataTable {
         }
         width_constraints
     }
-    pub fn render(&mut self, frame: &mut Frame, area: Rect) {
-        let block = Block::default()
-            .borders(Borders::ALL)
-            .style(Style::default())
-            .title(format!("Table - {} - {:?}", self.buffer, self.editing));
 
-        let table = self.rat_table().block(block);
-        frame.render_stateful_widget(table, area, &mut self.table_state);
-
-        if let Some(popup) = self.popup() {
-            let popup_area = Rect {
-                x: area.width / 4,
-                y: area.height / 3,
-                width: area.width / 2,
-                height: 5,
-            };
-            frame.render_widget(popup, popup_area);
-        }
-    }
     fn popup(&self) -> Option<Popup<'static>> {
         if let Some((row, col)) = self.editing {
             let popup = Popup::default()
@@ -118,6 +136,7 @@ impl DataTable {
             let value = row.get_mut(x).expect("out of bounds");
             *value = String::from(content);
         }
+        self.is_dirty = true;
     }
     fn cell_get_row_col(&self, cell_row_col: (usize, usize)) -> String {
         let (y, x) = cell_row_col;
