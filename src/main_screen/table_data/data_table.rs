@@ -53,11 +53,19 @@ impl DataTable {
             false => String::new(),
         };
 
+        let path = match self.is_dirty {
+            false => format!("{:?}", self.path),
+            true => {
+                format!("*{:?}", self.path)
+            }
+        };
+
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
             .title_bottom(bottom_title)
-            .title(format!("Table - {} - {:?}", self.buffer, self.editing));
+            .title(format!("{path:} - {:?}", self.editing))
+            .title_style(Style::default().light_green());
 
         let table = self.rat_table().block(block);
         frame.render_stateful_widget(table, area, &mut self.table_state);
