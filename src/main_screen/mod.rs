@@ -16,20 +16,7 @@ use crate::{
 pub mod table_data;
 
 #[derive(Debug)]
-pub enum TaField {
-    Name,
-    Amount,
-}
-
-#[derive(Debug)]
-pub enum Mode {
-    Normal,
-    Editing,
-}
-
-#[derive(Debug)]
 pub struct MainScreen {
-    pub mode: Mode,
     pub name: String,
     pub data_table: DataTable,
     pub action_error: Option<ActionError>,
@@ -38,7 +25,6 @@ pub struct MainScreen {
 impl Default for MainScreen {
     fn default() -> Self {
         Self {
-            mode: Mode::Normal,
             name: String::from("Main Screen"),
             data_table: DataTable::default(),
             action_error: None,
@@ -71,12 +57,8 @@ impl MainScreen {
         if self.data_table.width() > 0 {
             self.data_table.render(frame, area);
         } else {
-            // let txt = Line::from("No Data in Table");
-
-            // frame.render_widget(txt, area);
             if let Some(e) = &self.action_error {
                 let txt = Line::from(e.to_string());
-
                 frame.render_widget(txt, area);
             }
         }
@@ -148,7 +130,6 @@ impl MainScreen {
                 app.main_screen.data_table.select_cell_previous();
             }
 
-            KeyCode::Esc => app.main_screen.mode = Mode::Normal,
             _ => return Some(key_event),
         }
         None
