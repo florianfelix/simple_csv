@@ -117,7 +117,7 @@ impl DataTable {
 
         let header_row = self.rat_row_header();
         let data_rows = self.rat_rows();
-        let _widths = self.equal_percentages();
+        let _widths = self.equal_column_widths();
         let widths = self.min_column_widths();
         let table = Table::new(data_rows, widths)
             .header(header_row)
@@ -129,7 +129,7 @@ impl DataTable {
         let widths = self.rows.column_widths_min(self.header_widths());
         widths.into_iter().map(Constraint::Length).collect_vec()
     }
-    fn equal_percentages(&self) -> Vec<Constraint> {
+    fn equal_column_widths(&self) -> Vec<Constraint> {
         let cols = self.width();
         let equal: u16 = (100 / cols) as u16;
         let mut width_constraints = vec![];
