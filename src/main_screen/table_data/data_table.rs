@@ -12,7 +12,13 @@ use ratatui::{
 #[allow(unused)]
 use tracing::info;
 
-use crate::main_screen::table_data::table_ext::TableExt;
+use crate::{
+    event::{
+        actions::Action,
+        csv::{CsvData, CsvDescription},
+    },
+    main_screen::table_data::table_ext::TableExt,
+};
 
 use super::popup::Popup;
 
@@ -25,6 +31,7 @@ pub struct DataTable {
     // Cell indicies (column , row)
     pub editing: Option<(usize, usize)>,
     pub path: Option<PathBuf>,
+    pub delim: char,
     pub is_dirty: bool,
     pub parse_errors: Vec<String>,
 }
@@ -44,6 +51,10 @@ impl DataTable {
     }
     pub fn set_path(mut self, path: Option<PathBuf>) -> Self {
         self.path = path;
+        self
+    }
+    pub fn set_delim(mut self, delim: char) -> Self {
+        self.delim = delim;
         self
     }
 }
@@ -237,4 +248,16 @@ impl DataTable {
     // fn cell_rect(&self) -> Rect {
     //     Rect::new(0, 0, self.width() as u16, self.height() as u16)
     // }
+    pub fn action_save(&self) -> Action {
+        let data = CsvData {
+            headers: self.headers.clone(),
+            rows: self.rows.clone(),
+        };
+        Action::SaveCsv(CsvDescription {
+            data,
+            delim: self.delim,
+            errors: vec![],
+            path: self.path.clone(),
+        })
+    }
 }

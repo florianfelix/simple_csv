@@ -1,17 +1,11 @@
+use csv::WriterBuilder;
 use itertools::Itertools;
 use std::path::PathBuf;
-use tokio::io::AsyncReadExt;
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::AppResult;
 
 use super::{ActionError, ActionResult};
-
-#[derive(Default, Debug, Clone)]
-pub struct CsvFileDescription {
-    pub path: PathBuf,
-    pub data: String,
-    pub delim: char,
-}
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvData {
@@ -20,13 +14,14 @@ pub struct CsvData {
 }
 
 #[derive(Default, Debug, Clone)]
-pub struct CsvParseResult {
+pub struct CsvDescription {
     pub errors: Vec<String>,
     pub data: CsvData,
     pub path: Option<PathBuf>,
+    pub delim: char,
 }
 
-pub async fn load_csv(path: PathBuf, delim: char) -> ActionResult<CsvParseResult> {
+pub async fn load_csv(path: PathBuf, delim: char) -> ActionResult<CsvDescription> {
     let res = path_to_string(&path).await;
     match res {
         Err(e) => Err(ActionError::FileIo {
@@ -37,10 +32,10 @@ pub async fn load_csv(path: PathBuf, delim: char) -> ActionResult<CsvParseResult
     }
 }
 
-pub fn parse_csv(path: PathBuf, input: &str, delimiter: char) -> CsvParseResult {
+pub fn parse_csv(path: PathBuf, input: &str, delim: char) -> CsvDescription {
     let input: &[u8] = input.as_bytes();
     let mut rdr = csv::ReaderBuilder::default()
-        .delimiter(delimiter as u8)
+        .delimiter(delim as u8)
         .trim(csv::Trim::All)
         .has_headers(true)
         // .flexible(true)
@@ -72,10 +67,11 @@ pub fn parse_csv(path: PathBuf, input: &str, delimiter: char) -> CsvParseResult 
     //     false => Some(errors),
     // };
 
-    CsvParseResult {
+    CsvDescription {
         errors,
         data,
         path: Some(path),
+        delim,
     }
 }
 
@@ -84,4 +80,26 @@ async fn path_to_string(path: &PathBuf) -> AppResult<String> {
     let mut buffer = String::new();
     file.read_to_string(&mut buffer).await?;
     Ok(buffer)
+}
+
+impl CsvDescription {
+    pub fn data_to_string(&self) -> AppResult<String> {
+        let mut wtr = WriterBuilder::new()
+            .delimiter(self.delim as u8)
+            .from_writer(vec![]);
+        wtr.write_record(self.data.headers.clone())?;
+
+        for row in self.data.rows.clone() {
+            wtr.write_record(row)?;
+        }
+        let data = String::from_utf8(wtr.into_inner()?)?;
+        Ok(data)
+    }
+}
+
+pub async fn save_file(path: &PathBuf, content: &str) -> AppResult<()> {
+    let data: &[u8] = content.as_bytes();
+    let mut file = tokio::fs::File::create(path).await?;
+    file.write_all(data).await?;
+    Ok(())
 }

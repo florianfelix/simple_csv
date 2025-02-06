@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{layout::Rect, text::Line, Frame};
 use table_data::data_table::DataTable;
@@ -9,7 +7,7 @@ use tracing::info;
 
 use crate::{
     app::App,
-    event::{actions::Action, csv::CsvParseResult, ActionError, ActionResult},
+    event::{csv::CsvDescription, ActionError, ActionResult},
     utils::layout_helpers::triple_pane_percantages,
 };
 
@@ -33,7 +31,7 @@ impl Default for MainScreen {
 }
 
 impl MainScreen {
-    pub fn from_parsed_csv(&mut self, data: ActionResult<CsvParseResult>) {
+    pub fn from_parsed_csv(&mut self, data: ActionResult<CsvDescription>) {
         match data {
             Ok(csv) => {
                 self.action_error = None;
@@ -41,7 +39,8 @@ impl MainScreen {
                     .set_headers(csv.data.headers)
                     .set_rows(csv.data.rows)
                     .set_parse_errors(csv.errors)
-                    .set_path(csv.path);
+                    .set_path(csv.path)
+                    .set_delim(csv.delim);
             }
             Err(e) => {
                 // panic!("{}", e);
@@ -88,11 +87,7 @@ impl MainScreen {
             KeyCode::Char('s') => {
                 if key_event.modifiers == KeyModifiers::CONTROL {
                     app.action_sender
-                        .send(Action::SaveCsv {
-                            path: PathBuf::new(),
-                            data: String::new(),
-                            delim: ';',
-                        })
+                        .send(app.main_screen.data_table.action_save())
                         .expect("Action Receiver Closed. Quitting");
                 }
             }
