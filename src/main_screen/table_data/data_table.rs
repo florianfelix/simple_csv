@@ -174,11 +174,11 @@ impl DataTable {
     }
     fn cell_get_row_col(&self, cell_row_col: (usize, usize)) -> String {
         let (y, x) = cell_row_col;
-        let area = self.rect();
+        let area = self.cell_rect();
         let inside = area.contains(Position::new(x as u16, y as u16));
         if inside {
             let row = self.rows.get(y).expect("row index out of bounds");
-            row.get(x).unwrap().to_owned()
+            row.get(x).expect("column index out of bounds").to_owned()
         } else {
             String::new()
         }
@@ -235,7 +235,7 @@ impl DataTable {
             .map(|h| h.len() as u16)
             .collect_vec()
     }
-    fn rect(&self) -> Rect {
+    fn cell_rect(&self) -> Rect {
         Rect::new(0, 0, self.width() as u16, self.height() as u16)
     }
 }
