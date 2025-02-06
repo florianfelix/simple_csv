@@ -126,7 +126,7 @@ impl DataTable {
         table.block(block)
     }
     fn min_column_widths(&self) -> Vec<Constraint> {
-        let widths = self.rows.column_widths(self.header_widths());
+        let widths = self.rows.column_widths_min(self.header_widths());
         widths.into_iter().map(Constraint::Length).collect_vec()
     }
     fn equal_percentages(&self) -> Vec<Constraint> {
