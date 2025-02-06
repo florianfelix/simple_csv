@@ -125,7 +125,8 @@ impl DataTable {
         let widths = self.min_column_widths();
         let table = Table::new(data_rows, widths)
             .header(header_row)
-            // .row_highlight_style(Style::new().reversed())
+            // .row_highlight_style(Style::new())
+            // .column_highlight_style(Style::new())
             .cell_highlight_style(Style::new().bold().reversed());
         table.block(block)
     }
