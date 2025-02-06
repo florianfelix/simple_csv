@@ -40,6 +40,7 @@ impl TableExt for Vec<Vec<String>> {
                 }
             }
         }
+        widths.iter_mut().for_each(|w| *w += 1);
         widths
     }
     fn is_valid_coords(&self, row: usize, col: usize) -> bool {
