@@ -17,7 +17,7 @@ use crate::{
         actions::Action,
         csv::{CsvData, CsvDescription},
     },
-    main_screen::table_data::table_ext::TableExt,
+    main_screen::table_data::RowsExt,
 };
 
 use super::popup::Popup;

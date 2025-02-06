@@ -1,7 +1,7 @@
 #[allow(unused)]
 use tracing::info;
 
-use super::{data_table::DataTable, table_ext::TableExt};
+use super::{data_table::DataTable, RowsExt};
 
 impl DataTable {
     pub fn select_cell_next(&mut self) {

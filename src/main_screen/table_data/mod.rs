@@ -2,4 +2,5 @@
 pub mod cell_select;
 pub mod data_table;
 pub mod popup;
-pub mod table_ext;
+mod rows_ext;
+pub use rows_ext::RowsExt;
