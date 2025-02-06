@@ -75,8 +75,10 @@ impl MainScreen {
 
     fn key_consumer_normal(key_event: KeyEvent, app: &mut App) -> Option<KeyEvent> {
         match key_event.code {
-            KeyCode::Down => app.main_screen.data_table.table_state.select_next(),
-            KeyCode::Up => app.main_screen.data_table.table_state.select_previous(),
+            // KeyCode::Down => app.main_screen.data_table.table_state.select_next(),
+            // KeyCode::Up => app.main_screen.data_table.table_state.select_previous(),
+            KeyCode::Down => app.main_screen.data_table.select_cell_down(),
+            KeyCode::Up => app.main_screen.data_table.select_cell_up(),
             KeyCode::Right => app.main_screen.data_table.select_cell_next(),
             KeyCode::Left => app.main_screen.data_table.select_cell_previous(),
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),

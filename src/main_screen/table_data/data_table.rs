@@ -126,7 +126,7 @@ impl DataTable {
         table.block(block)
     }
     fn min_column_widths(&self) -> Vec<Constraint> {
-        let widths = self.rows.column_widths(self.width());
+        let widths = self.rows.column_widths(self.header_widths());
         widths.into_iter().map(Constraint::Length).collect_vec()
     }
     fn equal_percentages(&self) -> Vec<Constraint> {
@@ -215,35 +215,7 @@ impl DataTable {
             }
         }
     }
-    pub fn select_cell_next(&mut self) {
-        if let Some((col, row)) = self.table_state.selected_cell() {
-            let row: usize = {
-                let new = row + 1;
-                if new >= self.width() {
-                    0
-                } else {
-                    new
-                }
-            };
-            self.table_state.select_cell(Some((col, row)));
-        } else {
-            self.table_state.select_cell(Some((0, 0)));
-        }
-    }
-    pub fn select_cell_previous(&mut self) {
-        if let Some((col, row)) = self.table_state.selected_cell() {
-            let row: usize = {
-                if row == 0 {
-                    self.width()
-                } else {
-                    row - 1
-                }
-            };
-            self.table_state.select_cell(Some((col, row)));
-        } else {
-            self.table_state.select_cell(Some((0, 0)));
-        }
-    }
+
     pub fn height(&self) -> usize {
         self.rows.len()
     }
@@ -256,6 +228,13 @@ impl DataTable {
     // fn dimensions(&self) -> (usize, usize) {
     //     (self.width(), self.height())
     // }
+    fn header_widths(&self) -> Vec<u16> {
+        self.headers
+            .clone()
+            .into_iter()
+            .map(|h| h.len() as u16)
+            .collect_vec()
+    }
     fn rect(&self) -> Rect {
         Rect::new(0, 0, self.width() as u16, self.height() as u16)
     }
