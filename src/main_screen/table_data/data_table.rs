@@ -2,10 +2,10 @@ use std::path::PathBuf;
 
 use itertools::Itertools;
 use ratatui::{
-    layout::{Constraint, Position, Rect},
+    layout::{Constraint, Direction, Layout, Position, Rect},
     style::{Color, Style, Stylize},
-    text::Text,
-    widgets::{self, Block, Borders, Table, TableState},
+    text::{Text, ToLine},
+    widgets::{self, Block, Borders, Paragraph, Table, TableState},
     Frame,
 };
 
@@ -24,7 +24,7 @@ pub struct DataTable {
     pub editing: Option<(usize, usize)>,
     pub path: Option<PathBuf>,
     pub is_dirty: bool,
-    pub parse_errors: Option<Vec<String>>,
+    pub parse_errors: Vec<String>,
 }
 
 impl DataTable {
@@ -36,7 +36,7 @@ impl DataTable {
         self.rows = rows;
         self
     }
-    pub fn set_parse_errors(mut self, parse_errors: Option<Vec<String>>) -> Self {
+    pub fn set_parse_errors(mut self, parse_errors: Vec<String>) -> Self {
         self.parse_errors = parse_errors;
         self
     }
@@ -48,36 +48,26 @@ impl DataTable {
 
 impl DataTable {
     pub fn render(&mut self, frame: &mut Frame, area: Rect) {
-        let bottom_title = match !self.is_dirty && self.parse_errors.is_some() {
-            true => String::from("Parsed with errors"),
-            false => String::new(),
-        };
+        let [top, bottom] = Layout::new(
+            Direction::Vertical,
+            [
+                Constraint::Fill(1),
+                Constraint::Max(self.parse_errors.len() as u16),
+            ],
+        )
+        .areas(area);
 
-        let path = match self.is_dirty {
-            false => format!("{:?}", self.path),
-            true => {
-                format!("*{:?}", self.path)
-            }
-        };
+        let table = self.rat_table();
+        frame.render_stateful_widget(table, top, &mut self.table_state);
 
-        let block = Block::default()
-            .borders(Borders::ALL)
-            .style(Style::default())
-            .title_bottom(bottom_title)
-            .title(format!("{path:} - {:?}", self.editing))
-            .title_style(Style::default().light_green());
-
-        let table = self.rat_table().block(block);
-        frame.render_stateful_widget(table, area, &mut self.table_state);
-
-        if let Some(popup) = self.popup() {
-            let popup_area = Rect {
-                x: area.width / 4,
-                y: area.height / 3,
-                width: area.width / 2,
-                height: 5,
-            };
+        if let Some((popup, popup_area)) = self.popup(top) {
             frame.render_widget(popup, popup_area);
+        }
+
+        if !self.parse_errors.is_empty() {
+            let lines = self.parse_errors.iter().map(|e| e.to_line()).collect_vec();
+            let par = Paragraph::new(lines).red();
+            frame.render_widget(par, bottom);
         }
     }
 }
@@ -104,6 +94,25 @@ impl DataTable {
         rows
     }
     pub fn rat_table(&self) -> widgets::Table<'static> {
+        let bottom_title = match !self.is_dirty && !self.parse_errors.is_empty() {
+            true => String::from("Parsed with errors"),
+            false => String::new(),
+        };
+
+        let path = match self.is_dirty {
+            false => format!("{:?}", self.path),
+            true => {
+                format!("*{:?}", self.path)
+            }
+        };
+
+        let block = Block::default()
+            .borders(Borders::ALL)
+            .style(Style::default())
+            .title_bottom(bottom_title)
+            .title(format!("{path:} - {:?}", self.editing))
+            .title_style(Style::default().light_green());
+
         let header_row = self.rat_row_header();
         let data_rows = self.rat_rows();
         let widths = self.equal_percentages();
@@ -111,7 +120,7 @@ impl DataTable {
             .header(header_row)
             .row_highlight_style(Style::new().reversed())
             .cell_highlight_style(Style::new().bold().fg(Color::DarkGray).bg(Color::LightCyan));
-        table
+        table.block(block)
     }
     fn equal_percentages(&self) -> Vec<Constraint> {
         let cols = self.width();
@@ -123,7 +132,13 @@ impl DataTable {
         width_constraints
     }
 
-    fn popup(&self) -> Option<Popup<'static>> {
+    fn popup(&self, area: Rect) -> Option<(Popup<'static>, Rect)> {
+        let popup_area = Rect {
+            x: area.width / 4,
+            y: area.height / 3,
+            width: area.width / 2,
+            height: 5,
+        };
         if let Some((row, col)) = self.editing {
             let popup = Popup::default()
                 .content(self.buffer.clone())
@@ -132,10 +147,14 @@ impl DataTable {
                 .title_bottom(format!("row = {}, column = {}", row, col,))
                 .title_style(Style::new().white().bold())
                 .border_style(Style::new().red());
-            Some(popup)
+            Some((popup, popup_area))
         } else {
             None
         }
+    }
+    fn set_dirty(&mut self) {
+        self.is_dirty = true;
+        self.parse_errors = vec![];
     }
     fn cell_set_row_col(&mut self, cell_row_col: (usize, usize), content: &str) {
         let (y, x) = cell_row_col;
@@ -144,7 +163,7 @@ impl DataTable {
             let value = row.get_mut(x).expect("out of bounds");
             *value = String::from(content);
         }
-        self.is_dirty = true;
+        self.set_dirty();
     }
     fn cell_get_row_col(&self, cell_row_col: (usize, usize)) -> String {
         let (y, x) = cell_row_col;

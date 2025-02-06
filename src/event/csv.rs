@@ -21,7 +21,7 @@ pub struct CsvData {
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvParseResult {
-    pub errors: Option<Vec<String>>,
+    pub errors: Vec<String>,
     pub data: CsvData,
     pub path: Option<PathBuf>,
 }
@@ -67,10 +67,10 @@ pub fn parse_csv(path: PathBuf, input: &str, delimiter: char) -> CsvParseResult 
     }
     let data = CsvData { headers, rows };
 
-    let errors = match errors.is_empty() {
-        true => None,
-        false => Some(errors),
-    };
+    // let errors = match errors.is_empty() {
+    //     true => None,
+    //     false => Some(errors),
+    // };
 
     CsvParseResult {
         errors,
