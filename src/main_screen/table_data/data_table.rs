@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use itertools::Itertools;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Position, Rect},
-    style::{Color, Style, Stylize},
+    style::{Style, Stylize},
     text::{Text, ToLine},
     widgets::{self, Block, Borders, Paragraph, Table, TableState},
     Frame,
@@ -11,6 +11,8 @@ use ratatui::{
 
 #[allow(unused)]
 use tracing::info;
+
+use crate::main_screen::table_data::table_ext::TableExt;
 
 use super::popup::Popup;
 
@@ -115,12 +117,17 @@ impl DataTable {
 
         let header_row = self.rat_row_header();
         let data_rows = self.rat_rows();
-        let widths = self.equal_percentages();
+        let _widths = self.equal_percentages();
+        let widths = self.min_column_widths();
         let table = Table::new(data_rows, widths)
             .header(header_row)
-            .row_highlight_style(Style::new().reversed())
-            .cell_highlight_style(Style::new().bold().fg(Color::DarkGray).bg(Color::LightCyan));
+            // .row_highlight_style(Style::new().reversed())
+            .cell_highlight_style(Style::new().bold().reversed());
         table.block(block)
+    }
+    fn min_column_widths(&self) -> Vec<Constraint> {
+        let widths = self.rows.column_widths(self.width());
+        widths.into_iter().map(Constraint::Length).collect_vec()
     }
     fn equal_percentages(&self) -> Vec<Constraint> {
         let cols = self.width();
