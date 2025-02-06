@@ -6,9 +6,7 @@ use derive_more::derive::From;
 pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
 
 #[derive(Debug, From)]
-pub enum AppError {
-    EditingError,
-}
+pub enum AppError {}
 impl std::error::Error for AppError {}
 
 impl std::fmt::Display for AppError {
