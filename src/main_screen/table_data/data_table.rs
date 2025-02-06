@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use itertools::Itertools;
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Position, Rect},
+    layout::{Constraint, Direction, Layout, Rect},
     style::{Style, Stylize},
     text::{Text, ToLine},
     widgets::{self, Block, Borders, Paragraph, Table, TableState},
@@ -163,23 +163,17 @@ impl DataTable {
         self.is_dirty = true;
         self.parse_errors = vec![];
     }
-    fn cell_set_row_col(&mut self, cell_row_col: (usize, usize), content: &str) {
-        let (y, x) = cell_row_col;
-        if x <= self.width() && y <= self.height() {
-            let row = self.rows.get_mut(y).expect("row index out of bounds");
-            let value = row.get_mut(x).expect("out of bounds");
-            *value = String::from(content);
+    fn cell_set_row_col(&mut self, row: usize, col: usize, content: &str) {
+        if self.rows.is_valid_coords(row, col) {
+            self.rows.set_content(row, col, content);
         }
         self.set_dirty();
     }
-    fn cell_get_row_col(&self, cell_row_col: (usize, usize)) -> String {
-        let (y, x) = cell_row_col;
-        let area = self.cell_rect();
-        let inside = area.contains(Position::new(x as u16, y as u16));
-        if inside {
-            let row = self.rows.get(y).expect("row index out of bounds");
-            row.get(x).expect("column index out of bounds").to_owned()
+    fn cell_get_row_col(&self, row: usize, col: usize) -> String {
+        if self.rows.is_valid_coords(row, col) {
+            self.rows.get_owned(row, col).unwrap_or_default()
         } else {
+            // should never happen
             String::new()
         }
     }
@@ -199,10 +193,10 @@ impl DataTable {
 impl DataTable {
     pub fn toggle_edit(&mut self) {
         // IF EDITING
-        if let Some(col_row) = self.editing {
+        if let Some((row, col)) = self.editing {
             let buf = self.buffer.clone();
             // Set selected cell value to buffer & clear buffer
-            self.cell_set_row_col(col_row, &buf);
+            self.cell_set_row_col(row, col, &buf);
             self.editing = None;
             self.buffer = String::new();
         } else
@@ -210,8 +204,8 @@ impl DataTable {
         {
             // Set editing to selected cell
             self.editing = self.table_state.selected_cell();
-            if let Some(row_col) = self.editing {
-                self.buffer = self.cell_get_row_col(row_col)
+            if let Some((row, col)) = self.editing {
+                self.buffer = self.cell_get_row_col(row, col)
             }
         }
     }
@@ -235,7 +229,7 @@ impl DataTable {
             .map(|h| h.len() as u16)
             .collect_vec()
     }
-    fn cell_rect(&self) -> Rect {
-        Rect::new(0, 0, self.width() as u16, self.height() as u16)
-    }
+    // fn cell_rect(&self) -> Rect {
+    //     Rect::new(0, 0, self.width() as u16, self.height() as u16)
+    // }
 }

@@ -16,7 +16,7 @@ impl EzLog {
         let log_file = std::fs::File::create(PathBuf::from("./atui.log")).stack()?;
         let file_subscriber = tracing_subscriber::fmt::layer()
             // .json()
-            .with_file(true)
+            // .with_file(true)
             .with_line_number(true)
             .with_writer(log_file)
             .with_target(true)
