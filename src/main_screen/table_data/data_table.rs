@@ -19,7 +19,7 @@ use super::popup::Popup;
 #[derive(Default, Debug, Clone)]
 pub struct DataTable {
     headers: Vec<String>,
-    rows: Vec<Vec<String>>,
+    pub(crate) rows: Vec<Vec<String>>,
     pub table_state: TableState,
     pub buffer: String,
     // Cell indicies (column , row)
@@ -112,7 +112,11 @@ impl DataTable {
             .borders(Borders::ALL)
             .style(Style::default())
             .title_bottom(bottom_title)
-            .title(format!("{path:} - {:?}", self.editing))
+            .title(format!(
+                "{path:} - {:?} - {:?}",
+                self.editing,
+                self.table_state.selected_cell()
+            ))
             .title_style(Style::default().light_green());
 
         let header_row = self.rat_row_header();
