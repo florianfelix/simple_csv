@@ -1,10 +1,14 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
+#[allow(unused)]
+use tracing::info;
+
 use crate::{app::App, AppResult};
 
 impl App {
     /// Handles the key events and updates the state of [`App`].
     pub fn handle_key_events(&mut self, key_event: KeyEvent) -> AppResult<()> {
+        info!("{:#?}", key_event);
         let mut maybe_remaining_event = None;
 
         if let crossterm::event::KeyEventKind::Press = key_event.kind {

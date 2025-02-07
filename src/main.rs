@@ -10,6 +10,7 @@ pub use error::{AppError, AppResult};
 pub mod app;
 mod error;
 pub mod event;
+pub mod tmp;
 pub mod tui;
 pub mod utils;
 
@@ -40,6 +41,7 @@ async fn main() -> AppResult<()> {
 
     // Start the main loop.
     info!("{:#?}", "Starting main loop");
+    tmp::serialise_test().await;
     while app.running {
         // Render the user interface.
         tui.draw(&mut app)?;

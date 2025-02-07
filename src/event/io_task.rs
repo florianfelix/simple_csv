@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 use tokio::sync::mpsc;
+
+#[allow(unused)]
 use tracing::info;
 
 use super::{crossterm::Event, csv::CsvDescription};
@@ -21,7 +23,7 @@ pub async fn io_task(
               break;
             }
             Some(io_task) = io_task_receiver.recv() => {
-                info!("{:#?}", io_task);
+                // info!("{:#?}", io_task);
                 match io_task {
                     IoTask::LoadCsv{path, delim} => {
                         let parsed = load_csv(path, delim).await;

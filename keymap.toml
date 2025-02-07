@@ -1,0 +1,3 @@
+[normal]
+"Control Up" = "ToggleEdit"
+"Shift Control Char('s')" = "Save"
