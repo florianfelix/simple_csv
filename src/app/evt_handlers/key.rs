@@ -64,9 +64,7 @@ impl App {
             KeyCode::Char(' ') => self.data.append_row(),
             KeyCode::Char('s') => {
                 if key_event.modifiers == KeyModifiers::CONTROL {
-                    self.action_sender
-                        .send(self.data.action_save())
-                        .expect("IoTask Receiver Closed. Quitting");
+                    self.save();
                 }
             }
             _ => return Some(key_event),

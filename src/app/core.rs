@@ -68,4 +68,10 @@ impl App {
     pub fn quit(&mut self) {
         self.running = false;
     }
+
+    pub fn save(&mut self) {
+        self.action_sender
+            .send(self.data.action_save())
+            .expect("IoTask Receiver Closed. Quitting");
+    }
 }

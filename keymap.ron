@@ -1,16 +1,7 @@
-KeyMaps(
+SaveMaps(
   normal: {
-    KeyEvent(
-      code: Up,
-      modifiers: "CONTROL",
-      kind: Press,
-      state: "",
-    ): ToggleEdit,
-    KeyEvent(
-      code: Char('s'),
-      modifiers: "SHIFT | CONTROL",
-      kind: Press,
-      state: "",
-    ): Save,
+    "ctrl-up": ToggleEdit,
+    "ctrl-shift-s": Save,
   },
+  edit: {},
 )

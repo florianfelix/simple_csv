@@ -1,3 +1,5 @@
 [normal]
-"Control Up" = "ToggleEdit"
-"Shift Control Char('s')" = "Save"
+ctrl-up = "ToggleEdit"
+ctrl-shift-s = "Save"
+
+[edit]

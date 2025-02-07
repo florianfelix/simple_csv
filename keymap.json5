@@ -1,1 +1,1 @@
-{"normal":{"Control Up":"ToggleEdit","Shift Control Char('s')":"Save"}}
+{"normal":{"ctrl-up":"ToggleEdit","ctrl-shift-s":"Save"},"edit":{}}
