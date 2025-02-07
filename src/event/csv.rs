@@ -28,50 +28,43 @@ pub async fn load_csv(path: PathBuf, delim: char) -> IoTaskResult<CsvDescription
             path,
             error: e.to_string(),
         }),
-        Ok(res) => Ok(parse_csv(path, &res, delim)),
-    }
-}
+        Ok(res) => {
+            let input: &[u8] = res.as_bytes();
+            let mut rdr = csv::ReaderBuilder::default()
+                .delimiter(delim as u8)
+                .trim(csv::Trim::All)
+                .has_headers(true)
+                // .flexible(true)
+                .from_reader(input);
 
-pub fn parse_csv(path: PathBuf, input: &str, delim: char) -> CsvDescription {
-    let input: &[u8] = input.as_bytes();
-    let mut rdr = csv::ReaderBuilder::default()
-        .delimiter(delim as u8)
-        .trim(csv::Trim::All)
-        .has_headers(true)
-        // .flexible(true)
-        .from_reader(input);
+            let mut rows: Vec<Vec<String>> = vec![];
+            let mut errors: Vec<String> = vec![];
 
-    let mut rows: Vec<Vec<String>> = vec![];
-    let mut errors: Vec<String> = vec![];
+            let headers = rdr
+                .headers()
+                .map_err(|e| errors.push(format!("{:#?}", e)))
+                .unwrap();
 
-    let headers = rdr
-        .headers()
-        .map_err(|e| errors.push(format!("{:#?}", e)))
-        .unwrap();
+            let headers = headers.iter().map(|h| h.to_string()).collect_vec();
 
-    let headers = headers.iter().map(|h| h.to_string()).collect_vec();
-
-    for res in rdr.deserialize::<Vec<String>>() {
-        match res {
-            Ok(record) => rows.push(record),
-            Err(e) => {
-                // error!("{:#?}", &e);
-                errors.push(format!("{}", e));
+            for res in rdr.deserialize::<Vec<String>>() {
+                match res {
+                    Ok(record) => rows.push(record),
+                    Err(e) => {
+                        // error!("{:#?}", &e);
+                        errors.push(format!("{}", e));
+                    }
+                }
             }
+            let data = CsvData { headers, rows };
+
+            Ok(CsvDescription {
+                errors,
+                data,
+                path: Some(path),
+                delim,
+            })
         }
-    }
-    let data = CsvData { headers, rows };
-
-    // let errors = match errors.is_empty() {
-    //     true => None,
-    //     false => Some(errors),
-    // };
-
-    CsvDescription {
-        errors,
-        data,
-        path: Some(path),
-        delim,
     }
 }
 
