@@ -11,7 +11,7 @@ pub mod app;
 pub mod cli;
 mod error;
 pub mod event;
-pub mod main_screen;
+// pub mod main_screen;
 pub mod tui;
 pub mod utils;
 
@@ -52,7 +52,7 @@ async fn main() -> AppResult<()> {
             // Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
             Event::Mouse(_) => {}
             Event::Resize(_, _) => {}
-            Event::ParsedCsv(parsed) => app.main_screen.from_parsed_csv(parsed),
+            Event::ParsedCsv(parsed) => app.from_parsed_csv(parsed),
         }
     }
 
