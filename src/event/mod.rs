@@ -4,4 +4,4 @@ pub mod csv;
 mod error;
 pub mod event_handler;
 
-pub use error::{ActionError, ActionResult};
+pub use error::{IoTaskError, IoTaskResult};

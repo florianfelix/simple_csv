@@ -3,7 +3,7 @@ use futures::{FutureExt, StreamExt};
 use std::time::Duration;
 use tokio::sync::mpsc;
 
-use super::{csv::CsvDescription, ActionResult};
+use super::{csv::CsvDescription, IoTaskResult};
 
 #[derive(Clone, Debug)]
 pub enum Event {
@@ -11,7 +11,7 @@ pub enum Event {
     Key(KeyEvent),
     Mouse(MouseEvent),
     Resize(u16, u16),
-    ParsedCsv(ActionResult<CsvDescription>),
+    ParsedCsv(IoTaskResult<CsvDescription>),
     // TableData((Vec<String>, Vec<Vec<String>>)),
     // LoadedCsv(CsvFileDescription),
 }

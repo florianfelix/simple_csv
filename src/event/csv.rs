@@ -5,7 +5,7 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::AppResult;
 
-use super::{ActionError, ActionResult};
+use super::{IoTaskError, IoTaskResult};
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvData {
@@ -21,10 +21,10 @@ pub struct CsvDescription {
     pub delim: char,
 }
 
-pub async fn load_csv(path: PathBuf, delim: char) -> ActionResult<CsvDescription> {
+pub async fn load_csv(path: PathBuf, delim: char) -> IoTaskResult<CsvDescription> {
     let res = path_to_string(&path).await;
     match res {
-        Err(e) => Err(ActionError::FileIo {
+        Err(e) => Err(IoTaskError::FileIo {
             path,
             error: e.to_string(),
         }),

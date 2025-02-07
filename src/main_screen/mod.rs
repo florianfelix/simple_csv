@@ -7,7 +7,7 @@ use tracing::info;
 
 use crate::{
     app::App,
-    event::{csv::CsvDescription, ActionError, ActionResult},
+    event::{csv::CsvDescription, IoTaskError, IoTaskResult},
     utils::layout_helpers::triple_pane_percantages,
 };
 
@@ -17,7 +17,7 @@ pub mod table_data;
 pub struct MainScreen {
     pub name: String,
     pub data_table: DataTable,
-    pub action_error: Option<ActionError>,
+    pub action_error: Option<IoTaskError>,
 }
 
 impl Default for MainScreen {
@@ -31,7 +31,7 @@ impl Default for MainScreen {
 }
 
 impl MainScreen {
-    pub fn from_parsed_csv(&mut self, data: ActionResult<CsvDescription>) {
+    pub fn from_parsed_csv(&mut self, data: IoTaskResult<CsvDescription>) {
         match data {
             Ok(csv) => {
                 self.action_error = None;
