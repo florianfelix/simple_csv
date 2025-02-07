@@ -1,11 +1,7 @@
-use std::error;
-
-use derive_more::derive::From;
-
 /// Application result type.
-pub type AppResult<T> = std::result::Result<T, Box<dyn error::Error>>;
+pub type AppResult<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
-#[derive(Debug, From)]
+#[derive(Debug)]
 pub enum AppError {}
 impl std::error::Error for AppError {}
 

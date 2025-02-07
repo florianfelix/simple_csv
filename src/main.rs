@@ -8,7 +8,6 @@ use crate::{app::App, tui::Tui};
 pub use error::{AppError, AppResult};
 
 pub mod app;
-pub mod cli;
 mod error;
 pub mod event;
 pub mod tui;
@@ -16,7 +15,7 @@ pub mod utils;
 
 #[tokio::main]
 async fn main() -> AppResult<()> {
-    let cli = cli::Cli::parse();
+    let cli = utils::cli::Cli::parse();
     utils::logging::EzLog::init()?;
 
     let events = EventHandler::new(250);

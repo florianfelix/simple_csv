@@ -18,7 +18,6 @@ pub mod table_data;
 pub struct App {
     pub action_sender: UnboundedSender<IoTask>,
     pub running: bool,
-    // pub main_screen: MainScreen,
     pub data: DataTable,
     pub io_error: Option<IoTaskError>,
 }
@@ -36,8 +35,6 @@ impl App {
         } else {
             frame.render_widget(Line::from("No data"), area);
         }
-
-        // self.main_screen.render_body(frame, frame.area());
     }
 }
 
