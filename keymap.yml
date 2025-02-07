@@ -1,4 +1,5 @@
 normal:
-  ctrl-up: ToggleEdit
+  enter: ToggleEdit
   ctrl-shift-s: Save
-edit: {}
+edit:
+  enter: ToggleEdit

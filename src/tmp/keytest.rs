@@ -12,16 +12,36 @@ use tracing::info;
 use crate::{app::App, event::csv::save_file};
 
 pub trait KeyEventExt {
-    fn parse(raw: &str) -> KeyEvent;
+    fn parse(raw: &str) -> Result<KeyEvent, String>;
     fn as_config_string(&self) -> String;
 }
 
 impl KeyEventExt for KeyEvent {
-    fn parse(raw: &str) -> KeyEvent {
-        super::parse::parse_key_event(raw).unwrap()
+    fn parse(raw: &str) -> Result<KeyEvent, String> {
+        super::parse::parse_key_event(raw)
     }
     fn as_config_string(&self) -> String {
         super::parse::key_event_to_string(self)
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub enum Action {
+    ToggleEdit,
+    Save,
+}
+
+#[allow(unused)]
+impl Action {
+    pub fn act(&self, app: &mut App) {
+        match self {
+            Self::ToggleEdit => {
+                app.data.toggle_edit();
+            }
+            Self::Save => {
+                app.data.action_save();
+            }
+        }
     }
 }
 
@@ -47,88 +67,67 @@ impl KeyMaps {
         IndexMap::from_iter([("normal".to_string(), normal), ("edit".to_string(), edit)])
     }
     pub fn from_config_map(map: IndexMap<String, IndexMap<String, Action>>) -> Self {
-        let normal: IndexMap<KeyEvent, Action> = IndexMap::from_iter(
-            map.get("normal")
-                .unwrap()
-                .iter()
-                .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
-                .collect_vec(),
-        );
-        let edit: IndexMap<KeyEvent, Action> = IndexMap::from_iter(
-            map.get("edit")
-                .unwrap()
-                .iter()
-                .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
-                .collect_vec(),
-        );
+        let normal = match map.get("normal") {
+            Some(normal) => normal.to_owned(),
+            None => IndexMap::new(),
+        };
+        let normal = normal
+            .iter()
+            .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
+            .filter(|(k, _)| k.is_ok())
+            .map(|(k, v)| (k.unwrap(), v))
+            .collect_vec();
+        let normal: IndexMap<KeyEvent, Action> = IndexMap::from_iter(normal);
+
+        let edit = match map.get("edit") {
+            Some(edit) => edit.to_owned(),
+            None => IndexMap::new(),
+        };
+        let edit = edit
+            .iter()
+            .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
+            .filter(|(k, _)| k.is_ok())
+            .map(|(k, v)| (k.unwrap(), v))
+            .collect_vec();
+        let edit: IndexMap<KeyEvent, Action> = IndexMap::from_iter(edit);
+
         Self { normal, edit }
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct SaveMaps {
-    pub normal: IndexMap<String, Action>,
-    pub edit: IndexMap<String, Action>,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum Action {
-    ToggleEdit,
-    Save,
-}
-
-#[allow(unused)]
-impl Action {
-    pub fn act(&self, app: &mut App) {
-        match self {
-            Self::ToggleEdit => {
-                app.data.toggle_edit();
-            }
-            Self::Save => {
-                app.data.action_save();
-            }
+impl Default for KeyMaps {
+    fn default() -> Self {
+        Self {
+            normal: default_keymap_normal(),
+            edit: default_keymap_edit(),
         }
     }
 }
 
-fn default_keymap() -> IndexMap<KeyEvent, Action> {
+fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
     // let map = IndexMap::new();
-    let mut map_normal: IndexMap<KeyEvent, Action> = IndexMap::new();
-
-    let key = KeyEvent::new(KeyCode::Up, KeyModifiers::CONTROL);
-    map_normal.entry(key).insert_entry(Action::ToggleEdit);
-
-    let key = KeyEvent::new(
-        KeyCode::Char('s'),
-        KeyModifiers::CONTROL | KeyModifiers::SHIFT,
-    );
-
-    map_normal.entry(key).insert_entry(Action::Save);
-
-    map_normal
+    let map = [
+        (
+            KeyEvent::new(KeyCode::Enter, KeyModifiers::empty()),
+            Action::ToggleEdit,
+        ),
+        (
+            KeyEvent::new(
+                KeyCode::Char('s'),
+                KeyModifiers::CONTROL | KeyModifiers::SHIFT,
+            ),
+            Action::Save,
+        ),
+    ];
+    IndexMap::from_iter(map)
 }
-
-fn to_saveable() -> IndexMap<String, Action> {
-    let input = default_keymap();
-
-    let mut save: IndexMap<String, Action> = IndexMap::new();
-    input.iter().for_each(|(key, value)| {
-        save.insert(super::parse::key_event_to_string(key), value.clone());
-    });
-    save
-}
-
-fn from_savable(input: SaveMaps) -> KeyMaps {
-    let mut key_map = KeyMaps {
-        normal: IndexMap::new(),
-        edit: IndexMap::new(),
-    };
-    // let mut normal = IndexMap::new()
-    for (k, v) in input.normal.iter() {
-        let key = super::parse::parse_key_event(k).unwrap();
-        key_map.normal.entry(key).insert_entry(v.clone());
-    }
-    key_map
+fn default_keymap_edit() -> IndexMap<KeyEvent, Action> {
+    // let map = IndexMap::new();
+    let map = [(
+        KeyEvent::new(KeyCode::Enter, KeyModifiers::empty()),
+        Action::ToggleEdit,
+    )];
+    IndexMap::from_iter(map)
 }
 
 pub async fn serialize_toml(savemaps: &impl Serialize) {
@@ -159,11 +158,7 @@ pub async fn serialize_ron(savemaps: &impl Serialize) {
 }
 
 pub async fn serialise_test() {
-    let savemaps = KeyMaps {
-        normal: default_keymap(),
-        edit: IndexMap::new(),
-    }
-    .to_config_map();
+    let savemaps = KeyMaps::default().to_config_map();
 
     serialize_ron(&savemaps).await;
     serialize_toml(&savemaps).await;
