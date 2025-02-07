@@ -11,7 +11,6 @@ pub mod app;
 pub mod cli;
 mod error;
 pub mod event;
-// pub mod main_screen;
 pub mod tui;
 pub mod utils;
 
