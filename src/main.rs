@@ -1,5 +1,5 @@
 use clap::Parser;
-use event::{actions::Action, crossterm::Event, event_handler::EventHandler};
+use event::{actions::IoTask, crossterm::Event, event_handler::EventHandler};
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 use tracing::info;
@@ -22,12 +22,12 @@ async fn main() -> AppResult<()> {
 
     let events = EventHandler::new(250);
 
-    let mut app = App::new(events.action_sender());
+    let mut app = App::new(events.io_task_sender());
 
     if let Some(path) = cli.path {
         events
-            .action_sender()
-            .send(Action::LoadCsv {
+            .io_task_sender()
+            .send(IoTask::LoadCsv {
                 path: path.path().to_owned(),
                 delim: cli.delim,
             })

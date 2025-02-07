@@ -7,7 +7,7 @@ use tracing::info;
 use crate::AppResult;
 
 use super::{
-    actions::{action_task, Action},
+    actions::{io_task, IoTask},
     crossterm::{crossterm_task, Event},
 };
 
@@ -21,15 +21,15 @@ pub struct EventHandler {
     event_receiver: mpsc::UnboundedReceiver<Event>,
     /// Event handler thread.
     event_handler: tokio::task::JoinHandle<()>,
-    /// Action sender channel.
-    action_sender: mpsc::UnboundedSender<Action>,
-    /// Action handler thread.
+    /// IoTask sender channel.
+    io_task_sender: mpsc::UnboundedSender<IoTask>,
+    /// IoTask handler thread.
     action_handler: tokio::task::JoinHandle<()>,
 }
 
 impl EventHandler {
-    pub fn action_sender(&self) -> mpsc::UnboundedSender<Action> {
-        self.action_sender.clone()
+    pub fn io_task_sender(&self) -> mpsc::UnboundedSender<IoTask> {
+        self.io_task_sender.clone()
     }
     /// Constructs a new instance of [`EventHandler`].
     pub fn new(tick_rate: u64) -> Self {
@@ -39,16 +39,16 @@ impl EventHandler {
         let _event_sender = event_sender.clone();
         let event_handler = tokio::spawn(crossterm_task(tick_rate, _event_sender));
 
-        // Actions
-        let (action_sender, action_receiver) = mpsc::unbounded_channel::<Action>();
+        // Io Task
+        let (io_task_sender, io_task_receiver) = mpsc::unbounded_channel::<IoTask>();
         let _event_sender = event_sender.clone();
-        let action_handler = tokio::spawn(action_task(_event_sender, action_receiver));
+        let action_handler = tokio::spawn(io_task(_event_sender, io_task_receiver));
 
         Self {
             event_sender,
             event_receiver,
             event_handler,
-            action_sender,
+            io_task_sender,
             action_handler,
         }
     }
@@ -68,19 +68,19 @@ impl EventHandler {
     }
 }
 
-// async fn action_task(
+// async fn io_task(
 //     event_sender: mpsc::UnboundedSender<Event>,
-//     mut action_receiver: UnboundedReceiver<Action>,
+//     mut io_task_receiver: UnboundedReceiver<IoTask>,
 // ) {
 //     loop {
 //         tokio::select! {
 //             _ = event_sender.closed() => {
 //               break;
 //             }
-//             Some(action) = action_receiver.recv() => {
+//             Some(action) = io_task_receiver.recv() => {
 //                 info!("{:#?}", action);
 //                 match action {
-//                     Action::LoadCsv{path, delim} => {
+//                     IoTask::LoadCsv{path, delim} => {
 //                         let csv_str = read_to_string(&path).await.unwrap();
 //                         event_sender.send(
 //                             Event::LoadedCsv(CsvFileDescription { path: path, data: csv_str, delim })
@@ -92,7 +92,7 @@ impl EventHandler {
 //                         //         delim,
 //                         //     }).unwrap();
 //                     },
-//                     Action::SaveCsv{path: _, data: _, delim: _} => {}
+//                     IoTask::SaveCsv{path: _, data: _, delim: _} => {}
 //                 }
 //             }
 //         }

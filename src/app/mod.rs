@@ -5,7 +5,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use tracing::info;
 
 use crate::{
-    event::actions::Action, main_screen::MainScreen,
+    event::actions::IoTask, main_screen::MainScreen,
     utils::layout_helpers::header_body_footer_areas,
 };
 
@@ -19,7 +19,7 @@ pub enum AppMode {
 /// Application.
 #[derive(Debug)]
 pub struct App {
-    pub action_sender: UnboundedSender<Action>,
+    pub action_sender: UnboundedSender<IoTask>,
     pub running: bool,
     pub app_mode: AppMode,
     pub main_screen: MainScreen,
@@ -37,7 +37,7 @@ impl App {
 
 impl App {
     /// Constructs a new instance of [`App`].
-    pub fn new(action_sender: UnboundedSender<Action>) -> Self {
+    pub fn new(action_sender: UnboundedSender<IoTask>) -> Self {
         Self {
             action_sender,
             running: true,

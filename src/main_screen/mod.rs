@@ -88,7 +88,7 @@ impl MainScreen {
                 if key_event.modifiers == KeyModifiers::CONTROL {
                     app.action_sender
                         .send(app.main_screen.data_table.action_save())
-                        .expect("Action Receiver Closed. Quitting");
+                        .expect("IoTask Receiver Closed. Quitting");
                 }
             }
             _ => return Some(key_event),
