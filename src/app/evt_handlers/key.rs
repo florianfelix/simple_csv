@@ -8,11 +8,7 @@ impl App {
         let mut maybe_remaining_event = None;
 
         if let crossterm::event::KeyEventKind::Press = key_event.kind {
-            match self.app_mode {
-                crate::app::AppMode::Main => {
-                    maybe_remaining_event = MainScreen::key_handler(key_event, self);
-                }
-            }
+            maybe_remaining_event = MainScreen::key_handler(key_event, self);
         }
 
         if let Some(key_event) = maybe_remaining_event {

@@ -11,17 +11,11 @@ use crate::{
 
 pub mod evt_handlers;
 
-#[derive(Debug)]
-pub enum AppMode {
-    Main,
-}
-
 /// Application.
 #[derive(Debug)]
 pub struct App {
     pub action_sender: UnboundedSender<IoTask>,
     pub running: bool,
-    pub app_mode: AppMode,
     pub main_screen: MainScreen,
 }
 
@@ -29,9 +23,7 @@ impl App {
     pub fn render(&mut self, frame: &mut Frame) {
         let [_header, _body, _footer] = header_body_footer_areas(1, 6, frame.area());
         // info!("{:#?}", "RENDER");
-        match self.app_mode {
-            AppMode::Main => self.main_screen.render_body(frame, frame.area()),
-        }
+        self.main_screen.render_body(frame, frame.area());
     }
 }
 
@@ -41,7 +33,6 @@ impl App {
         Self {
             action_sender,
             running: true,
-            app_mode: AppMode::Main,
             main_screen: MainScreen::default(),
         }
     }
