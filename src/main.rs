@@ -4,14 +4,13 @@ use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 use tracing::info;
 
-use crate::{app::App, handler::handle_key_events, tui::Tui};
+use crate::{app::App, tui::Tui};
 pub use error::{AppError, AppResult};
 
 pub mod app;
 pub mod cli;
 mod error;
 pub mod event;
-pub mod handler;
 pub mod main_screen;
 pub mod tui;
 pub mod utils;
@@ -49,7 +48,8 @@ async fn main() -> AppResult<()> {
         // Handle events.
         match tui.events.next().await? {
             Event::Tick => app.tick(),
-            Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
+            Event::Key(key_event) => app.handle_key_events(key_event)?,
+            // Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
             Event::Mouse(_) => {}
             Event::Resize(_, _) => {}
             Event::ParsedCsv(parsed) => app.main_screen.from_parsed_csv(parsed),

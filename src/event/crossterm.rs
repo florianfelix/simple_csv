@@ -21,15 +21,15 @@ pub async fn crossterm_task(tick_rate: Duration, event_sender: mpsc::UnboundedSe
     let mut tick = tokio::time::interval(tick_rate);
 
     loop {
-        let tick_delay = tick.tick();
+        let _tick_delay = tick.tick();
         let crossterm_event = reader.next().fuse();
         tokio::select! {
           _ = event_sender.closed() => {
             break;
           }
-          _ = tick_delay => {
-            event_sender.send(Event::Tick).unwrap();
-          }
+          // _ = tick_delay => {
+          //   event_sender.send(Event::Tick).unwrap();
+          // }
 
           Some(Ok(evt)) = crossterm_event => {
             match evt {
