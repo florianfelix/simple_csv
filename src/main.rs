@@ -1,3 +1,6 @@
+// #![feature(inherent_associated_types)]
+// #![allow(incomplete_features)]
+
 use clap::Parser;
 use event::{crossterm::Event, event_handler::EventHandler, io_task::IoTask};
 use ratatui::{backend::CrosstermBackend, Terminal};

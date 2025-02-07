@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use indexmap::IndexMap;
+use itertools::Itertools;
 use ron::ser::{to_string_pretty, PrettyConfig};
 use serde::{Deserialize, Serialize};
 
@@ -10,11 +11,60 @@ use tracing::info;
 
 use crate::{app::App, event::csv::save_file};
 
+pub trait KeyEventExt {
+    fn parse(raw: &str) -> KeyEvent;
+    fn as_config_string(&self) -> String;
+}
+
+impl KeyEventExt for KeyEvent {
+    fn parse(raw: &str) -> KeyEvent {
+        super::parse::parse_key_event(raw).unwrap()
+    }
+    fn as_config_string(&self) -> String {
+        super::parse::key_event_to_string(self)
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct KeyMaps {
     pub normal: IndexMap<KeyEvent, Action>,
     pub edit: IndexMap<KeyEvent, Action>,
 }
+impl KeyMaps {
+    pub fn to_config_map(&self) -> IndexMap<String, IndexMap<String, Action>> {
+        let normal: IndexMap<String, Action> = IndexMap::from_iter(
+            self.normal
+                .iter()
+                .map(|(k, v)| (k.as_config_string(), v.clone()))
+                .collect_vec(),
+        );
+        let edit: IndexMap<String, Action> = IndexMap::from_iter(
+            self.edit
+                .iter()
+                .map(|(k, v)| (k.as_config_string(), v.clone()))
+                .collect_vec(),
+        );
+        IndexMap::from_iter([("normal".to_string(), normal), ("edit".to_string(), edit)])
+    }
+    pub fn from_config_map(map: IndexMap<String, IndexMap<String, Action>>) -> Self {
+        let normal: IndexMap<KeyEvent, Action> = IndexMap::from_iter(
+            map.get("normal")
+                .unwrap()
+                .iter()
+                .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
+                .collect_vec(),
+        );
+        let edit: IndexMap<KeyEvent, Action> = IndexMap::from_iter(
+            map.get("edit")
+                .unwrap()
+                .iter()
+                .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
+                .collect_vec(),
+        );
+        Self { normal, edit }
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SaveMaps {
     pub normal: IndexMap<String, Action>,
@@ -81,22 +131,22 @@ fn from_savable(input: SaveMaps) -> KeyMaps {
     key_map
 }
 
-pub async fn serialize_toml(savemaps: &SaveMaps) {
+pub async fn serialize_toml(savemaps: &impl Serialize) {
     let s = toml::to_string(savemaps).unwrap();
     save_file(&PathBuf::from("keymap.toml"), &s).await.unwrap();
 }
 
-pub async fn serialize_json5(savemaps: &SaveMaps) {
+pub async fn serialize_json5(savemaps: &impl Serialize) {
     let s = json5::to_string(savemaps).unwrap();
     save_file(&PathBuf::from("keymap.json5"), &s).await.unwrap();
 }
 
-pub async fn serialize_yml(savemaps: &SaveMaps) {
+pub async fn serialize_yml(savemaps: &impl Serialize) {
     let s = serde_yml::to_string(savemaps).unwrap();
     save_file(&PathBuf::from("keymap.yml"), &s).await.unwrap();
 }
 
-pub async fn serialize_ron(savemaps: &SaveMaps) {
+pub async fn serialize_ron(savemaps: &impl Serialize) {
     let s = to_string_pretty(
         savemaps,
         PrettyConfig::new()
@@ -109,16 +159,17 @@ pub async fn serialize_ron(savemaps: &SaveMaps) {
 }
 
 pub async fn serialise_test() {
-    let savemaps = SaveMaps {
-        normal: to_saveable(),
+    let savemaps = KeyMaps {
+        normal: default_keymap(),
         edit: IndexMap::new(),
-    };
+    }
+    .to_config_map();
 
     serialize_ron(&savemaps).await;
     serialize_toml(&savemaps).await;
     serialize_json5(&savemaps).await;
     serialize_yml(&savemaps).await;
 
-    let key_map = from_savable(savemaps);
+    let key_map = KeyMaps::from_config_map(savemaps);
     info!("{:#?}", key_map);
 }

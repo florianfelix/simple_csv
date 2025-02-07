@@ -1,7 +1,7 @@
-SaveMaps(
-  normal: {
+{
+  "normal": {
     "ctrl-up": ToggleEdit,
     "ctrl-shift-s": Save,
   },
-  edit: {},
-)
+  "edit": {},
+}
