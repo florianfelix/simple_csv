@@ -12,8 +12,6 @@ pub enum Event {
     Mouse(MouseEvent),
     Resize(u16, u16),
     ParsedCsv(IoTaskResult<CsvDescription>),
-    // TableData((Vec<String>, Vec<Vec<String>>)),
-    // LoadedCsv(CsvFileDescription),
 }
 
 pub async fn crossterm_task(tick_rate: Duration, event_sender: mpsc::UnboundedSender<Event>) {
