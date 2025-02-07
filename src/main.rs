@@ -1,5 +1,5 @@
 use clap::Parser;
-use event::{actions::IoTask, crossterm::Event, event_handler::EventHandler};
+use event::{crossterm::Event, event_handler::EventHandler, io_task::IoTask};
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 use tracing::info;

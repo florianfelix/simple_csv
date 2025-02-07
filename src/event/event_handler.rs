@@ -7,8 +7,8 @@ use tracing::info;
 use crate::AppResult;
 
 use super::{
-    actions::{io_task, IoTask},
     crossterm::{crossterm_task, Event},
+    io_task::{io_task, IoTask},
 };
 
 /// Terminal event handler.

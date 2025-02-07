@@ -5,7 +5,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use tracing::info;
 
 use crate::{
-    event::actions::IoTask, main_screen::MainScreen,
+    event::io_task::IoTask, main_screen::MainScreen,
     utils::layout_helpers::header_body_footer_areas,
 };
 

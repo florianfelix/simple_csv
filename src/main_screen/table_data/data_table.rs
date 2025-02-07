@@ -14,8 +14,8 @@ use tracing::info;
 
 use crate::{
     event::{
-        actions::IoTask,
         csv::{CsvData, CsvDescription},
+        io_task::IoTask,
     },
     main_screen::table_data::RowsExt,
 };
