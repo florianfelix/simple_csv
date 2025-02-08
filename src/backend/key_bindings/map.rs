@@ -6,15 +6,15 @@ use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::backend::{
-    utils::{read_file, save_file},
-    IoCommandResult,
+use crate::{
+    app::evt_handlers::Action,
+    backend::{
+        utils::{read_file, save_file},
+        IoCommandResult,
+    },
 };
 
-use super::{
-    action::Action,
-    defaults::{default_keymap_edit, default_keymap_normal},
-};
+use super::defaults::{default_keymap_edit, default_keymap_normal};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct KeyBindings {

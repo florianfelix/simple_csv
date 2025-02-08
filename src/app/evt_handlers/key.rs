@@ -6,8 +6,32 @@ use tracing::info;
 use crate::{app::App, AppResult};
 
 impl App {
-    /// Handles the key events and updates the state of [`App`].
     pub fn handle_key_events(&mut self, key_event: KeyEvent) -> AppResult<()> {
+        let is_editing = self.data.editing.is_some();
+
+        if is_editing {
+            if let Some(action) = self.key_bindings.edit.get(&key_event) {
+                self.perform_action(action.clone());
+            }
+        } else if let Some(action) = self.key_bindings.normal.get(&key_event) {
+            info!("{:#?}", action);
+            self.perform_action(action.clone());
+        }
+        // info!("{:#?}", key_event);
+        // let mut maybe_remaining_event = None;
+
+        // if let crossterm::event::KeyEventKind::Press = key_event.kind {
+        //     maybe_remaining_event = self.key_handler(key_event);
+        // }
+
+        // if let Some(key_event) = maybe_remaining_event {
+        //     self.base_key_events(key_event)?;
+        // }
+
+        Ok(())
+    }
+    // Handles the key events and updates the state of [`App`].
+    pub fn handle_key_events1(&mut self, key_event: KeyEvent) -> AppResult<()> {
         // info!("{:#?}", key_event);
         let mut maybe_remaining_event = None;
 

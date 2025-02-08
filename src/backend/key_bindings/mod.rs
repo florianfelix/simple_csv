@@ -10,7 +10,6 @@ use tracing::info;
 
 use super::IoCommandResult;
 
-mod action;
 mod defaults;
 mod map;
 mod utils;

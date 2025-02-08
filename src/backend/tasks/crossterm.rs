@@ -3,6 +3,9 @@ use futures::{FutureExt, StreamExt};
 use std::time::Duration;
 use tokio::sync::mpsc;
 
+#[allow(unused)]
+use tracing::info;
+
 use super::events::BackendEvent;
 
 pub async fn crossterm_task(
