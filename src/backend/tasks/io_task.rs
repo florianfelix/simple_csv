@@ -9,14 +9,14 @@ use super::events::{BackendEvent, IoCommand};
 
 pub async fn io_task(
     event_sender: mpsc::UnboundedSender<BackendEvent>,
-    mut io_task_receiver: mpsc::UnboundedReceiver<IoCommand>,
+    mut io_command_receiver: mpsc::UnboundedReceiver<IoCommand>,
 ) {
     loop {
         tokio::select! {
             _ = event_sender.closed() => {
               break;
             }
-            Some(io_task) = io_task_receiver.recv() => {
+            Some(io_task) = io_command_receiver.recv() => {
                 // info!("{:#?}", io_task);
                 match io_task {
                     IoCommand::LoadCsv{path, delim} => {

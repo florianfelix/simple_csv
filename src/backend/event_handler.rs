@@ -23,14 +23,14 @@ pub struct EventHandler {
     /// Event handler thread.
     event_handler: tokio::task::JoinHandle<()>,
     /// IoCommand sender channel.
-    io_task_sender: mpsc::UnboundedSender<IoCommand>,
+    io_command_sender: mpsc::UnboundedSender<IoCommand>,
     /// IoCommand handler thread.
-    action_handler: tokio::task::JoinHandle<()>,
+    io_command_handler: tokio::task::JoinHandle<()>,
 }
 
 impl EventHandler {
-    pub fn io_task_sender(&self) -> mpsc::UnboundedSender<IoCommand> {
-        self.io_task_sender.clone()
+    pub fn io_command_sender(&self) -> mpsc::UnboundedSender<IoCommand> {
+        self.io_command_sender.clone()
     }
     /// Constructs a new instance of [`EventHandler`].
     pub fn new(tick_rate: u64) -> Self {
@@ -41,16 +41,16 @@ impl EventHandler {
         let event_handler = tokio::spawn(crossterm_task(tick_rate, _event_sender));
 
         // Io Task
-        let (io_task_sender, io_task_receiver) = mpsc::unbounded_channel::<IoCommand>();
+        let (io_command_sender, io_command_receiver) = mpsc::unbounded_channel::<IoCommand>();
         let _event_sender = event_sender.clone();
-        let action_handler = tokio::spawn(io_task(_event_sender, io_task_receiver));
+        let io_command_handler = tokio::spawn(io_task(_event_sender, io_command_receiver));
 
         Self {
             event_sender,
             event_receiver,
             event_handler,
-            io_task_sender,
-            action_handler,
+            io_command_sender,
+            io_command_handler,
         }
     }
 

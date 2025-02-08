@@ -13,7 +13,7 @@ use super::{layout::header_body_footer_areas, table_data::data_table::DataTable}
 #[derive(Debug)]
 pub struct App {
     pub key_bindings: KeyBindings,
-    pub action_sender: UnboundedSender<IoCommand>,
+    pub io_command_sender: UnboundedSender<IoCommand>,
     pub running: bool,
     pub data: DataTable,
     pub io_error: Option<IoCommandError>,
@@ -37,10 +37,10 @@ impl App {
 
 impl App {
     /// Constructs a new instance of [`App`].
-    pub fn new(action_sender: UnboundedSender<IoCommand>) -> Self {
+    pub fn new(io_command_sender: UnboundedSender<IoCommand>) -> Self {
         Self {
             key_bindings: KeyBindings::default(),
-            action_sender,
+            io_command_sender,
             running: true,
             // main_screen: MainScreen::default(),
             data: DataTable::default(),
@@ -76,13 +76,13 @@ impl App {
     }
 
     pub fn save(&mut self) {
-        self.action_sender
+        self.io_command_sender
             .send(self.data.save_command())
             .expect("IoCommand Receiver Closed. Quitting");
     }
 
     pub fn reload_key_bindings(&self) {
-        self.action_sender
+        self.io_command_sender
             .send(IoCommand::LoadKeyBindings)
             .expect("IoCommand Receiver Closed. Quitting");
     }

@@ -86,7 +86,7 @@ impl MainScreen {
             KeyCode::Char(' ') => app.main_screen.data_table.append_row(),
             KeyCode::Char('s') => {
                 if key_event.modifiers == KeyModifiers::CONTROL {
-                    app.action_sender
+                    app.io_command_sender
                         .send(app.main_screen.data_table.action_save())
                         .expect("IoCommand Receiver Closed. Quitting");
                 }

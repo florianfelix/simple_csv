@@ -27,11 +27,11 @@ async fn main() -> AppResult<()> {
 
     let events = EventHandler::new(250);
 
-    let mut app = App::new(events.io_task_sender());
+    let mut app = App::new(events.io_command_sender());
 
     if let Some(path) = cli.path {
         events
-            .io_task_sender()
+            .io_command_sender()
             .send(IoCommand::LoadCsv {
                 path: path.path().to_owned(),
                 delim: cli.delim,
@@ -39,7 +39,7 @@ async fn main() -> AppResult<()> {
             .unwrap();
     }
     events
-        .io_task_sender()
+        .io_command_sender()
         .send(IoCommand::LoadKeyBindings)
         .expect("IoCommand Receiver Closed. Quitting");
 
