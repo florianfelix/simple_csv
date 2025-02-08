@@ -1,7 +1,7 @@
 use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::event::{
+use crate::backend::{
     key_bindings::KeyBindings, tasks::io_task::IoTask, CsvDescription, IoTaskError, IoTaskResult,
 };
 

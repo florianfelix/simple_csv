@@ -7,7 +7,7 @@ use tracing::info;
 use crate::AppResult;
 
 use super::tasks::{
-    crossterm::{crossterm_task, Event},
+    crossterm::{crossterm_task, BackendEvent},
     io_task::{io_task, IoTask},
 };
 
@@ -16,9 +16,9 @@ use super::tasks::{
 #[derive(Debug)]
 pub struct EventHandler {
     /// Event sender channel.
-    event_sender: mpsc::UnboundedSender<Event>,
+    event_sender: mpsc::UnboundedSender<BackendEvent>,
     /// Event receiver channel.
-    event_receiver: mpsc::UnboundedReceiver<Event>,
+    event_receiver: mpsc::UnboundedReceiver<BackendEvent>,
     /// Event handler thread.
     event_handler: tokio::task::JoinHandle<()>,
     /// IoTask sender channel.
@@ -57,7 +57,7 @@ impl EventHandler {
     ///
     /// This function will always block the current thread if
     /// there is no data available and it's possible for more data to be sent.
-    pub async fn next(&mut self) -> AppResult<Event> {
+    pub async fn next(&mut self) -> AppResult<BackendEvent> {
         self.event_receiver
             .recv()
             .await

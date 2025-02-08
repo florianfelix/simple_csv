@@ -3,10 +3,10 @@ use futures::{FutureExt, StreamExt};
 use std::time::Duration;
 use tokio::sync::mpsc;
 
-use crate::event::{csv::CsvDescription, key_bindings::KeyBindings, IoTaskResult};
+use crate::backend::{csv::CsvDescription, key_bindings::KeyBindings, IoTaskResult};
 
 #[derive(Clone, Debug)]
-pub enum Event {
+pub enum BackendEvent {
     Tick,
     Key(KeyEvent),
     Mouse(MouseEvent),
@@ -15,7 +15,10 @@ pub enum Event {
     LoadedKeybindings(IoTaskResult<KeyBindings>),
 }
 
-pub async fn crossterm_task(tick_rate: Duration, event_sender: mpsc::UnboundedSender<Event>) {
+pub async fn crossterm_task(
+    tick_rate: Duration,
+    event_sender: mpsc::UnboundedSender<BackendEvent>,
+) {
     let mut reader = crossterm::event::EventStream::new();
     let mut tick = tokio::time::interval(tick_rate);
 
@@ -34,14 +37,14 @@ pub async fn crossterm_task(tick_rate: Duration, event_sender: mpsc::UnboundedSe
             match evt {
               CrosstermEvent::Key(key) => {
                 if key.kind == crossterm::event::KeyEventKind::Press {
-                  event_sender.send(Event::Key(key)).unwrap();
+                  event_sender.send(BackendEvent::Key(key)).unwrap();
                 }
               },
               CrosstermEvent::Mouse(mouse) => {
-                event_sender.send(Event::Mouse(mouse)).unwrap();
+                event_sender.send(BackendEvent::Mouse(mouse)).unwrap();
               },
               CrosstermEvent::Resize(x, y) => {
-                event_sender.send(Event::Resize(x, y)).unwrap();
+                event_sender.send(BackendEvent::Resize(x, y)).unwrap();
               },
               CrosstermEvent::FocusLost => {
               },

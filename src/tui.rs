@@ -1,5 +1,5 @@
 use crate::app::App;
-use crate::event::event_handler::EventHandler;
+use crate::backend::event_handler::EventHandler;
 use crate::AppResult;
 use crossterm::event::{
     DisableMouseCapture, EnableMouseCapture, KeyboardEnhancementFlags, PushKeyboardEnhancementFlags,

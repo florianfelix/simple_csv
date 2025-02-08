@@ -1,11 +1,11 @@
 // #![feature(inherent_associated_types)]
 // #![allow(incomplete_features)]
 
-use clap::Parser;
-use event::{
+use backend::{
     event_handler::EventHandler,
-    tasks::{crossterm::Event, io_task::IoTask},
+    tasks::{crossterm::BackendEvent, io_task::IoTask},
 };
+use clap::Parser;
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 use tracing::info;
@@ -14,8 +14,8 @@ use crate::{app::App, tui::Tui};
 pub use error::{AppError, AppResult};
 
 pub mod app;
+pub mod backend;
 mod error;
-pub mod event;
 // pub mod tmp;
 pub mod tui;
 pub mod utils;
@@ -57,13 +57,13 @@ async fn main() -> AppResult<()> {
         tui.draw(&mut app)?;
         // Handle events.
         match tui.events.next().await? {
-            Event::Tick => app.tick(),
-            Event::Key(key_event) => app.handle_key_events(key_event)?,
-            // Event::Key(key_event) => handle_key_events(key_event, &mut app)?,
-            Event::Mouse(_) => {}
-            Event::Resize(_, _) => {}
-            Event::ParsedCsv(parsed) => app.from_parsed_csv(parsed),
-            Event::LoadedKeybindings(key_bindings) => app.set_key_bindings(key_bindings),
+            BackendEvent::Tick => app.tick(),
+            BackendEvent::Key(key_event) => app.handle_key_events(key_event)?,
+            // BackendEvent::Key(key_event) => handle_key_events(key_event, &mut app)?,
+            BackendEvent::Mouse(_) => {}
+            BackendEvent::Resize(_, _) => {}
+            BackendEvent::ParsedCsv(parsed) => app.from_parsed_csv(parsed),
+            BackendEvent::LoadedKeybindings(key_bindings) => app.set_key_bindings(key_bindings),
         }
     }
 
