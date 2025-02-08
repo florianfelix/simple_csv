@@ -10,6 +10,7 @@ impl App {
         let is_editing = self.data.editing.is_some();
 
         if is_editing {
+            self.intercept_edits(key_event);
             if let Some(action) = self.key_bindings.edit.get(&key_event) {
                 self.perform_action(action.clone());
             }
@@ -17,18 +18,17 @@ impl App {
             info!("{:#?}", action);
             self.perform_action(action.clone());
         }
-        // info!("{:#?}", key_event);
-        // let mut maybe_remaining_event = None;
-
-        // if let crossterm::event::KeyEventKind::Press = key_event.kind {
-        //     maybe_remaining_event = self.key_handler(key_event);
-        // }
-
-        // if let Some(key_event) = maybe_remaining_event {
-        //     self.base_key_events(key_event)?;
-        // }
 
         Ok(())
+    }
+    fn intercept_edits(&mut self, key_event: KeyEvent) {
+        match key_event.code {
+            KeyCode::Char(c) => self.data.buffer.push(c),
+            KeyCode::Backspace => {
+                self.data.buffer.pop();
+            }
+            _ => {}
+        }
     }
     // Handles the key events and updates the state of [`App`].
     pub fn handle_key_events1(&mut self, key_event: KeyEvent) -> AppResult<()> {
@@ -80,8 +80,8 @@ impl App {
             // KeyCode::Up => app.main_screen.data_table.table_state.select_previous(),
             KeyCode::Down => self.data.select_cell_down(),
             KeyCode::Up => self.data.select_cell_up(),
-            KeyCode::Right => self.data.select_cell_next(),
-            KeyCode::Left => self.data.select_cell_previous(),
+            KeyCode::Right => self.data.select_cell_right(),
+            KeyCode::Left => self.data.select_cell_left(),
             KeyCode::Enter => self.data.toggle_edit(),
             KeyCode::PageUp => self.data.table_state.select_first(),
             KeyCode::PageDown => self.data.table_state.select_last(),
@@ -104,7 +104,7 @@ impl App {
             KeyCode::Enter => self.data.toggle_edit(),
             KeyCode::Tab => {
                 self.data.toggle_edit();
-                self.data.select_cell_next();
+                self.data.select_cell_right();
             }
             KeyCode::Char(c) => buffer.push(c),
             KeyCode::Backspace => {
@@ -120,11 +120,11 @@ impl App {
             }
             KeyCode::Right => {
                 self.data.toggle_edit();
-                self.data.select_cell_next();
+                self.data.select_cell_right();
             }
             KeyCode::Left => {
                 self.data.toggle_edit();
-                self.data.select_cell_previous();
+                self.data.select_cell_left();
             }
 
             _ => return Some(key_event),

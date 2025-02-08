@@ -242,7 +242,7 @@ impl DataTable {
     // fn cell_rect(&self) -> Rect {
     //     Rect::new(0, 0, self.width() as u16, self.height() as u16)
     // }
-    pub fn action_save(&self) -> IoCommand {
+    pub fn save_command(&self) -> IoCommand {
         let data = CsvData {
             headers: self.headers.clone(),
             rows: self.rows.clone(),

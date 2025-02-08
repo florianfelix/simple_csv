@@ -78,8 +78,8 @@ impl MainScreen {
             // KeyCode::Up => app.main_screen.data_table.table_state.select_previous(),
             KeyCode::Down => app.main_screen.data_table.select_cell_down(),
             KeyCode::Up => app.main_screen.data_table.select_cell_up(),
-            KeyCode::Right => app.main_screen.data_table.select_cell_next(),
-            KeyCode::Left => app.main_screen.data_table.select_cell_previous(),
+            KeyCode::Right => app.main_screen.data_table.select_cell_right(),
+            KeyCode::Left => app.main_screen.data_table.select_cell_left(),
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
             KeyCode::PageUp => app.main_screen.data_table.table_state.select_first(),
             KeyCode::PageDown => app.main_screen.data_table.table_state.select_last(),
@@ -103,7 +103,7 @@ impl MainScreen {
             KeyCode::Enter => app.main_screen.data_table.toggle_edit(),
             KeyCode::Tab => {
                 app.main_screen.data_table.toggle_edit();
-                app.main_screen.data_table.select_cell_next();
+                app.main_screen.data_table.select_cell_right();
             }
             KeyCode::Char(c) => buffer.push(c),
             KeyCode::Backspace => {
@@ -119,11 +119,11 @@ impl MainScreen {
             }
             KeyCode::Right => {
                 app.main_screen.data_table.toggle_edit();
-                app.main_screen.data_table.select_cell_next();
+                app.main_screen.data_table.select_cell_right();
             }
             KeyCode::Left => {
                 app.main_screen.data_table.toggle_edit();
-                app.main_screen.data_table.select_cell_previous();
+                app.main_screen.data_table.select_cell_left();
             }
 
             _ => return Some(key_event),

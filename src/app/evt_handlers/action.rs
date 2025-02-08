@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use tracing::info;
 
 use crate::app::App;
 
@@ -11,30 +10,42 @@ pub enum Action {
     SelectLeft,
     SelectUp,
     SelectDown,
+    SelectFirstRow,
+    SelectLastRow,
+    AppendRow,
+    ConfirmSelectRight,
+    ConfirmSelectLeft,
+    ConfirmSelectUp,
+    ConfirmSelectDown,
 }
 
 impl App {
     pub fn perform_action(&mut self, action: Action) {
         use Action::*;
         match action {
-            ToggleEdit => {
-                info!("{:#?}", "Toggle Edit");
+            ToggleEdit => self.data.toggle_edit(),
+            Save => self.save(),
+            SelectRight => self.data.select_cell_right(),
+            SelectLeft => self.data.select_cell_left(),
+            SelectUp => self.data.select_cell_up(),
+            SelectDown => self.data.select_cell_down(),
+            SelectFirstRow => self.data.table_state.select_first(),
+            SelectLastRow => self.data.table_state.select_last(),
+            AppendRow => self.data.append_row(),
+            ConfirmSelectRight => {
                 self.data.toggle_edit();
+                self.data.select_cell_right();
             }
-            Save => {
-                info!("{:#?}", "Save");
-                self.data.action_save();
+            ConfirmSelectLeft => {
+                self.data.toggle_edit();
+                self.data.select_cell_left();
             }
-            SelectRight => {
-                self.data.select_cell_next();
-            }
-            SelectLeft => {
-                self.data.select_cell_previous();
-            }
-            SelectUp => {
+            ConfirmSelectUp => {
+                self.data.toggle_edit();
                 self.data.select_cell_up();
             }
-            SelectDown => {
+            ConfirmSelectDown => {
+                self.data.toggle_edit();
                 self.data.select_cell_down();
             }
         }

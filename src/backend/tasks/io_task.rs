@@ -28,7 +28,8 @@ pub async fn io_task(
                         save_file(&data.path.unwrap(), &content).await.unwrap();
                     }
                     IoCommand::LoadKeyBindings => {
-                        let _key_bindings = KeyBindingsIo::load().await;
+                        let key_bindings = KeyBindingsIo::load().await;
+                        event_sender.send(BackendEvent::LoadedKeybindings(key_bindings)).unwrap()
                         // info!("{:#?}", _key_bindings);
                     }
                 }

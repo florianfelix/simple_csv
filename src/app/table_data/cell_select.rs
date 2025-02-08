@@ -4,7 +4,7 @@ use tracing::info;
 use super::{data_table::DataTable, RowsExt};
 
 impl DataTable {
-    pub fn select_cell_next(&mut self) {
+    pub fn select_cell_right(&mut self) {
         if let Some((row, col)) = self.table_state.selected_cell() {
             let col: usize = {
                 let new = col + 1;
@@ -21,7 +21,7 @@ impl DataTable {
             self.table_state.select_cell(Some((0, 0)));
         }
     }
-    pub fn select_cell_previous(&mut self) {
+    pub fn select_cell_left(&mut self) {
         if let Some((row, col)) = self.table_state.selected_cell() {
             let col: usize = {
                 if col == 0 {

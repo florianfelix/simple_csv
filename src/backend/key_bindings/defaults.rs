@@ -11,10 +11,7 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
             Action::ToggleEdit,
         ),
         (
-            KeyEvent::new(
-                KeyCode::Char('s'),
-                KeyModifiers::CONTROL | KeyModifiers::SHIFT,
-            ),
+            KeyEvent::new(KeyCode::Char('s'), KeyModifiers::CONTROL),
             Action::Save,
         ),
         (

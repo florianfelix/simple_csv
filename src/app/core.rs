@@ -1,5 +1,6 @@
 use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::info;
 
 use crate::backend::{
     key_bindings::KeyBindings, tasks::events::IoCommand, CsvDescription, IoCommandError,
@@ -76,7 +77,7 @@ impl App {
 
     pub fn save(&mut self) {
         self.action_sender
-            .send(self.data.action_save())
+            .send(self.data.save_command())
             .expect("IoCommand Receiver Closed. Quitting");
     }
 
@@ -90,5 +91,6 @@ impl App {
             Ok(key_bindings) => self.key_bindings = key_bindings,
             Err(e) => self.io_error = Some(e),
         }
+        info!("\n{:#?}", "SET KEYBINDINGS");
     }
 }
