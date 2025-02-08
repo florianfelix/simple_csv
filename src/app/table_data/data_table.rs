@@ -201,6 +201,22 @@ impl DataTable {
 }
 
 impl DataTable {
+    pub fn mode_edit(&mut self) {
+        if self.editing.is_none() {
+            self.editing = self.table_state.selected_cell();
+            if let Some((row, col)) = self.editing {
+                self.buffer = self.cell_get_row_col(row, col)
+            }
+        }
+    }
+    pub fn mode_normal(&mut self) {
+        if let Some((row, col)) = self.editing {
+            let buf = self.buffer.clone();
+            self.cell_set_row_col(row, col, &buf);
+            self.editing = None;
+            self.buffer.clear();
+        }
+    }
     pub fn toggle_edit(&mut self) {
         // IF EDITING
         if let Some((row, col)) = self.editing {

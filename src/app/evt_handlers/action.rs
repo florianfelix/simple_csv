@@ -5,6 +5,8 @@ use crate::app::App;
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Action {
     ToggleEdit,
+    ModeEdit,
+    ModeNormal,
     Save,
     SelectRight,
     SelectLeft,
@@ -24,6 +26,8 @@ impl App {
         use Action::*;
         match action {
             ToggleEdit => self.data.toggle_edit(),
+            ModeEdit => self.data.mode_edit(),
+            ModeNormal => self.data.mode_normal(),
             Save => self.save(),
             SelectRight => self.data.select_cell_right(),
             SelectLeft => self.data.select_cell_left(),
@@ -33,19 +37,19 @@ impl App {
             SelectLastRow => self.data.table_state.select_last(),
             AppendRow => self.data.append_row(),
             ConfirmSelectRight => {
-                self.data.toggle_edit();
+                self.data.mode_normal();
                 self.data.select_cell_right();
             }
             ConfirmSelectLeft => {
-                self.data.toggle_edit();
+                self.data.mode_normal();
                 self.data.select_cell_left();
             }
             ConfirmSelectUp => {
-                self.data.toggle_edit();
+                self.data.mode_normal();
                 self.data.select_cell_up();
             }
             ConfirmSelectDown => {
-                self.data.toggle_edit();
+                self.data.mode_normal();
                 self.data.select_cell_down();
             }
         }
