@@ -3,7 +3,7 @@ use futures::{FutureExt, StreamExt};
 use std::time::Duration;
 use tokio::sync::mpsc;
 
-use super::{csv::CsvDescription, key_bindings::KeyBindings, IoTaskResult};
+use crate::event::{csv::CsvDescription, key_bindings::KeyBindings, IoTaskResult};
 
 #[derive(Clone, Debug)]
 pub enum Event {

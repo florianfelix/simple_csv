@@ -4,10 +4,11 @@ use tokio::sync::mpsc;
 #[allow(unused)]
 use tracing::info;
 
-use super::{crossterm::Event, csv::CsvDescription};
+use super::crossterm::Event;
 use crate::event::{
-    csv::{load_csv, save_file},
+    csv::{load_csv, CsvDescription},
     key_bindings::KeyBindingsIo,
+    utils::save_file,
 };
 
 #[derive(Clone, Debug)]

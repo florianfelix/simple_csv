@@ -13,8 +13,8 @@ use ratatui::{
 use tracing::info;
 
 use crate::event::{
-    csv::{CsvData, CsvDescription},
-    io_task::IoTask,
+    tasks::io_task::IoTask,
+    {CsvData, CsvDescription},
 };
 
 use super::{popup::Popup, RowsExt};

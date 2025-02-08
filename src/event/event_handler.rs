@@ -1,12 +1,12 @@
 use std::time::Duration;
 
-use tokio::sync::mpsc::{self};
+use tokio::sync::mpsc;
 #[allow(unused)]
 use tracing::info;
 
 use crate::AppResult;
 
-use super::{
+use super::tasks::{
     crossterm::{crossterm_task, Event},
     io_task::{io_task, IoTask},
 };
@@ -67,79 +67,3 @@ impl EventHandler {
             )))
     }
 }
-
-// async fn io_task(
-//     event_sender: mpsc::UnboundedSender<Event>,
-//     mut io_task_receiver: UnboundedReceiver<IoTask>,
-// ) {
-//     loop {
-//         tokio::select! {
-//             _ = event_sender.closed() => {
-//               break;
-//             }
-//             Some(action) = io_task_receiver.recv() => {
-//                 info!("{:#?}", action);
-//                 match action {
-//                     IoTask::LoadCsv{path, delim} => {
-//                         let csv_str = read_to_string(&path).await.unwrap();
-//                         event_sender.send(
-//                             Event::LoadedCsv(CsvFileDescription { path: path, data: csv_str, delim })
-//                         ).unwrap();
-//                         // event_sender.send(
-//                         //     Event::ReadCsvString {
-//                         //         data: csv_str.clone(),
-//                         //         path: path.clone(),
-//                         //         delim,
-//                         //     }).unwrap();
-//                     },
-//                     IoTask::SaveCsv{path: _, data: _, delim: _} => {}
-//                 }
-//             }
-//         }
-//     }
-// }
-
-// async fn read_to_string(path: &PathBuf) -> AppResult<String> {
-//     let mut file = tokio::fs::File::open(path).await?;
-//     let mut buffer = String::new();
-//     file.read_to_string(&mut buffer).await?;
-//     Ok(buffer)
-// }
-
-// async fn crossterm_task(tick_rate: Duration, event_sender: mpsc::UnboundedSender<Event>) {
-//     let mut reader = crossterm::event::EventStream::new();
-//     let mut tick = tokio::time::interval(tick_rate);
-//     loop {
-//         let tick_delay = tick.tick();
-//         let crossterm_event = reader.next().fuse();
-//         tokio::select! {
-//           _ = event_sender.closed() => {
-//             break;
-//           }
-//           _ = tick_delay => {
-//             event_sender.send(Event::Tick).unwrap();
-//           }
-//           Some(Ok(evt)) = crossterm_event => {
-//             match evt {
-//               CrosstermEvent::Key(key) => {
-//                 if key.kind == crossterm::event::KeyEventKind::Press {
-//                   event_sender.send(Event::Key(key)).unwrap();
-//                 }
-//               },
-//               CrosstermEvent::Mouse(mouse) => {
-//                 event_sender.send(Event::Mouse(mouse)).unwrap();
-//               },
-//               CrosstermEvent::Resize(x, y) => {
-//                 event_sender.send(Event::Resize(x, y)).unwrap();
-//               },
-//               CrosstermEvent::FocusLost => {
-//               },
-//               CrosstermEvent::FocusGained => {
-//               },
-//               CrosstermEvent::Paste(_) => {
-//               },
-//             }
-//           }
-//         };
-//     }
-// }

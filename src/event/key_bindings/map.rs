@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use tracing::info;
 
 use crate::event::{
-    csv::{path_to_string, save_file},
+    utils::{read_file, save_file},
     IoTaskResult,
 };
 
@@ -30,7 +30,7 @@ impl KeyBindings {
         Ok(())
     }
     pub async fn load(path: &PathBuf) -> IoTaskResult<Self> {
-        let text = path_to_string(path).await?;
+        let text = read_file(path).await?;
         let maps: IndexMap<String, IndexMap<String, Action>> = serde_yml::from_str(&text)?;
         let key_bindings = KeyBindings::from_config_map(maps);
         info!("Lodaed key bindings from: {:#?}", path);

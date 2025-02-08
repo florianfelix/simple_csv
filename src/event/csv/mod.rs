@@ -1,11 +1,10 @@
 use csv::WriterBuilder;
 use itertools::Itertools;
 use std::path::PathBuf;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use crate::AppResult;
 
-use super::{IoTaskError, IoTaskResult};
+use super::{utils::read_file, IoTaskError, IoTaskResult};
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvData {
@@ -22,7 +21,7 @@ pub struct CsvDescription {
 }
 
 pub async fn load_csv(path: PathBuf, delim: char) -> IoTaskResult<CsvDescription> {
-    let res = path_to_string(&path).await;
+    let res = read_file(&path).await;
     match res {
         Err(e) => Err(IoTaskError::FileIo {
             path,
@@ -68,13 +67,6 @@ pub async fn load_csv(path: PathBuf, delim: char) -> IoTaskResult<CsvDescription
     }
 }
 
-pub async fn path_to_string(path: &PathBuf) -> IoTaskResult<String> {
-    let mut file = tokio::fs::File::open(path).await?;
-    let mut buffer = String::new();
-    file.read_to_string(&mut buffer).await?;
-    Ok(buffer)
-}
-
 impl CsvDescription {
     pub fn data_to_string(&self) -> AppResult<String> {
         let mut wtr = WriterBuilder::new()
@@ -88,11 +80,4 @@ impl CsvDescription {
         let data = String::from_utf8(wtr.into_inner()?)?;
         Ok(data)
     }
-}
-
-pub async fn save_file(path: &PathBuf, content: &str) -> IoTaskResult<()> {
-    let data: &[u8] = content.as_bytes();
-    let mut file = tokio::fs::File::create(path).await?;
-    file.write_all(data).await?;
-    Ok(())
 }

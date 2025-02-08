@@ -2,7 +2,10 @@
 // #![allow(incomplete_features)]
 
 use clap::Parser;
-use event::{crossterm::Event, event_handler::EventHandler, io_task::IoTask};
+use event::{
+    event_handler::EventHandler,
+    tasks::{crossterm::Event, io_task::IoTask},
+};
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
 use tracing::info;
@@ -13,7 +16,7 @@ pub use error::{AppError, AppResult};
 pub mod app;
 mod error;
 pub mod event;
-pub mod tmp;
+// pub mod tmp;
 pub mod tui;
 pub mod utils;
 

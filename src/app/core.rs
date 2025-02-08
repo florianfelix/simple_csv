@@ -2,7 +2,7 @@ use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::event::{
-    csv::CsvDescription, io_task::IoTask, key_bindings::KeyBindings, IoTaskError, IoTaskResult,
+    key_bindings::KeyBindings, tasks::io_task::IoTask, CsvDescription, IoTaskError, IoTaskResult,
 };
 
 use super::{layout::header_body_footer_areas, table_data::data_table::DataTable};
