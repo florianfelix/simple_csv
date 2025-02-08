@@ -3,7 +3,7 @@ use futures::{FutureExt, StreamExt};
 use std::time::Duration;
 use tokio::sync::mpsc;
 
-use super::{csv::CsvDescription, IoTaskResult};
+use super::{csv::CsvDescription, key_bindings::KeyBindings, IoTaskResult};
 
 #[derive(Clone, Debug)]
 pub enum Event {
@@ -12,6 +12,7 @@ pub enum Event {
     Mouse(MouseEvent),
     Resize(u16, u16),
     ParsedCsv(IoTaskResult<CsvDescription>),
+    LoadedKeybindings(IoTaskResult<KeyBindings>),
 }
 
 pub async fn crossterm_task(tick_rate: Duration, event_sender: mpsc::UnboundedSender<Event>) {

@@ -1,4 +1,3 @@
-use map::KeyBindings;
 use std::{
     env,
     path::{Path, PathBuf},
@@ -15,6 +14,8 @@ mod action;
 mod defaults;
 mod map;
 mod utils;
+
+pub use map::KeyBindings;
 
 pub struct KeyBindingsIo;
 
@@ -60,8 +61,3 @@ impl KeyBindingsIo {
         .into())
     }
 }
-
-// pub async fn serialize_yml(savemaps: &impl Serialize) {
-//     let s = serde_yml::to_string(savemaps).unwrap();
-//     save_file(&PathBuf::from("keymap.yml"), &s).await.unwrap();
-// }

@@ -1,13 +1,16 @@
 use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::event::{csv::CsvDescription, io_task::IoTask, IoTaskError, IoTaskResult};
+use crate::event::{
+    csv::CsvDescription, io_task::IoTask, key_bindings::KeyBindings, IoTaskError, IoTaskResult,
+};
 
 use super::{layout::header_body_footer_areas, table_data::data_table::DataTable};
 
 /// Application.
 #[derive(Debug)]
 pub struct App {
+    pub key_bindings: KeyBindings,
     pub action_sender: UnboundedSender<IoTask>,
     pub running: bool,
     pub data: DataTable,
@@ -34,6 +37,7 @@ impl App {
     /// Constructs a new instance of [`App`].
     pub fn new(action_sender: UnboundedSender<IoTask>) -> Self {
         Self {
+            key_bindings: KeyBindings::default(),
             action_sender,
             running: true,
             // main_screen: MainScreen::default(),
@@ -79,5 +83,11 @@ impl App {
         self.action_sender
             .send(IoTask::LoadKeyBindings)
             .expect("IoTask Receiver Closed. Quitting");
+    }
+    pub fn set_key_bindings(&mut self, key_bindings: IoTaskResult<KeyBindings>) {
+        match key_bindings {
+            Ok(key_bindings) => self.key_bindings = key_bindings,
+            Err(e) => self.io_error = Some(e),
+        }
     }
 }

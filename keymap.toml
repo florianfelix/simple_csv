@@ -1,6 +1,0 @@
-[normal]
-enter = "ToggleEdit"
-ctrl-shift-s = "Save"
-
-[edit]
-enter = "ToggleEdit"

@@ -60,6 +60,7 @@ async fn main() -> AppResult<()> {
             Event::Mouse(_) => {}
             Event::Resize(_, _) => {}
             Event::ParsedCsv(parsed) => app.from_parsed_csv(parsed),
+            Event::LoadedKeybindings(key_bindings) => app.set_key_bindings(key_bindings),
         }
     }
 
