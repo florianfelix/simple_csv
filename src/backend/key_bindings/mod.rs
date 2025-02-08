@@ -38,7 +38,7 @@ impl KeyBindingsIo {
         }
     }
 
-    async fn get_conf_path() -> IoCommandResult<PathBuf> {
+    pub async fn get_conf_path() -> IoCommandResult<PathBuf> {
         if let Ok(current_dir) = env::current_dir() {
             let local = current_dir.join(Path::new(Self::KEYMAP));
             if let Ok(true) = fs::try_exists(&local).await {

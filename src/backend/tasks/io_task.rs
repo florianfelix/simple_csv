@@ -30,7 +30,6 @@ pub async fn io_task(
                     IoCommand::LoadKeyBindings => {
                         let key_bindings = KeyBindingsIo::load().await;
                         event_sender.send(BackendEvent::LoadedKeybindings(key_bindings)).unwrap()
-                        // info!("{:#?}", _key_bindings);
                     }
                 }
             }
