@@ -48,7 +48,7 @@ async fn main() -> AppResult<()> {
 
     // Start the main loop.
     info!("{:#?}", "Starting main loop");
-    tmp::serialise_test().await;
+    // tmp::serialise_test().await;
     while app.running {
         // Render the user interface.
         tui.draw(&mut app)?;

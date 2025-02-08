@@ -1,3 +1,4 @@
+#![allow(unused)]
 use std::path::PathBuf;
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};

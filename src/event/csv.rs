@@ -68,7 +68,7 @@ pub async fn load_csv(path: PathBuf, delim: char) -> IoTaskResult<CsvDescription
     }
 }
 
-async fn path_to_string(path: &PathBuf) -> AppResult<String> {
+pub async fn path_to_string(path: &PathBuf) -> IoTaskResult<String> {
     let mut file = tokio::fs::File::open(path).await?;
     let mut buffer = String::new();
     file.read_to_string(&mut buffer).await?;
@@ -90,7 +90,7 @@ impl CsvDescription {
     }
 }
 
-pub async fn save_file(path: &PathBuf, content: &str) -> AppResult<()> {
+pub async fn save_file(path: &PathBuf, content: &str) -> IoTaskResult<()> {
     let data: &[u8] = content.as_bytes();
     let mut file = tokio::fs::File::create(path).await?;
     file.write_all(data).await?;

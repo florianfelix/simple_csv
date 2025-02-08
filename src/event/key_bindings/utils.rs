@@ -1,3 +1,4 @@
+#![allow(unused)]
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
 pub fn parse_key_event(raw: &str) -> Result<KeyEvent, String> {

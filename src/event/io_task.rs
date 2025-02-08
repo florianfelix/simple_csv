@@ -7,7 +7,7 @@ use tracing::info;
 use super::{crossterm::Event, csv::CsvDescription};
 use crate::event::{
     csv::{load_csv, save_file},
-    key_bindings::KeyBindings,
+    key_bindings::KeyBindingsIo,
 };
 
 #[derive(Clone, Debug)]
@@ -38,7 +38,8 @@ pub async fn io_task(
                         save_file(&data.path.unwrap(), &content).await.unwrap();
                     }
                     IoTask::LoadKeyBindings => {
-                        let _key_bindings = KeyBindings::load();
+                        let _key_bindings = KeyBindingsIo::load().await;
+                        // info!("{:#?}", _key_bindings);
                     }
                 }
             }
