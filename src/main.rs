@@ -26,7 +26,10 @@ async fn main() -> AppResult<()> {
     let cli = utils::cli::Cli::parse();
     utils::logging::EzLog::init()?;
 
+    // ensure keybindings file exists
+    let _ = KeyBindingsIo::load().await;
     let keymap = KeyBindingsIo::get_conf_path().await.unwrap();
+
     let events = EventHandler::new(250, keymap);
 
     let mut app = App::new(events.io_command_sender());

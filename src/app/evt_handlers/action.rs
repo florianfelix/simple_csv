@@ -4,6 +4,7 @@ use crate::app::App;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Action {
+    Quit,
     ToggleEdit,
     ModeEdit,
     ModeNormal,
@@ -25,6 +26,7 @@ impl App {
     pub fn perform_action(&mut self, action: Action) {
         use Action::*;
         match action {
+            Quit => self.quit(),
             ToggleEdit => self.data.toggle_edit(),
             ModeEdit => self.data.mode_edit(),
             ModeNormal => self.data.mode_normal(),

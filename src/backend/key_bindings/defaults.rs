@@ -7,6 +7,10 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
     // let map = IndexMap::new();
     let map = [
         (
+            KeyEvent::new(KeyCode::Char('q'), KeyModifiers::empty()),
+            Action::Quit,
+        ),
+        (
             KeyEvent::new(KeyCode::Enter, KeyModifiers::empty()),
             Action::ToggleEdit,
         ),
@@ -35,9 +39,27 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
 }
 pub fn default_keymap_edit() -> IndexMap<KeyEvent, Action> {
     // let map = IndexMap::new();
-    let map = [(
-        KeyEvent::new(KeyCode::Enter, KeyModifiers::empty()),
-        Action::ToggleEdit,
-    )];
+    let map = [
+        (
+            KeyEvent::new(KeyCode::Enter, KeyModifiers::empty()),
+            Action::ToggleEdit,
+        ),
+        (
+            KeyEvent::new(KeyCode::Right, KeyModifiers::empty()),
+            Action::ConfirmSelectRight,
+        ),
+        (
+            KeyEvent::new(KeyCode::Left, KeyModifiers::empty()),
+            Action::ConfirmSelectLeft,
+        ),
+        (
+            KeyEvent::new(KeyCode::Up, KeyModifiers::empty()),
+            Action::ConfirmSelectRight,
+        ),
+        (
+            KeyEvent::new(KeyCode::Down, KeyModifiers::empty()),
+            Action::ConfirmSelectDown,
+        ),
+    ];
     IndexMap::from_iter(map)
 }
