@@ -3,7 +3,7 @@
 
 use backend::{
     event_handler::EventHandler,
-    tasks::{crossterm::BackendEvent, io_task::IoTask},
+    tasks::events::{BackendEvent, IoCommand},
 };
 use clap::Parser;
 use ratatui::{backend::CrosstermBackend, Terminal};
@@ -32,7 +32,7 @@ async fn main() -> AppResult<()> {
     if let Some(path) = cli.path {
         events
             .io_task_sender()
-            .send(IoTask::LoadCsv {
+            .send(IoCommand::LoadCsv {
                 path: path.path().to_owned(),
                 delim: cli.delim,
             })
@@ -40,8 +40,8 @@ async fn main() -> AppResult<()> {
     }
     events
         .io_task_sender()
-        .send(IoTask::LoadKeyBindings)
-        .expect("IoTask Receiver Closed. Quitting");
+        .send(IoCommand::LoadKeyBindings)
+        .expect("IoCommand Receiver Closed. Quitting");
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stdout());
@@ -59,7 +59,6 @@ async fn main() -> AppResult<()> {
         match tui.events.next().await? {
             BackendEvent::Tick => app.tick(),
             BackendEvent::Key(key_event) => app.handle_key_events(key_event)?,
-            // BackendEvent::Key(key_event) => handle_key_events(key_event, &mut app)?,
             BackendEvent::Mouse(_) => {}
             BackendEvent::Resize(_, _) => {}
             BackendEvent::ParsedCsv(parsed) => app.from_parsed_csv(parsed),

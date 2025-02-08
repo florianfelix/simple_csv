@@ -7,4 +7,4 @@ pub mod tasks;
 pub mod utils;
 
 mod error;
-pub use error::{IoTaskError, IoTaskResult};
+pub use error::{IoCommandError, IoCommandResult};

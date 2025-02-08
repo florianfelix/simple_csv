@@ -7,7 +7,7 @@ use tracing::info;
 
 use crate::{
     app::App,
-    event::{csv::CsvDescription, IoTaskError, IoTaskResult},
+    event::{csv::CsvDescription, IoCommandError, IoCommandResult},
     utils::layout_helpers::triple_pane_percantages,
 };
 
@@ -17,7 +17,7 @@ pub mod table_data;
 pub struct MainScreen {
     pub name: String,
     pub data_table: DataTable,
-    pub action_error: Option<IoTaskError>,
+    pub action_error: Option<IoCommandError>,
 }
 
 impl Default for MainScreen {
@@ -31,7 +31,7 @@ impl Default for MainScreen {
 }
 
 impl MainScreen {
-    pub fn from_parsed_csv(&mut self, data: IoTaskResult<CsvDescription>) {
+    pub fn from_parsed_csv(&mut self, data: IoCommandResult<CsvDescription>) {
         match data {
             Ok(csv) => {
                 self.action_error = None;
@@ -88,7 +88,7 @@ impl MainScreen {
                 if key_event.modifiers == KeyModifiers::CONTROL {
                     app.action_sender
                         .send(app.main_screen.data_table.action_save())
-                        .expect("IoTask Receiver Closed. Quitting");
+                        .expect("IoCommand Receiver Closed. Quitting");
                 }
             }
             _ => return Some(key_event),

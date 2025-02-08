@@ -7,8 +7,9 @@ use tracing::info;
 use crate::AppResult;
 
 use super::tasks::{
-    crossterm::{crossterm_task, BackendEvent},
-    io_task::{io_task, IoTask},
+    crossterm::crossterm_task,
+    events::{BackendEvent, IoCommand},
+    io_task::io_task,
 };
 
 /// Terminal event handler.
@@ -21,14 +22,14 @@ pub struct EventHandler {
     event_receiver: mpsc::UnboundedReceiver<BackendEvent>,
     /// Event handler thread.
     event_handler: tokio::task::JoinHandle<()>,
-    /// IoTask sender channel.
-    io_task_sender: mpsc::UnboundedSender<IoTask>,
-    /// IoTask handler thread.
+    /// IoCommand sender channel.
+    io_task_sender: mpsc::UnboundedSender<IoCommand>,
+    /// IoCommand handler thread.
     action_handler: tokio::task::JoinHandle<()>,
 }
 
 impl EventHandler {
-    pub fn io_task_sender(&self) -> mpsc::UnboundedSender<IoTask> {
+    pub fn io_task_sender(&self) -> mpsc::UnboundedSender<IoCommand> {
         self.io_task_sender.clone()
     }
     /// Constructs a new instance of [`EventHandler`].
@@ -40,7 +41,7 @@ impl EventHandler {
         let event_handler = tokio::spawn(crossterm_task(tick_rate, _event_sender));
 
         // Io Task
-        let (io_task_sender, io_task_receiver) = mpsc::unbounded_channel::<IoTask>();
+        let (io_task_sender, io_task_receiver) = mpsc::unbounded_channel::<IoCommand>();
         let _event_sender = event_sender.clone();
         let action_handler = tokio::spawn(io_task(_event_sender, io_task_receiver));
 

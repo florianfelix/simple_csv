@@ -8,7 +8,7 @@ use tracing::error;
 #[allow(unused)]
 use tracing::info;
 
-use super::IoTaskResult;
+use super::IoCommandResult;
 
 mod action;
 mod defaults;
@@ -21,7 +21,7 @@ pub struct KeyBindingsIo;
 
 impl KeyBindingsIo {
     const KEYMAP: &str = "keymap.yml";
-    pub async fn load() -> IoTaskResult<KeyBindings> {
+    pub async fn load() -> IoCommandResult<KeyBindings> {
         let conf_path = Self::get_conf_path().await;
         info!("LOADING KEYBINDINGS\n{:#?}", conf_path);
         if let Err(e) = conf_path {
@@ -39,7 +39,7 @@ impl KeyBindingsIo {
         }
     }
 
-    async fn get_conf_path() -> IoTaskResult<PathBuf> {
+    async fn get_conf_path() -> IoCommandResult<PathBuf> {
         if let Ok(current_dir) = env::current_dir() {
             let local = current_dir.join(Path::new(Self::KEYMAP));
             if let Ok(true) = fs::try_exists(&local).await {

@@ -4,7 +4,7 @@ use std::path::PathBuf;
 
 use crate::AppResult;
 
-use super::{utils::read_file, IoTaskError, IoTaskResult};
+use super::{utils::read_file, IoCommandError, IoCommandResult};
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvData {
@@ -20,10 +20,10 @@ pub struct CsvDescription {
     pub delim: char,
 }
 
-pub async fn load_csv(path: PathBuf, delim: char) -> IoTaskResult<CsvDescription> {
+pub async fn load_csv(path: PathBuf, delim: char) -> IoCommandResult<CsvDescription> {
     let res = read_file(&path).await;
     match res {
-        Err(e) => Err(IoTaskError::FileIo {
+        Err(e) => Err(IoCommandError::FileIo {
             path,
             error: e.to_string(),
         }),

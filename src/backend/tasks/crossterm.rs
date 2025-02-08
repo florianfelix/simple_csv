@@ -1,19 +1,9 @@
-use crossterm::event::{Event as CrosstermEvent, KeyEvent, MouseEvent};
+use crossterm::event::Event as CrosstermEvent;
 use futures::{FutureExt, StreamExt};
 use std::time::Duration;
 use tokio::sync::mpsc;
 
-use crate::backend::{csv::CsvDescription, key_bindings::KeyBindings, IoTaskResult};
-
-#[derive(Clone, Debug)]
-pub enum BackendEvent {
-    Tick,
-    Key(KeyEvent),
-    Mouse(MouseEvent),
-    Resize(u16, u16),
-    ParsedCsv(IoTaskResult<CsvDescription>),
-    LoadedKeybindings(IoTaskResult<KeyBindings>),
-}
+use super::events::BackendEvent;
 
 pub async fn crossterm_task(
     tick_rate: Duration,

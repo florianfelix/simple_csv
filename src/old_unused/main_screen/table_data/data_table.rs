@@ -15,7 +15,7 @@ use tracing::info;
 use crate::{
     event::{
         csv::{CsvData, CsvDescription},
-        io_task::IoTask,
+        io_task::IoCommand,
     },
     main_screen::table_data::RowsExt,
 };
@@ -248,12 +248,12 @@ impl DataTable {
     // fn cell_rect(&self) -> Rect {
     //     Rect::new(0, 0, self.width() as u16, self.height() as u16)
     // }
-    pub fn action_save(&self) -> IoTask {
+    pub fn action_save(&self) -> IoCommand {
         let data = CsvData {
             headers: self.headers.clone(),
             rows: self.rows.clone(),
         };
-        IoTask::SaveCsv(CsvDescription {
+        IoCommand::SaveCsv(CsvDescription {
             data,
             delim: self.delim,
             errors: vec![],

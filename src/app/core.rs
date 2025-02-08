@@ -2,7 +2,8 @@ use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::backend::{
-    key_bindings::KeyBindings, tasks::io_task::IoTask, CsvDescription, IoTaskError, IoTaskResult,
+    key_bindings::KeyBindings, tasks::events::IoCommand, CsvDescription, IoCommandError,
+    IoCommandResult,
 };
 
 use super::{layout::header_body_footer_areas, table_data::data_table::DataTable};
@@ -11,10 +12,10 @@ use super::{layout::header_body_footer_areas, table_data::data_table::DataTable}
 #[derive(Debug)]
 pub struct App {
     pub key_bindings: KeyBindings,
-    pub action_sender: UnboundedSender<IoTask>,
+    pub action_sender: UnboundedSender<IoCommand>,
     pub running: bool,
     pub data: DataTable,
-    pub io_error: Option<IoTaskError>,
+    pub io_error: Option<IoCommandError>,
 }
 
 impl App {
@@ -35,7 +36,7 @@ impl App {
 
 impl App {
     /// Constructs a new instance of [`App`].
-    pub fn new(action_sender: UnboundedSender<IoTask>) -> Self {
+    pub fn new(action_sender: UnboundedSender<IoCommand>) -> Self {
         Self {
             key_bindings: KeyBindings::default(),
             action_sender,
@@ -46,7 +47,7 @@ impl App {
         }
     }
 
-    pub fn from_parsed_csv(&mut self, data: IoTaskResult<CsvDescription>) {
+    pub fn from_parsed_csv(&mut self, data: IoCommandResult<CsvDescription>) {
         match data {
             Ok(csv) => {
                 self.io_error = None;
@@ -76,15 +77,15 @@ impl App {
     pub fn save(&mut self) {
         self.action_sender
             .send(self.data.action_save())
-            .expect("IoTask Receiver Closed. Quitting");
+            .expect("IoCommand Receiver Closed. Quitting");
     }
 
     pub fn reload_key_bindings(&self) {
         self.action_sender
-            .send(IoTask::LoadKeyBindings)
-            .expect("IoTask Receiver Closed. Quitting");
+            .send(IoCommand::LoadKeyBindings)
+            .expect("IoCommand Receiver Closed. Quitting");
     }
-    pub fn set_key_bindings(&mut self, key_bindings: IoTaskResult<KeyBindings>) {
+    pub fn set_key_bindings(&mut self, key_bindings: IoCommandResult<KeyBindings>) {
         match key_bindings {
             Ok(key_bindings) => self.key_bindings = key_bindings,
             Err(e) => self.io_error = Some(e),

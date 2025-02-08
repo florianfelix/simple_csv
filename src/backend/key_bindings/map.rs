@@ -8,7 +8,7 @@ use tracing::info;
 
 use crate::backend::{
     utils::{read_file, save_file},
-    IoTaskResult,
+    IoCommandResult,
 };
 
 use super::{
@@ -22,14 +22,14 @@ pub struct KeyBindings {
     pub edit: IndexMap<KeyEvent, Action>,
 }
 impl KeyBindings {
-    pub async fn save(&self, path: &PathBuf) -> IoTaskResult<()> {
+    pub async fn save(&self, path: &PathBuf) -> IoCommandResult<()> {
         let map = self.to_config_map();
         let map = serde_yml::to_string(&map).unwrap();
         save_file(path, &map).await?;
         info!("Saved default key bindings: {:#?}", path);
         Ok(())
     }
-    pub async fn load(path: &PathBuf) -> IoTaskResult<Self> {
+    pub async fn load(path: &PathBuf) -> IoCommandResult<Self> {
         let text = read_file(path).await?;
         let maps: IndexMap<String, IndexMap<String, Action>> = serde_yml::from_str(&text)?;
         let key_bindings = KeyBindings::from_config_map(maps);
