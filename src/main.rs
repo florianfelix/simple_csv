@@ -35,6 +35,10 @@ async fn main() -> AppResult<()> {
             })
             .unwrap();
     }
+    events
+        .io_task_sender()
+        .send(IoTask::LoadKeyBindings)
+        .expect("IoTask Receiver Closed. Quitting");
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stdout());

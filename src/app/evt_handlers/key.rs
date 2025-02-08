@@ -8,7 +8,7 @@ use crate::{app::App, AppResult};
 impl App {
     /// Handles the key events and updates the state of [`App`].
     pub fn handle_key_events(&mut self, key_event: KeyEvent) -> AppResult<()> {
-        info!("{:#?}", key_event);
+        // info!("{:#?}", key_event);
         let mut maybe_remaining_event = None;
 
         if let crossterm::event::KeyEventKind::Press = key_event.kind {
@@ -67,6 +67,7 @@ impl App {
                     self.save();
                 }
             }
+            KeyCode::Char('k') => self.reload_key_bindings(),
             _ => return Some(key_event),
         }
         None

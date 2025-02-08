@@ -5,12 +5,16 @@ use tokio::sync::mpsc;
 use tracing::info;
 
 use super::{crossterm::Event, csv::CsvDescription};
-use crate::event::csv::{load_csv, save_file};
+use crate::event::{
+    csv::{load_csv, save_file},
+    key_bindings::KeyBindings,
+};
 
 #[derive(Clone, Debug)]
 pub enum IoTask {
     SaveCsv(CsvDescription),
     LoadCsv { path: PathBuf, delim: char },
+    LoadKeyBindings,
 }
 
 pub async fn io_task(
@@ -32,6 +36,9 @@ pub async fn io_task(
                     IoTask::SaveCsv(data) => {
                         let content = data.data_to_string().unwrap();
                         save_file(&data.path.unwrap(), &content).await.unwrap();
+                    }
+                    IoTask::LoadKeyBindings => {
+                        let _key_bindings = KeyBindings::load();
                     }
                 }
             }

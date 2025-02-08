@@ -74,4 +74,10 @@ impl App {
             .send(self.data.action_save())
             .expect("IoTask Receiver Closed. Quitting");
     }
+
+    pub fn reload_key_bindings(&self) {
+        self.action_sender
+            .send(IoTask::LoadKeyBindings)
+            .expect("IoTask Receiver Closed. Quitting");
+    }
 }

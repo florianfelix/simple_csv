@@ -166,5 +166,5 @@ pub async fn serialise_test() {
     serialize_yml(&savemaps).await;
 
     let key_map = KeyMaps::from_config_map(savemaps);
-    info!("{:#?}", key_map);
+    // info!("{:#?}", key_map);
 }
