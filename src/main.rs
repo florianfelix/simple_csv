@@ -1,7 +1,4 @@
-use backend::{
-    event_handler::EventHandler,
-    tasks::events::{BackendEvent, IoCommand},
-};
+use backend::{event_handler::EventHandler, tasks::events::IoCommand};
 use clap::Parser;
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
@@ -49,14 +46,7 @@ async fn main() -> AppResult<()> {
         // Render the user interface.
         tui.draw(&mut app)?;
         // Handle events.
-        match tui.events.next().await? {
-            BackendEvent::Tick => app.tick(),
-            BackendEvent::Key(key_event) => app.handle_key_events(key_event)?,
-            BackendEvent::Mouse(_) => {}
-            BackendEvent::Resize(_, _) => {}
-            BackendEvent::ParsedCsv(parsed) => app.from_parsed_csv(parsed),
-            BackendEvent::LoadedKeybindings(key_bindings) => app.set_key_bindings(key_bindings),
-        }
+        app.handle_backend_events(tui.events.next().await?);
     }
 
     // Exit the user interface.

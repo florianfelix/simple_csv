@@ -3,10 +3,10 @@ use crossterm::event::{KeyCode, KeyEvent};
 #[allow(unused)]
 use tracing::info;
 
-use crate::{app::App, AppResult};
+use crate::app::App;
 
 impl App {
-    pub fn handle_key_events(&mut self, key_event: KeyEvent) -> AppResult<()> {
+    pub fn handle_key_events(&mut self, key_event: KeyEvent) {
         let is_editing = self.data.editing.is_some();
 
         if is_editing {
@@ -18,8 +18,6 @@ impl App {
             info!("{:#?}", action);
             self.perform_action(action.clone());
         }
-
-        Ok(())
     }
 
     fn intercept_edits(&mut self, key_event: KeyEvent) {
