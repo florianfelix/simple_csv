@@ -1,4 +1,5 @@
 mod action;
+mod io;
 mod key;
 pub use action::Action;
 
@@ -13,8 +14,7 @@ impl App {
             BackendEvent::Key(key_event) => self.handle_key_events(key_event),
             BackendEvent::Mouse(_) => {}
             BackendEvent::Resize(_, _) => {}
-            BackendEvent::ParsedCsv(parsed) => self.from_parsed_csv(parsed),
-            BackendEvent::LoadedKeybindings(key_bindings) => self.set_key_bindings(key_bindings),
+            BackendEvent::IoEvent(io_event) => self.handle_io_events(io_event),
         }
     }
 }

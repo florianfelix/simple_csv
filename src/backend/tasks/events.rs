@@ -10,8 +10,7 @@ pub enum BackendEvent {
     Key(KeyEvent),
     Mouse(MouseEvent),
     Resize(u16, u16),
-    ParsedCsv(IoCommandResult<CsvDescription>),
-    LoadedKeybindings(IoCommandResult<KeyBindings>),
+    IoEvent(IoEvent),
 }
 
 #[derive(Clone, Debug)]
@@ -20,4 +19,11 @@ pub enum IoCommand {
     LoadCsv { path: PathBuf, delim: char },
     LoadKeyBindings,
     SaveKeyBindings(KeyBindings),
+}
+
+#[derive(Clone, Debug)]
+pub enum IoEvent {
+    LoadedCsv(IoCommandResult<CsvDescription>),
+    SavedCsv,
+    LoadedKeybindings(IoCommandResult<KeyBindings>),
 }
