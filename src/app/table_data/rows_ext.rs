@@ -2,7 +2,7 @@ pub trait RowsExt {
     fn append_column(&mut self);
     fn get_ref(&self, row: usize, column: usize) -> Option<&str>;
     fn get_owned(&self, row: usize, column: usize) -> Option<String>;
-    fn set_content(&mut self, row: usize, col: usize, content: &str);
+    fn set_content(&mut self, row: usize, col: usize, content: String);
     fn column_widths_min(&self, widths: Vec<u16>) -> Vec<u16>;
     fn is_valid_coords(&self, row: usize, col: usize) -> bool;
 }
@@ -31,10 +31,10 @@ impl RowsExt for Vec<Vec<String>> {
             None
         }
     }
-    fn set_content(&mut self, row: usize, col: usize, content: &str) {
+    fn set_content(&mut self, row: usize, col: usize, content: String) {
         let row = self.get_mut(row).expect("row index out of bounds");
         let value = row.get_mut(col).expect("out of bounds");
-        *value = String::from(content);
+        *value = content;
     }
     fn column_widths_min(&self, mut widths: Vec<u16>) -> Vec<u16> {
         for row in self.iter() {

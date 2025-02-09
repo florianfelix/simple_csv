@@ -12,9 +12,16 @@ use ratatui::{
 #[allow(unused)]
 use tracing::info;
 
+use super::{popup::Popup, RowsExt};
 use crate::backend::{tasks::events::IoCommand, CsvData, CsvDescription};
 
-use super::{popup::Popup, RowsExt};
+#[derive(Default, Debug, Clone)]
+pub enum EditTarget {
+    #[default]
+    None,
+    Cell((usize, usize)),
+    Header(usize),
+}
 
 #[derive(Default, Debug, Clone)]
 pub struct DataTable {
@@ -24,6 +31,7 @@ pub struct DataTable {
     pub buffer: String,
     // Cell indicies (column , row)
     pub editing: Option<(usize, usize)>,
+    pub edit_target: EditTarget,
     pub path: Option<PathBuf>,
     pub delim: char,
     pub is_dirty: bool,
@@ -173,7 +181,7 @@ impl DataTable {
         self.is_dirty = true;
         self.parse_errors = vec![];
     }
-    fn cell_set_row_col(&mut self, row: usize, col: usize, content: &str) {
+    fn cell_set_row_col(&mut self, row: usize, col: usize, content: String) {
         if self.rows.is_valid_coords(row, col) {
             self.rows.set_content(row, col, content);
         }
@@ -202,6 +210,32 @@ impl DataTable {
         self.headers.push(String::from("NewColumn"));
         self.rows.append_column();
     }
+    fn set_column_name(&mut self, col: usize, content: String) {
+        let value = self.headers.get_mut(col).unwrap();
+        *value = content;
+    }
+    pub fn edit_column_name(&mut self) {
+        if let Some(col) = self.table_state.selected_column() {
+            self.edit_target = EditTarget::Header(col);
+            self.buffer = self.headers.get(col).unwrap().clone();
+        }
+    }
+    pub fn edit_cell(&mut self) {
+        if let Some((row, col)) = self.table_state.selected_cell() {
+            self.edit_target = EditTarget::Cell((row, col));
+            self.buffer = self.cell_get_row_col(row, col);
+        }
+    }
+    pub fn apply_edit(&mut self) {
+        use EditTarget::*;
+        match self.edit_target {
+            Header(col) => self.set_column_name(col, self.buffer.clone()),
+            Cell((row, col)) => self.cell_set_row_col(row, col, self.buffer.clone()),
+            None => (),
+        }
+        self.edit_target = EditTarget::None;
+        self.buffer.clear();
+    }
 }
 
 impl DataTable {
@@ -215,8 +249,7 @@ impl DataTable {
     }
     pub fn mode_normal(&mut self) {
         if let Some((row, col)) = self.editing {
-            let buf = self.buffer.clone();
-            self.cell_set_row_col(row, col, &buf);
+            self.cell_set_row_col(row, col, self.buffer.clone());
             self.editing = None;
             self.buffer.clear();
         }
@@ -224,9 +257,7 @@ impl DataTable {
     pub fn toggle_edit(&mut self) {
         // IF EDITING
         if let Some((row, col)) = self.editing {
-            let buf = self.buffer.clone();
-            // Set selected cell value to buffer & clear buffer
-            self.cell_set_row_col(row, col, &buf);
+            self.cell_set_row_col(row, col, self.buffer.clone());
             self.editing = None;
             self.buffer = String::new();
         } else
