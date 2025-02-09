@@ -21,12 +21,23 @@ pub struct KeyBindings {
     pub normal: IndexMap<KeyEvent, Action>,
     pub edit: IndexMap<KeyEvent, Action>,
 }
+
+impl Default for KeyBindings {
+    fn default() -> Self {
+        Self {
+            normal: default_keymap_normal(),
+            edit: default_keymap_edit(),
+        }
+    }
+}
+
 impl KeyBindings {
     pub async fn save(&self, path: &PathBuf) -> IoCommandResult<()> {
         let map = self.to_config_map();
         let map = serde_yml::to_string(&map).unwrap();
         save_file(path, &map).await?;
         info!("Saved default key bindings: {:#?}", path);
+
         Ok(())
     }
     pub async fn load(path: &PathBuf) -> IoCommandResult<Self> {
@@ -78,15 +89,6 @@ impl KeyBindings {
         let edit: IndexMap<KeyEvent, Action> = IndexMap::from_iter(edit);
 
         Self { normal, edit }
-    }
-}
-
-impl Default for KeyBindings {
-    fn default() -> Self {
-        Self {
-            normal: default_keymap_normal(),
-            edit: default_keymap_edit(),
-        }
     }
 }
 

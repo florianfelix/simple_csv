@@ -27,7 +27,7 @@ pub struct EventHandler {
     io_command_sender: mpsc::UnboundedSender<IoCommand>,
     /// IoCommand handler thread.
     io_command_handler: tokio::task::JoinHandle<()>,
-    watcher: Debouncer<INotifyWatcher, NoCache>,
+    watcher: Option<Debouncer<INotifyWatcher, NoCache>>,
 }
 
 impl EventHandler {
@@ -35,7 +35,7 @@ impl EventHandler {
         self.io_command_sender.clone()
     }
     /// Constructs a new instance of [`EventHandler`].
-    pub fn new(tick_rate: u64, path: PathBuf) -> Self {
+    pub fn new(tick_rate: u64) -> Self {
         // Events
         let tick_rate = Duration::from_millis(tick_rate);
         let (event_sender, event_receiver) = mpsc::unbounded_channel();
@@ -47,8 +47,13 @@ impl EventHandler {
         let _event_sender = event_sender.clone();
         let io_command_handler = tokio::spawn(io_task(_event_sender, io_command_receiver));
 
-        // Watcher
-        let watcher = Self::watch(io_command_sender.clone(), path).unwrap();
+        // Watcher - If keymap file exists load it and watch for changes
+        let watcher = crate::utils::get_config_path().map(|path| {
+            io_command_sender
+                .send(IoCommand::LoadKeyBindings)
+                .expect("IoCommand Receiver Closed. Quitting");
+            Self::watch(io_command_sender.clone(), path).unwrap()
+        });
 
         Self {
             event_sender,

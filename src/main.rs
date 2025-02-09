@@ -1,9 +1,5 @@
-// #![feature(inherent_associated_types)]
-// #![allow(incomplete_features)]
-
 use backend::{
     event_handler::EventHandler,
-    key_bindings::KeyBindingsIo,
     tasks::events::{BackendEvent, IoCommand},
 };
 use clap::Parser;
@@ -26,11 +22,7 @@ async fn main() -> AppResult<()> {
     let cli = utils::cli::Cli::parse();
     utils::logging::EzLog::init()?;
 
-    // ensure keybindings file exists
-    let _ = KeyBindingsIo::load().await;
-    let keymap = KeyBindingsIo::get_conf_path().await.unwrap();
-
-    let events = EventHandler::new(250, keymap);
+    let events = EventHandler::new(250);
 
     let mut app = App::new(events.io_command_sender());
 
@@ -43,10 +35,6 @@ async fn main() -> AppResult<()> {
             })
             .unwrap();
     }
-    events
-        .io_command_sender()
-        .send(IoCommand::LoadKeyBindings)
-        .expect("IoCommand Receiver Closed. Quitting");
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stdout());
