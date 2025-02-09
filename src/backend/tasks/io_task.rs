@@ -3,7 +3,7 @@ use tokio::sync::mpsc;
 #[allow(unused)]
 use tracing::info;
 
-use crate::backend::{csv::load_csv, key_bindings::KeyBindingsIo, utils::save_file};
+use crate::backend::{csv::load_csv, key_bindings::KeyBindings, utils::save_file};
 
 use super::events::{BackendEvent, IoCommand};
 
@@ -28,8 +28,11 @@ pub async fn io_task(
                         save_file(&data.path.unwrap(), &content).await.unwrap();
                     }
                     IoCommand::LoadKeyBindings => {
-                        let key_bindings = KeyBindingsIo::load().await;
+                        let key_bindings = KeyBindings::load().await;
                         event_sender.send(BackendEvent::LoadedKeybindings(key_bindings)).unwrap()
+                    }
+                    IoCommand::SaveKeyBindings(key_bindings) => {
+                        key_bindings.save().await.unwrap();
                     }
                 }
             }

@@ -19,6 +19,10 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
             Action::Save,
         ),
         (
+            KeyEvent::new(KeyCode::Char('s'), KeyModifiers::ALT),
+            Action::SaveKeyBindings,
+        ),
+        (
             KeyEvent::new(KeyCode::Right, KeyModifiers::empty()),
             Action::SelectRight,
         ),

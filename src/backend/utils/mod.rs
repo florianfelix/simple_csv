@@ -11,6 +11,9 @@ pub async fn read_file(path: &PathBuf) -> IoCommandResult<String> {
 }
 pub async fn save_file(path: &PathBuf, content: &str) -> IoCommandResult<()> {
     let data: &[u8] = content.as_bytes();
+    if path.extension().is_some() {
+        tokio::fs::create_dir_all(path.parent().unwrap()).await?;
+    }
     let mut file = tokio::fs::File::create(path).await?;
     file.write_all(data).await?;
     Ok(())

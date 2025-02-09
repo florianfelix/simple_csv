@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use crossterm::event::KeyEvent;
 use indexmap::IndexMap;
 use itertools::Itertools;
@@ -9,12 +7,16 @@ use tracing::info;
 use crate::{
     app::evt_handlers::Action,
     backend::{
+        key_bindings::keymap_path,
         utils::{read_file, save_file},
-        IoCommandResult,
+        IoCommandError, IoCommandResult,
     },
 };
 
-use super::defaults::{default_keymap_edit, default_keymap_normal};
+use super::{
+    defaults::{default_keymap_edit, default_keymap_normal},
+    keymap_file,
+};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct KeyBindings {
@@ -32,20 +34,31 @@ impl Default for KeyBindings {
 }
 
 impl KeyBindings {
-    pub async fn save(&self, path: &PathBuf) -> IoCommandResult<()> {
-        let map = self.to_config_map();
-        let map = serde_yml::to_string(&map).unwrap();
-        save_file(path, &map).await?;
-        info!("Saved default key bindings: {:#?}", path);
-
+    pub async fn save(&self) -> IoCommandResult<()> {
+        match keymap_path() {
+            None => return Err(IoCommandError::Io(String::from("unable to determine path"))),
+            Some(path) => {
+                let map = self.to_config_map();
+                let map = serde_yml::to_string(&map).unwrap();
+                save_file(&path, &map).await?;
+                info!("Saved default key bindings: {:#?}", path);
+            }
+        }
         Ok(())
     }
-    pub async fn load(path: &PathBuf) -> IoCommandResult<Self> {
-        let text = read_file(path).await?;
-        let maps: IndexMap<String, IndexMap<String, Action>> = serde_yml::from_str(&text)?;
-        let key_bindings = KeyBindings::from_config_map(maps);
-        info!("Lodaed key bindings from: {:#?}", path);
-        Ok(key_bindings)
+    pub async fn load() -> IoCommandResult<Self> {
+        match keymap_file() {
+            None => Err(IoCommandError::Io(String::from(
+                "Keymap config file not found",
+            ))),
+            Some(path) => {
+                let text = read_file(&path).await?;
+                let maps: IndexMap<String, IndexMap<String, Action>> = serde_yml::from_str(&text)?;
+                let key_bindings = KeyBindings::from_config_map(maps);
+                info!("Lodaed key bindings from: {:#?}", path);
+                Ok(key_bindings)
+            }
+        }
     }
 
     pub fn to_config_map(&self) -> IndexMap<String, IndexMap<String, Action>> {

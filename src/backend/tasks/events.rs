@@ -19,4 +19,5 @@ pub enum IoCommand {
     SaveCsv(CsvDescription),
     LoadCsv { path: PathBuf, delim: char },
     LoadKeyBindings,
+    SaveKeyBindings(KeyBindings),
 }

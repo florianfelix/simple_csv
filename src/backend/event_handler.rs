@@ -7,10 +7,13 @@ use tracing::info;
 
 use crate::AppResult;
 
-use super::tasks::{
-    crossterm::crossterm_task,
-    events::{BackendEvent, IoCommand},
-    io_task::io_task,
+use super::{
+    key_bindings::keymap_file,
+    tasks::{
+        crossterm::crossterm_task,
+        events::{BackendEvent, IoCommand},
+        io_task::io_task,
+    },
 };
 
 /// Terminal event handler.
@@ -48,7 +51,7 @@ impl EventHandler {
         let io_command_handler = tokio::spawn(io_task(_event_sender, io_command_receiver));
 
         // Watcher - If keymap file exists load it and watch for changes
-        let watcher = crate::utils::get_config_path().map(|path| {
+        let watcher = keymap_file().map(|path| {
             io_command_sender
                 .send(IoCommand::LoadKeyBindings)
                 .expect("IoCommand Receiver Closed. Quitting");
