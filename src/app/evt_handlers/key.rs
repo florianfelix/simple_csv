@@ -15,7 +15,6 @@ impl App {
                 self.perform_action(action.clone());
             }
         } else if let Some(action) = self.key_bindings.normal.get(&key_event) {
-            info!("{:#?}", action);
             self.perform_action(action.clone());
         }
     }
