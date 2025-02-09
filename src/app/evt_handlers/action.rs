@@ -16,11 +16,12 @@ pub enum Action {
     SelectDown,
     SelectFirstRow,
     SelectLastRow,
-    AppendRow,
     ConfirmSelectRight,
     ConfirmSelectLeft,
     ConfirmSelectUp,
     ConfirmSelectDown,
+    AppendRow,
+    AppendColumn,
 }
 
 impl App {
@@ -39,7 +40,6 @@ impl App {
             SelectDown => self.data.select_cell_down(),
             SelectFirstRow => self.data.table_state.select_first(),
             SelectLastRow => self.data.table_state.select_last(),
-            AppendRow => self.data.append_row(),
             ConfirmSelectRight => {
                 self.data.mode_normal();
                 self.data.select_cell_right();
@@ -56,6 +56,8 @@ impl App {
                 self.data.mode_normal();
                 self.data.select_cell_down();
             }
+            AppendRow => self.data.append_row(),
+            AppendColumn => self.data.append_column(),
         }
     }
 }

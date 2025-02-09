@@ -38,6 +38,14 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
             KeyEvent::new(KeyCode::Down, KeyModifiers::empty()),
             Action::SelectDown,
         ),
+        (
+            KeyEvent::new(KeyCode::Char('r'), KeyModifiers::empty()),
+            Action::AppendRow,
+        ),
+        (
+            KeyEvent::new(KeyCode::Char('c'), KeyModifiers::empty()),
+            Action::AppendColumn,
+        ),
     ];
     IndexMap::from_iter(map)
 }

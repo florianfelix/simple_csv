@@ -198,6 +198,10 @@ impl DataTable {
         self.rows.push(vec![String::new(); self.width()]);
         // info!("{:#?}", self);
     }
+    pub fn append_column(&mut self) {
+        self.headers.push(String::from("NewColumn"));
+        self.rows.append_column();
+    }
 }
 
 impl DataTable {

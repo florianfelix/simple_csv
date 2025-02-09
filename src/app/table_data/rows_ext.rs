@@ -1,4 +1,5 @@
 pub trait RowsExt {
+    fn append_column(&mut self);
     fn get_ref(&self, row: usize, column: usize) -> Option<&str>;
     fn get_owned(&self, row: usize, column: usize) -> Option<String>;
     fn set_content(&mut self, row: usize, col: usize, content: &str);
@@ -7,6 +8,11 @@ pub trait RowsExt {
 }
 
 impl RowsExt for Vec<Vec<String>> {
+    fn append_column(&mut self) {
+        for row in self.iter_mut() {
+            row.push(String::new());
+        }
+    }
     fn get_ref(&self, row: usize, column: usize) -> Option<&str> {
         if let Some(r) = self.get(row) {
             if let Some(c) = r.get(column) {
