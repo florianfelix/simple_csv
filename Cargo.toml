@@ -32,3 +32,4 @@ json5 = "0.4.1"
 serde_yml = "0.0.12"
 notify-debouncer-full = { version = "0.5.0", features = ["serde"] }
 directories = "6.0.0"
+text-buffer = "0.1.0"

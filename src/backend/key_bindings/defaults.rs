@@ -61,19 +61,19 @@ pub fn default_keymap_edit() -> IndexMap<KeyEvent, Action> {
             Action::ApplyEdit,
         ),
         (
-            KeyEvent::new(KeyCode::Right, KeyModifiers::empty()),
+            KeyEvent::new(KeyCode::Right, KeyModifiers::SHIFT),
             Action::ConfirmSelectRight,
         ),
         (
-            KeyEvent::new(KeyCode::Left, KeyModifiers::empty()),
+            KeyEvent::new(KeyCode::Left, KeyModifiers::SHIFT),
             Action::ConfirmSelectLeft,
         ),
         (
-            KeyEvent::new(KeyCode::Up, KeyModifiers::empty()),
+            KeyEvent::new(KeyCode::Up, KeyModifiers::SHIFT),
             Action::ConfirmSelectRight,
         ),
         (
-            KeyEvent::new(KeyCode::Down, KeyModifiers::empty()),
+            KeyEvent::new(KeyCode::Down, KeyModifiers::SHIFT),
             Action::ConfirmSelectDown,
         ),
     ];

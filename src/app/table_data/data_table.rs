@@ -9,6 +9,7 @@ use ratatui::{
     Frame,
 };
 
+use text_buffer::Buffer;
 #[allow(unused)]
 use tracing::info;
 
@@ -23,12 +24,13 @@ pub enum EditTarget {
     Header(usize),
 }
 
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug)]
 pub struct DataTable {
     headers: Vec<String>,
     pub(crate) rows: Vec<Vec<String>>,
     pub table_state: TableState,
     pub buffer: String,
+    pub textbuffer: text_buffer::Buffer,
     // Cell indicies (column , row)
     pub edit_target: EditTarget,
     pub path: Option<PathBuf>,
@@ -120,14 +122,17 @@ impl DataTable {
             }
         };
 
+        let buf = self.textbuffer.to_string();
+
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
             .title_bottom(bottom_title)
             .title(format!(
-                "{path:} - {:?} - {:?}",
+                "{path:} - {:?} - {:?} -Buf: {}",
                 self.edit_target,
-                self.table_state.selected_cell()
+                self.table_state.selected_cell(),
+                buf
             ))
             .title_style(Style::default().light_green());
 
@@ -187,19 +192,6 @@ impl DataTable {
             }
             _ => None,
         }
-
-        // if let EditTarget::Cell((row, col)) = self.edit_target {
-        //     let popup = Popup::default()
-        //         .content(self.buffer.clone())
-        //         .style(Style::new().yellow())
-        //         .title(self.cell_get_header(col))
-        //         .title_bottom(format!("row = {}, column = {}", row, col,))
-        //         .title_style(Style::new().white().bold())
-        //         .border_style(Style::new().red());
-        //     Some((popup, popup_area))
-        // } else {
-        //     None
-        // }
     }
     fn set_dirty(&mut self) {
         self.is_dirty = true;
@@ -242,12 +234,14 @@ impl DataTable {
         if let Some(col) = self.table_state.selected_column() {
             self.edit_target = EditTarget::Header(col);
             self.buffer = self.headers.get(col).unwrap().clone();
+            self.textbuffer = Buffer::from(self.headers.get(col).unwrap().clone());
         }
     }
     pub fn edit_cell(&mut self) {
         if let Some((row, col)) = self.table_state.selected_cell() {
             self.edit_target = EditTarget::Cell((row, col));
             self.buffer = self.cell_get_row_col(row, col);
+            self.textbuffer = Buffer::from(self.cell_get_row_col(row, col));
         }
     }
     pub fn apply_edit(&mut self) {
@@ -259,6 +253,7 @@ impl DataTable {
         }
         self.edit_target = EditTarget::None;
         self.buffer.clear();
+        self.textbuffer = Buffer::new();
     }
 }
 
