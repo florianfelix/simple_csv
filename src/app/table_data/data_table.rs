@@ -76,6 +76,7 @@ impl DataTable {
 
         if let Some((edit_popup, popup_area)) = self.edit_popup(top) {
             frame.render_widget(edit_popup, popup_area);
+            // edit_popup.render(popup_area, frame.buffer_mut());
         }
 
         if !self.parse_errors.is_empty() {
