@@ -103,6 +103,19 @@ impl KeyBindings {
 
         Self { normal, edit }
     }
+    pub fn display(&self) -> (Vec<[String; 2]>, Vec<[String; 2]>) {
+        let normal = self
+            .normal
+            .iter()
+            .map(|(k, v)| [v.to_string(), k.as_config_string()])
+            .collect_vec();
+        let edit = self
+            .edit
+            .iter()
+            .map(|(k, v)| [v.to_string(), k.as_config_string()])
+            .collect_vec();
+        (normal, edit)
+    }
 }
 
 pub trait KeyEventExt {

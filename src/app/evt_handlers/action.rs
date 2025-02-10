@@ -25,6 +25,13 @@ pub enum Action {
     ConfirmSelectDown,
     AppendRow,
     AppendColumn,
+    ToggleKeyBindingsDisplay,
+}
+
+impl std::fmt::Display for Action {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 impl App {
@@ -64,6 +71,7 @@ impl App {
             }
             AppendRow => self.data.append_row(),
             AppendColumn => self.data.append_column(),
+            ToggleKeyBindingsDisplay => self.toggle_keybindings(),
         }
     }
 }

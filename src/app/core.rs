@@ -7,7 +7,10 @@ use crate::backend::{
     IoCommandResult,
 };
 
-use super::{layout::header_body_footer_areas, table_data::data_table::DataTable};
+use super::{
+    layout::header_body_footer_areas, table_data::data_table::DataTable,
+    widget_keybindings::KeyBindingsDisplay,
+};
 
 /// Application.
 #[derive(Debug)]
@@ -17,6 +20,8 @@ pub struct App {
     pub running: bool,
     pub data: DataTable,
     pub io_error: Option<IoCommandError>,
+    pub show_key_bindings: bool,
+    pub key_bindings_display: KeyBindingsDisplay,
 }
 
 impl App {
@@ -24,6 +29,13 @@ impl App {
         let area = frame.area();
         let [_header, _body, _footer] = header_body_footer_areas(1, 6, frame.area());
         // info!("{:#?}", "RENDER");
+
+        if self.show_key_bindings {
+            self.key_bindings_display
+                .render(frame, area, &self.key_bindings);
+            return;
+        }
+
         if self.data.width() > 0 {
             self.data.render(frame, area);
         } else if let Some(e) = &self.io_error {
@@ -45,6 +57,8 @@ impl App {
             // main_screen: MainScreen::default(),
             data: DataTable::default(),
             io_error: None,
+            show_key_bindings: false,
+            key_bindings_display: KeyBindingsDisplay::default(),
         }
     }
 
@@ -98,5 +112,8 @@ impl App {
             Err(e) => self.io_error = Some(e),
         }
         info!("\n{:#?}", "SET KEYBINDINGS");
+    }
+    pub fn toggle_keybindings(&mut self) {
+        self.show_key_bindings = !self.show_key_bindings;
     }
 }

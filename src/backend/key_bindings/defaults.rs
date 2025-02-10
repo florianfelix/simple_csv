@@ -54,6 +54,10 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
             KeyEvent::new(KeyCode::Char('c'), KeyModifiers::empty()),
             Action::AppendColumn,
         ),
+        (
+            KeyEvent::new(KeyCode::Char('?'), KeyModifiers::empty()),
+            Action::ToggleKeyBindingsDisplay,
+        ),
     ];
     IndexMap::from_iter(map)
 }
