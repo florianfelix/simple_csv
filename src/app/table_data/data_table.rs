@@ -260,15 +260,25 @@ impl DataTable {
             self.edit_target = EditTarget::FileName;
             self.textbuffer = Buffer::from(path.to_string_lossy().into_owned());
             self.textbuffer.set_cursor(self.textbuffer.len_chars());
+        } else {
+            self.edit_target = EditTarget::FileName;
+            self.textbuffer = Buffer::new();
         }
     }
     pub fn apply_edit(&mut self) {
-        use EditTarget::*;
         match self.edit_target {
-            Header(col) => self.set_column_name(col, self.textbuffer.to_string()),
-            Cell((row, col)) => self.cell_set_row_col(row, col, self.textbuffer.to_string()),
-            FileName => self.path = Some(self.textbuffer.to_string().into()),
-            None => (),
+            EditTarget::Header(col) => self.set_column_name(col, self.textbuffer.to_string()),
+            EditTarget::Cell((row, col)) => {
+                self.cell_set_row_col(row, col, self.textbuffer.to_string())
+            }
+            EditTarget::FileName => {
+                if self.textbuffer.is_empty() {
+                    self.path = None;
+                } else {
+                    self.path = Some(self.textbuffer.to_string().into());
+                };
+            }
+            EditTarget::None => {}
         }
         self.edit_target = EditTarget::None;
         self.textbuffer = Buffer::new();
