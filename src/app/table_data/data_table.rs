@@ -22,6 +22,7 @@ pub enum EditTarget {
     None,
     Cell((usize, usize)),
     Header(usize),
+    FileName,
 }
 
 #[derive(Default, Debug)]
@@ -170,12 +171,12 @@ impl DataTable {
         };
 
         match self.edit_target {
-            EditTarget::Cell((row, col)) => {
+            EditTarget::Cell((_row, col)) => {
                 let popup = Popup::default()
                     .content(self.textbuffer.to_cursor_string())
                     .style(Style::new().yellow())
                     .title(self.cell_get_header(col))
-                    .title_bottom(format!("row = {}, column = {}", row, col,))
+                    .title_bottom("Edit cell".to_string())
                     .title_style(Style::new().white().bold())
                     .border_style(Style::new().red());
                 Some((popup, popup_area))
@@ -185,12 +186,22 @@ impl DataTable {
                     .content(self.textbuffer.to_cursor_string())
                     .style(Style::new().yellow())
                     .title(self.cell_get_header(col))
-                    .title_bottom(format!("column = {}", col))
+                    .title_bottom("Edit column name".to_string())
                     .title_style(Style::new().white().bold())
                     .border_style(Style::new().red());
                 Some((popup, popup_area))
             }
-            _ => None,
+            EditTarget::FileName => {
+                let popup = Popup::default()
+                    .content(self.textbuffer.to_cursor_string())
+                    .style(Style::new().yellow())
+                    // .title(self.cell_get_header(col))
+                    .title_bottom("Edit filename".to_string())
+                    .title_style(Style::new().white().bold())
+                    .border_style(Style::new().red());
+                Some((popup, popup_area))
+            }
+            EditTarget::None => None,
         }
     }
     fn set_dirty(&mut self) {
@@ -244,11 +255,19 @@ impl DataTable {
             self.textbuffer.set_cursor(self.textbuffer.len_chars());
         }
     }
+    pub fn edit_file_name(&mut self) {
+        if let Some(path) = self.path.clone() {
+            self.edit_target = EditTarget::FileName;
+            self.textbuffer = Buffer::from(path.to_string_lossy().into_owned());
+            self.textbuffer.set_cursor(self.textbuffer.len_chars());
+        }
+    }
     pub fn apply_edit(&mut self) {
         use EditTarget::*;
         match self.edit_target {
             Header(col) => self.set_column_name(col, self.textbuffer.to_string()),
             Cell((row, col)) => self.cell_set_row_col(row, col, self.textbuffer.to_string()),
+            FileName => self.path = Some(self.textbuffer.to_string().into()),
             None => (),
         }
         self.edit_target = EditTarget::None;

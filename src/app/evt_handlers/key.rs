@@ -30,6 +30,13 @@ impl App {
                     self.perform_action(action.clone());
                 }
             }
+            EditTarget::FileName => {
+                self.intercept_edits(&key_event);
+                if let Some(action) = self.key_bindings.edit.get(&key_event) {
+                    info!("Edit {:#?}", action);
+                    self.perform_action(action.clone());
+                }
+            }
         }
     }
 

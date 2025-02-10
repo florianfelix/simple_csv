@@ -19,6 +19,10 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
             Action::EditHeader,
         ),
         (
+            KeyEvent::new(KeyCode::Char('f'), KeyModifiers::empty()),
+            Action::EditFileName,
+        ),
+        (
             KeyEvent::new(KeyCode::Char('s'), KeyModifiers::CONTROL),
             Action::Save,
         ),
