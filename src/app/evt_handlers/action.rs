@@ -5,9 +5,9 @@ use crate::app::App;
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Action {
     Quit,
-    ToggleEdit,
-    ModeEdit,
-    ModeNormal,
+    EditCell,
+    EditHeader,
+    ApplyEdit,
     Save,
     SaveKeyBindings,
     SelectRight,
@@ -29,9 +29,9 @@ impl App {
         use Action::*;
         match action {
             Quit => self.quit(),
-            ToggleEdit => self.data.toggle_edit(),
-            ModeEdit => self.data.mode_edit(),
-            ModeNormal => self.data.mode_normal(),
+            EditCell => self.data.edit_cell(),
+            EditHeader => self.data.edit_column_name(),
+            ApplyEdit => self.data.apply_edit(),
             Save => self.save(),
             SaveKeyBindings => self.save_key_bindings(),
             SelectRight => self.data.select_cell_right(),
@@ -41,19 +41,19 @@ impl App {
             SelectFirstRow => self.data.table_state.select_first(),
             SelectLastRow => self.data.table_state.select_last(),
             ConfirmSelectRight => {
-                self.data.mode_normal();
+                self.data.apply_edit();
                 self.data.select_cell_right();
             }
             ConfirmSelectLeft => {
-                self.data.mode_normal();
+                self.data.apply_edit();
                 self.data.select_cell_left();
             }
             ConfirmSelectUp => {
-                self.data.mode_normal();
+                self.data.apply_edit();
                 self.data.select_cell_up();
             }
             ConfirmSelectDown => {
-                self.data.mode_normal();
+                self.data.apply_edit();
                 self.data.select_cell_down();
             }
             AppendRow => self.data.append_row(),

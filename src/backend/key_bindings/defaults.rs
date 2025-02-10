@@ -12,7 +12,11 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
         ),
         (
             KeyEvent::new(KeyCode::Enter, KeyModifiers::empty()),
-            Action::ToggleEdit,
+            Action::EditCell,
+        ),
+        (
+            KeyEvent::new(KeyCode::Enter, KeyModifiers::ALT),
+            Action::EditHeader,
         ),
         (
             KeyEvent::new(KeyCode::Char('s'), KeyModifiers::CONTROL),
@@ -54,7 +58,7 @@ pub fn default_keymap_edit() -> IndexMap<KeyEvent, Action> {
     let map = [
         (
             KeyEvent::new(KeyCode::Enter, KeyModifiers::empty()),
-            Action::ToggleEdit,
+            Action::ApplyEdit,
         ),
         (
             KeyEvent::new(KeyCode::Right, KeyModifiers::empty()),

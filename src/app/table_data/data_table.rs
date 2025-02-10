@@ -30,7 +30,6 @@ pub struct DataTable {
     pub table_state: TableState,
     pub buffer: String,
     // Cell indicies (column , row)
-    pub editing: Option<(usize, usize)>,
     pub edit_target: EditTarget,
     pub path: Option<PathBuf>,
     pub delim: char,
@@ -127,7 +126,7 @@ impl DataTable {
             .title_bottom(bottom_title)
             .title(format!(
                 "{path:} - {:?} - {:?}",
-                self.editing,
+                self.edit_target,
                 self.table_state.selected_cell()
             ))
             .title_style(Style::default().light_green());
@@ -164,18 +163,43 @@ impl DataTable {
             width: area.width / 2,
             height: 5,
         };
-        if let Some((row, col)) = self.editing {
-            let popup = Popup::default()
-                .content(self.buffer.clone())
-                .style(Style::new().yellow())
-                .title(self.cell_get_header(col))
-                .title_bottom(format!("row = {}, column = {}", row, col,))
-                .title_style(Style::new().white().bold())
-                .border_style(Style::new().red());
-            Some((popup, popup_area))
-        } else {
-            None
+
+        match self.edit_target {
+            EditTarget::Cell((row, col)) => {
+                let popup = Popup::default()
+                    .content(self.buffer.clone())
+                    .style(Style::new().yellow())
+                    .title(self.cell_get_header(col))
+                    .title_bottom(format!("row = {}, column = {}", row, col,))
+                    .title_style(Style::new().white().bold())
+                    .border_style(Style::new().red());
+                Some((popup, popup_area))
+            }
+            EditTarget::Header(col) => {
+                let popup = Popup::default()
+                    .content(self.buffer.clone())
+                    .style(Style::new().yellow())
+                    .title(self.cell_get_header(col))
+                    .title_bottom(format!("column = {}", col))
+                    .title_style(Style::new().white().bold())
+                    .border_style(Style::new().red());
+                Some((popup, popup_area))
+            }
+            _ => None,
         }
+
+        // if let EditTarget::Cell((row, col)) = self.edit_target {
+        //     let popup = Popup::default()
+        //         .content(self.buffer.clone())
+        //         .style(Style::new().yellow())
+        //         .title(self.cell_get_header(col))
+        //         .title_bottom(format!("row = {}, column = {}", row, col,))
+        //         .title_style(Style::new().white().bold())
+        //         .border_style(Style::new().red());
+        //     Some((popup, popup_area))
+        // } else {
+        //     None
+        // }
     }
     fn set_dirty(&mut self) {
         self.is_dirty = true;
@@ -239,38 +263,6 @@ impl DataTable {
 }
 
 impl DataTable {
-    pub fn mode_edit(&mut self) {
-        if self.editing.is_none() {
-            self.editing = self.table_state.selected_cell();
-            if let Some((row, col)) = self.editing {
-                self.buffer = self.cell_get_row_col(row, col)
-            }
-        }
-    }
-    pub fn mode_normal(&mut self) {
-        if let Some((row, col)) = self.editing {
-            self.cell_set_row_col(row, col, self.buffer.clone());
-            self.editing = None;
-            self.buffer.clear();
-        }
-    }
-    pub fn toggle_edit(&mut self) {
-        // IF EDITING
-        if let Some((row, col)) = self.editing {
-            self.cell_set_row_col(row, col, self.buffer.clone());
-            self.editing = None;
-            self.buffer = String::new();
-        } else
-        // IF NOT EDITING
-        {
-            // Set editing to selected cell
-            self.editing = self.table_state.selected_cell();
-            if let Some((row, col)) = self.editing {
-                self.buffer = self.cell_get_row_col(row, col)
-            }
-        }
-    }
-
     pub fn height(&self) -> usize {
         self.rows.len()
     }
