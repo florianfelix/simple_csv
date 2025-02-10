@@ -74,8 +74,8 @@ impl DataTable {
         let table = self.rat_table();
         frame.render_stateful_widget(table, top, &mut self.table_state);
 
-        if let Some((popup, popup_area)) = self.popup(top) {
-            frame.render_widget(popup, popup_area);
+        if let Some((edit_popup, popup_area)) = self.edit_popup(top) {
+            frame.render_widget(edit_popup, popup_area);
         }
 
         if !self.parse_errors.is_empty() {
@@ -156,7 +156,7 @@ impl DataTable {
         width_constraints
     }
 
-    fn popup(&self, area: Rect) -> Option<(Popup<'static>, Rect)> {
+    fn edit_popup(&self, area: Rect) -> Option<(Popup<'static>, Rect)> {
         let popup_area = Rect {
             x: area.width / 4,
             y: area.height / 3,
