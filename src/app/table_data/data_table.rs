@@ -13,7 +13,7 @@ use text_buffer::Buffer;
 #[allow(unused)]
 use tracing::info;
 
-use super::{popup::Popup, RowsExt};
+use super::{extensions::BufferExt, extensions::RowsExt, popup::Popup};
 use crate::backend::{tasks::events::IoCommand, CsvData, CsvDescription};
 
 #[derive(Default, Debug, Clone)]
@@ -29,9 +29,7 @@ pub struct DataTable {
     headers: Vec<String>,
     pub(crate) rows: Vec<Vec<String>>,
     pub table_state: TableState,
-    pub buffer: String,
     pub textbuffer: text_buffer::Buffer,
-    // Cell indicies (column , row)
     pub edit_target: EditTarget,
     pub path: Option<PathBuf>,
     pub delim: char,
@@ -129,10 +127,11 @@ impl DataTable {
             .style(Style::default())
             .title_bottom(bottom_title)
             .title(format!(
-                "{path:} - {:?} - {:?} -Buf: {}",
+                "{path:} - {:?} - {:?} -Buf: {} -Cursor {}",
                 self.edit_target,
                 self.table_state.selected_cell(),
-                buf
+                buf,
+                self.textbuffer.cursor().chars()
             ))
             .title_style(Style::default().light_green());
 
@@ -172,7 +171,7 @@ impl DataTable {
         match self.edit_target {
             EditTarget::Cell((row, col)) => {
                 let popup = Popup::default()
-                    .content(self.buffer.clone())
+                    .content(self.textbuffer.to_cursor_string())
                     .style(Style::new().yellow())
                     .title(self.cell_get_header(col))
                     .title_bottom(format!("row = {}, column = {}", row, col,))
@@ -182,7 +181,7 @@ impl DataTable {
             }
             EditTarget::Header(col) => {
                 let popup = Popup::default()
-                    .content(self.buffer.clone())
+                    .content(self.textbuffer.to_cursor_string())
                     .style(Style::new().yellow())
                     .title(self.cell_get_header(col))
                     .title_bottom(format!("column = {}", col))
@@ -233,27 +232,45 @@ impl DataTable {
     pub fn edit_column_name(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
             self.edit_target = EditTarget::Header(col);
-            self.buffer = self.headers.get(col).unwrap().clone();
             self.textbuffer = Buffer::from(self.headers.get(col).unwrap().clone());
+            self.textbuffer.set_cursor(self.textbuffer.len_chars());
         }
     }
     pub fn edit_cell(&mut self) {
         if let Some((row, col)) = self.table_state.selected_cell() {
             self.edit_target = EditTarget::Cell((row, col));
-            self.buffer = self.cell_get_row_col(row, col);
             self.textbuffer = Buffer::from(self.cell_get_row_col(row, col));
+            self.textbuffer.set_cursor(self.textbuffer.len_chars());
         }
     }
     pub fn apply_edit(&mut self) {
         use EditTarget::*;
         match self.edit_target {
-            Header(col) => self.set_column_name(col, self.buffer.clone()),
-            Cell((row, col)) => self.cell_set_row_col(row, col, self.buffer.clone()),
+            Header(col) => self.set_column_name(col, self.textbuffer.to_string()),
+            Cell((row, col)) => self.cell_set_row_col(row, col, self.textbuffer.to_string()),
             None => (),
         }
         self.edit_target = EditTarget::None;
-        self.buffer.clear();
         self.textbuffer = Buffer::new();
+    }
+    pub fn move_cursor_right(&mut self) {
+        let current = self.textbuffer.cursor().chars();
+        self.textbuffer.set_cursor(current + 1);
+    }
+    pub fn move_cursor_left(&mut self) {
+        let current = self.textbuffer.cursor().chars();
+        if let Some(new) = current.checked_sub(1) {
+            self.textbuffer.set_cursor(new);
+        }
+    }
+    pub fn insert_char(&mut self, c: char) {
+        self.textbuffer.insert_char(c);
+    }
+    pub fn delete_backwards(&mut self) {
+        self.textbuffer.delete_backwards(1);
+    }
+    pub fn delete_forwards(&mut self) {
+        self.textbuffer.delete_forwards(1);
     }
 }
 

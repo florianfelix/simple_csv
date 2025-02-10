@@ -76,6 +76,14 @@ pub fn default_keymap_edit() -> IndexMap<KeyEvent, Action> {
             KeyEvent::new(KeyCode::Down, KeyModifiers::SHIFT),
             Action::ConfirmSelectDown,
         ),
+        (
+            KeyEvent::new(KeyCode::Right, KeyModifiers::empty()),
+            Action::CursorRight,
+        ),
+        (
+            KeyEvent::new(KeyCode::Left, KeyModifiers::empty()),
+            Action::CursorLeft,
+        ),
     ];
     IndexMap::from_iter(map)
 }

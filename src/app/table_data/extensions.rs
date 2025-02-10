@@ -1,3 +1,6 @@
+#![allow(unused)]
+use text_buffer::Buffer;
+
 pub trait RowsExt {
     fn append_column(&mut self);
     fn get_ref(&self, row: usize, column: usize) -> Option<&str>;
@@ -56,5 +59,17 @@ impl RowsExt for Vec<Vec<String>> {
             let r = self.get(row).expect("Should never be out of bounds");
             col <= r.len()
         }
+    }
+}
+
+pub trait BufferExt {
+    fn to_cursor_string(&self) -> String;
+}
+
+impl BufferExt for Buffer {
+    fn to_cursor_string(&self) -> String {
+        let mut res = self.to_string();
+        res.insert(self.cursor().chars(), '|');
+        res
     }
 }

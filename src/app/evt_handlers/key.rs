@@ -35,10 +35,10 @@ impl App {
 
     fn intercept_edits(&mut self, key_event: &KeyEvent) {
         match key_event.code {
-            KeyCode::Char(c) => self.data.buffer.push(c),
-            KeyCode::Backspace => {
-                self.data.buffer.pop();
-            }
+            KeyCode::Char(c) => self.data.insert_char(c),
+            KeyCode::Backspace => self.data.delete_backwards(),
+            KeyCode::Delete => self.data.delete_forwards(),
+
             _ => {}
         }
     }
