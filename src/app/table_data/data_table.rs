@@ -116,25 +116,29 @@ impl DataTable {
         };
 
         let path = match self.is_dirty {
-            false => format!("{:?}", self.path),
+            false => self.path.to_cursor_string().to_string(),
             true => {
-                format!("*{:?}", self.path)
+                format!("*{:}", self.path.to_cursor_string())
             }
         };
 
         let buf = self.textbuffer.to_string();
 
+        let _debug_title = format!(
+            "{path:} - {:?} - {:?} -Buf: {} -Cursor {}",
+            self.edit_target,
+            self.table_state.selected_cell(),
+            buf,
+            self.textbuffer.cursor().chars()
+        );
+
+        let title = format!("{path:}  -  help(<?>)");
+
         let block = Block::default()
             .borders(Borders::ALL)
             .style(Style::default())
             .title_bottom(bottom_title)
-            .title(format!(
-                "{path:} - {:?} - {:?} -Buf: {} -Cursor {}",
-                self.edit_target,
-                self.table_state.selected_cell(),
-                buf,
-                self.textbuffer.cursor().chars()
-            ))
+            .title(title)
             .title_style(Style::default().light_green());
 
         let header_row = self.rat_row_header();
@@ -280,6 +284,10 @@ impl DataTable {
             }
             EditTarget::None => {}
         }
+        self.edit_target = EditTarget::None;
+        self.textbuffer = Buffer::new();
+    }
+    pub fn edit_cancel(&mut self) {
         self.edit_target = EditTarget::None;
         self.textbuffer = Buffer::new();
     }

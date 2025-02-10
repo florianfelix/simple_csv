@@ -69,6 +69,10 @@ pub fn default_keymap_edit() -> IndexMap<KeyEvent, Action> {
             Action::ApplyEdit,
         ),
         (
+            KeyEvent::new(KeyCode::Esc, KeyModifiers::empty()),
+            Action::CancelEdit,
+        ),
+        (
             KeyEvent::new(KeyCode::Right, KeyModifiers::SHIFT),
             Action::ConfirmSelectRight,
         ),
