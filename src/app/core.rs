@@ -3,9 +3,12 @@ use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::info;
 
-use crate::backend::{
-    key_bindings::KeyBindings, tasks::events::IoCommand, CsvDescription, IoCommandError,
-    IoCommandResult,
+use crate::{
+    backend::{
+        key_bindings::KeyBindings, tasks::events::IoCommand, CsvDescription, IoCommandError,
+        IoCommandResult,
+    },
+    utils::cli::Cli,
 };
 
 use super::{
@@ -16,6 +19,7 @@ use super::{
 /// Application.
 #[derive(Debug)]
 pub struct App {
+    pub cli: Cli,
     pub key_bindings: KeyBindings,
     pub combiner: Combiner,
     pub io_command_sender: UnboundedSender<IoCommand>,
@@ -51,13 +55,14 @@ impl App {
 
 impl App {
     /// Constructs a new instance of [`App`].
-    pub fn new(io_command_sender: UnboundedSender<IoCommand>) -> Self {
+    pub fn new(io_command_sender: UnboundedSender<IoCommand>, cli: Cli) -> Self {
         Self {
+            cli,
             key_bindings: KeyBindings::default(),
             combiner: Combiner::default(),
             io_command_sender,
             running: true,
-            data: DataTable::new_simple(),
+            data: DataTable::default(),
             io_error: None,
             show_key_bindings: false,
             key_bindings_display: KeyBindingsDisplay::default(),
@@ -72,7 +77,11 @@ impl App {
             }
             Err(e) => {
                 self.io_error = Some(e);
-                self.data = DataTable::new_simple();
+                self.data = DataTable::default();
+                match self.cli.path {
+                    Some(ref cliopath) => self.data.path = Some(cliopath.path().to_owned()),
+                    None => self.data.path = None,
+                }
             }
         }
     }

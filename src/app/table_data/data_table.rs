@@ -25,7 +25,7 @@ pub enum EditTarget {
     FileName,
 }
 
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct DataTable {
     pub(crate) headers: Vec<String>,
     pub(crate) rows: Vec<Vec<String>>,
@@ -36,6 +36,22 @@ pub struct DataTable {
     pub delim: char,
     pub is_dirty: bool,
     pub parse_errors: Vec<String>,
+}
+
+impl Default for DataTable {
+    fn default() -> Self {
+        Self {
+            headers: vec![String::from("key"), String::from("value")],
+            rows: vec![vec![String::from(""), String::from("")]],
+            table_state: TableState::default(),
+            textbuffer: Buffer::new(),
+            edit_target: EditTarget::None,
+            path: None,
+            delim: ';',
+            is_dirty: true,
+            parse_errors: vec![],
+        }
+    }
 }
 
 impl DataTable {
@@ -50,15 +66,15 @@ impl DataTable {
         self.is_dirty = false;
         self.parse_errors = csv_description.errors;
     }
-    pub fn new_simple() -> Self {
-        let mut new = Self::default();
-        new.append_column_named("key");
-        new.append_column_named("value");
-        new.append_row();
-        new.select_cell_right();
-        new.path = Some(PathBuf::from("file.csv"));
-        new
-    }
+    // pub fn new_simple() -> Self {
+    //     let mut new = Self::default();
+    //     new.append_column_named("key");
+    //     new.append_column_named("value");
+    //     new.append_row();
+    //     new.select_cell_right();
+    //     new.path = Some(PathBuf::from("file.csv"));
+    //     new
+    // }
 }
 
 impl DataTable {

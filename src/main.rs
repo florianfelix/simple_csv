@@ -21,9 +21,7 @@ async fn main() -> AppResult<()> {
 
     let events = EventHandler::new(250);
 
-    let mut app = App::new(events.io_command_sender());
-
-    if let Some(path) = cli.path {
+    if let Some(ref path) = cli.path {
         events
             .io_command_sender()
             .send(IoCommand::LoadCsv {
@@ -32,6 +30,8 @@ async fn main() -> AppResult<()> {
             })
             .unwrap();
     }
+
+    let mut app = App::new(events.io_command_sender(), cli);
 
     // Initialize the terminal user interface.
     let backend = CrosstermBackend::new(io::stdout());
