@@ -66,17 +66,11 @@ impl App {
 
     pub fn from_parsed_csv(&mut self, data: IoCommandResult<CsvDescription>) {
         match data {
-            Ok(csv) => {
+            Ok(csv_description) => {
                 self.io_error = None;
-                self.data = DataTable::default()
-                    .set_headers(csv.data.headers)
-                    .set_rows(csv.data.rows)
-                    .set_parse_errors(csv.errors)
-                    .set_path(csv.path)
-                    .set_delim(csv.delim);
+                self.data.from_csv_description(csv_description);
             }
             Err(e) => {
-                // panic!("{}", e);
                 self.io_error = Some(e);
                 self.data = DataTable::default();
             }

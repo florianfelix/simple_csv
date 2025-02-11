@@ -39,25 +39,16 @@ pub struct DataTable {
 }
 
 impl DataTable {
-    pub fn set_headers(mut self, headers: Vec<String>) -> Self {
-        self.headers = headers;
-        self
-    }
-    pub fn set_rows(mut self, rows: Vec<Vec<String>>) -> Self {
-        self.rows = rows;
-        self
-    }
-    pub fn set_parse_errors(mut self, parse_errors: Vec<String>) -> Self {
-        self.parse_errors = parse_errors;
-        self
-    }
-    pub fn set_path(mut self, path: Option<PathBuf>) -> Self {
-        self.path = path;
-        self
-    }
-    pub fn set_delim(mut self, delim: char) -> Self {
-        self.delim = delim;
-        self
+    pub fn from_csv_description(&mut self, csv_description: CsvDescription) {
+        self.headers = csv_description.data.headers;
+        self.rows = csv_description.data.rows;
+        self.table_state = TableState::default();
+        self.textbuffer = Buffer::new();
+        self.edit_target = EditTarget::None;
+        self.path = csv_description.path;
+        self.delim = csv_description.delim;
+        self.is_dirty = false;
+        self.parse_errors = csv_description.errors;
     }
 }
 
