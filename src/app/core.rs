@@ -1,3 +1,4 @@
+use crokey::Combiner;
 use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::info;
@@ -16,6 +17,7 @@ use super::{
 #[derive(Debug)]
 pub struct App {
     pub key_bindings: KeyBindings,
+    pub combiner: Combiner,
     pub io_command_sender: UnboundedSender<IoCommand>,
     pub running: bool,
     pub data: DataTable,
@@ -52,9 +54,9 @@ impl App {
     pub fn new(io_command_sender: UnboundedSender<IoCommand>) -> Self {
         Self {
             key_bindings: KeyBindings::default(),
+            combiner: Combiner::default(),
             io_command_sender,
             running: true,
-            // main_screen: MainScreen::default(),
             data: DataTable::default(),
             io_error: None,
             show_key_bindings: false,
@@ -111,7 +113,7 @@ impl App {
             Ok(key_bindings) => self.key_bindings = key_bindings,
             Err(e) => self.io_error = Some(e),
         }
-        info!("\n{:#?}", "SET KEYBINDINGS");
+        info!("{:#?}", "SET KEYBINDINGS");
     }
     pub fn toggle_keybindings(&mut self) {
         self.show_key_bindings = !self.show_key_bindings;

@@ -1,51 +1,36 @@
-use crossterm::event::KeyEvent;
+use crokey::{KeyCombination, KeyCombinationFormat};
 use indexmap::IndexMap;
 use itertools::Itertools;
 use serde::{Deserialize, Serialize};
+
+#[allow(unused)]
 use tracing::info;
 
 use crate::{
     app::evt_handlers::Action,
     backend::{
-        key_bindings::keymap_path,
         utils::{read_file, save_file},
         IoCommandError, IoCommandResult,
     },
 };
 
-use super::{
-    defaults::{default_keymap_edit, default_keymap_normal},
-    keymap_file,
-};
+use super::{keymap_file, keymap_path};
+
+const DEFAULTS: &str = include_str!("default.yml");
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct KeyBindings {
-    pub normal: IndexMap<KeyEvent, Action>,
-    pub edit: IndexMap<KeyEvent, Action>,
+    pub normal: IndexMap<KeyCombination, Action>,
+    pub edit: IndexMap<KeyCombination, Action>,
 }
 
 impl Default for KeyBindings {
     fn default() -> Self {
-        Self {
-            normal: default_keymap_normal(),
-            edit: default_keymap_edit(),
-        }
+        serde_yml::from_str(DEFAULTS).unwrap()
     }
 }
 
 impl KeyBindings {
-    pub async fn save(&self) -> IoCommandResult<()> {
-        match keymap_path() {
-            None => return Err(IoCommandError::Io(String::from("unable to determine path"))),
-            Some(path) => {
-                let map = self.to_config_map();
-                let map = serde_yml::to_string(&map).unwrap();
-                save_file(&path, &map).await?;
-                info!("Saved default key bindings: {:#?}", path);
-            }
-        }
-        Ok(())
-    }
     pub async fn load() -> IoCommandResult<Self> {
         match keymap_file() {
             None => Err(IoCommandError::Io(String::from(
@@ -53,81 +38,37 @@ impl KeyBindings {
             ))),
             Some(path) => {
                 let text = read_file(&path).await?;
-                let maps: IndexMap<String, IndexMap<String, Action>> = serde_yml::from_str(&text)?;
-                let key_bindings = KeyBindings::from_config_map(maps);
-                info!("Lodaed key bindings from: {:#?}", path);
+                let key_bindings: KeyBindings = serde_yml::from_str(&text)?;
+                // info!("\nLoaded key bindings from: {:#?}", path);
                 Ok(key_bindings)
             }
         }
     }
 
-    pub fn to_config_map(&self) -> IndexMap<String, IndexMap<String, Action>> {
-        let normal: IndexMap<String, Action> = IndexMap::from_iter(
-            self.normal
-                .iter()
-                .map(|(k, v)| (k.as_config_string(), v.clone()))
-                .collect_vec(),
-        );
-        let edit: IndexMap<String, Action> = IndexMap::from_iter(
-            self.edit
-                .iter()
-                .map(|(k, v)| (k.as_config_string(), v.clone()))
-                .collect_vec(),
-        );
-        IndexMap::from_iter([("normal".to_string(), normal), ("edit".to_string(), edit)])
+    pub async fn save(&self) -> IoCommandResult<()> {
+        match keymap_path() {
+            None => return Err(IoCommandError::Io(String::from("unable to determine path"))),
+            Some(path) => {
+                let map = serde_yml::to_string(&self).unwrap();
+                save_file(&path, &map).await?;
+                // info!("Saved default key bindings: {:#?}", path);
+            }
+        }
+        Ok(())
     }
-    pub fn from_config_map(map: IndexMap<String, IndexMap<String, Action>>) -> Self {
-        let normal = match map.get("normal") {
-            Some(normal) => normal.to_owned(),
-            None => IndexMap::new(),
-        };
-        let normal = normal
-            .iter()
-            .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
-            .filter(|(k, _)| k.is_ok())
-            .map(|(k, v)| (k.unwrap(), v))
-            .collect_vec();
-        let normal: IndexMap<KeyEvent, Action> = IndexMap::from_iter(normal);
 
-        let edit = match map.get("edit") {
-            Some(edit) => edit.to_owned(),
-            None => IndexMap::new(),
-        };
-        let edit = edit
-            .iter()
-            .map(|(k, v)| (KeyEvent::parse(k), v.clone()))
-            .filter(|(k, _)| k.is_ok())
-            .map(|(k, v)| (k.unwrap(), v))
-            .collect_vec();
-        let edit: IndexMap<KeyEvent, Action> = IndexMap::from_iter(edit);
-
-        Self { normal, edit }
-    }
     pub fn display(&self) -> (Vec<[String; 2]>, Vec<[String; 2]>) {
+        let format = KeyCombinationFormat::default();
         let normal = self
             .normal
             .iter()
-            .map(|(k, v)| [v.to_string(), k.as_config_string()])
+            .map(|(k, v)| [v.to_string(), format.to_string(k.to_owned())])
             .collect_vec();
         let edit = self
             .edit
             .iter()
-            .map(|(k, v)| [v.to_string(), k.as_config_string()])
+            .map(|(k, v)| [v.to_string(), format.to_string(k.to_owned())])
             .collect_vec();
         (normal, edit)
-    }
-}
-
-pub trait KeyEventExt {
-    fn parse(raw: &str) -> Result<KeyEvent, String>;
-    fn as_config_string(&self) -> String;
-}
-
-impl KeyEventExt for KeyEvent {
-    fn parse(raw: &str) -> Result<KeyEvent, String> {
-        super::utils::parse_key_event(raw)
-    }
-    fn as_config_string(&self) -> String {
-        super::utils::key_event_to_string(self)
     }
 }
