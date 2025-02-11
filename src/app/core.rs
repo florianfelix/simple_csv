@@ -57,7 +57,7 @@ impl App {
             combiner: Combiner::default(),
             io_command_sender,
             running: true,
-            data: DataTable::default(),
+            data: DataTable::new_simple(),
             io_error: None,
             show_key_bindings: false,
             key_bindings_display: KeyBindingsDisplay::default(),
@@ -72,7 +72,7 @@ impl App {
             }
             Err(e) => {
                 self.io_error = Some(e);
-                self.data = DataTable::default();
+                self.data = DataTable::new_simple();
             }
         }
     }

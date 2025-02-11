@@ -50,6 +50,15 @@ impl DataTable {
         self.is_dirty = false;
         self.parse_errors = csv_description.errors;
     }
+    pub fn new_simple() -> Self {
+        let mut new = Self::default();
+        new.append_column_named("key");
+        new.append_column_named("value");
+        new.append_row();
+        new.select_cell_right();
+        new.path = Some(PathBuf::from("file.csv"));
+        new
+    }
 }
 
 impl DataTable {
@@ -101,11 +110,6 @@ impl DataTable {
         rows
     }
     pub fn rat_table(&self) -> widgets::Table<'static> {
-        let bottom_title = match !self.is_dirty && !self.parse_errors.is_empty() {
-            true => String::from("Parsed with errors"),
-            false => String::new(),
-        };
-
         let path = match self.is_dirty {
             false => self.path.to_cursor_string().to_string(),
             true => {
@@ -124,6 +128,12 @@ impl DataTable {
         );
 
         let title = format!("{path:}  -  help(<?>)");
+        let bottom_title = match self.edit_target {
+            EditTarget::None => String::from(
+                "help: ?, new column: c, new row: r, rename file: f, rename column: alt-enter, save: ctrl-s",
+            ),
+            _ => String::from("accept: enter"),
+        };
 
         let block = Block::default()
             .borders(Borders::ALL)
@@ -230,6 +240,10 @@ impl DataTable {
     }
     pub fn append_column(&mut self) {
         self.headers.push(String::from("NewColumn"));
+        self.rows.append_column();
+    }
+    pub fn append_column_named(&mut self, name: &str) {
+        self.headers.push(String::from(name));
         self.rows.append_column();
     }
     fn set_column_name(&mut self, col: usize, content: String) {
