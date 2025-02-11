@@ -1,5 +1,4 @@
 mod map;
-mod utils;
 
 use std::{
     path::{Path, PathBuf},
