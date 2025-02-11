@@ -27,7 +27,7 @@ pub enum EditTarget {
 
 #[derive(Default, Debug)]
 pub struct DataTable {
-    headers: Vec<String>,
+    pub(crate) headers: Vec<String>,
     pub(crate) rows: Vec<Vec<String>>,
     pub table_state: TableState,
     pub textbuffer: text_buffer::Buffer,
