@@ -9,10 +9,10 @@ pub use map::KeyBindings;
 
 pub fn keymap_file() -> Option<PathBuf> {
     static KEYMAPPATH: OnceLock<Option<PathBuf>> = OnceLock::new();
-    KEYMAPPATH.get_or_init(maybe_keymap_path).clone()
+    KEYMAPPATH.get_or_init(maybe_existing_keymap_file).clone()
 }
 
-fn maybe_keymap_path() -> Option<PathBuf> {
+fn maybe_existing_keymap_file() -> Option<PathBuf> {
     if let Some(conf_path) = keymap_path() {
         if let Ok(true) = conf_path.try_exists() {
             return Some(conf_path);
