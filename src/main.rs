@@ -16,8 +16,10 @@ pub mod utils;
 
 #[tokio::main]
 async fn main() -> AppResult<()> {
-    let cli = utils::cli::Cli::parse();
+    #[cfg(debug_assertions)]
     utils::logging::EzLog::init()?;
+
+    let cli = utils::cli::Cli::parse();
 
     let events = EventHandler::new(250);
 
