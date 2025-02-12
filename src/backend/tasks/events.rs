@@ -2,7 +2,11 @@ use std::path::PathBuf;
 
 use crossterm::event::{KeyEvent, MouseEvent};
 
-use crate::backend::{key_bindings::KeyBindings, CsvDescription, IoCommandResult};
+use crate::backend::{
+    file_formats::{file_csv::CsvDescription, file_toml::TomlDescription},
+    key_bindings::KeyBindings,
+    IoCommandResult,
+};
 
 #[derive(Clone, Debug)]
 pub enum BackendEvent {
@@ -19,6 +23,7 @@ pub enum IoCommand {
     LoadCsv { path: PathBuf, delim: char },
     LoadKeyBindings,
     SaveKeyBindings(KeyBindings),
+    SaveToml(TomlDescription),
 }
 
 #[derive(Clone, Debug)]

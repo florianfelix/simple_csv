@@ -1,5 +1,4 @@
-mod csv;
-pub use csv::*;
+pub mod file_formats;
 
 pub mod event_handler;
 pub mod key_bindings;

@@ -27,6 +27,7 @@ pub enum Action {
     AppendRow,
     AppendColumn,
     ToggleKeyBindingsDisplay,
+    SaveToml,
 }
 
 impl std::fmt::Display for Action {
@@ -74,6 +75,7 @@ impl App {
             AppendRow => self.data.append_row(),
             AppendColumn => self.data.append_column(),
             ToggleKeyBindingsDisplay => self.toggle_keybindings(),
+            SaveToml => self.save_as_toml(),
         }
     }
 }

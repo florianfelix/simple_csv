@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use indexmap::IndexMap;
 use itertools::Itertools;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
@@ -14,7 +15,13 @@ use text_buffer::Buffer;
 use tracing::info;
 
 use super::{extensions::BufferExt, extensions::RowsExt, popup::Popup};
-use crate::backend::{tasks::events::IoCommand, CsvData, CsvDescription};
+use crate::backend::{
+    file_formats::{
+        file_csv::{CsvData, CsvDescription},
+        file_toml::TomlDescription,
+    },
+    tasks::events::IoCommand,
+};
 
 #[derive(Default, Debug, Clone)]
 pub enum EditTarget {
@@ -356,7 +363,7 @@ impl DataTable {
     // fn cell_rect(&self) -> Rect {
     //     Rect::new(0, 0, self.width() as u16, self.height() as u16)
     // }
-    pub fn save_command(&self) -> IoCommand {
+    pub fn save_csv_command(&self) -> IoCommand {
         let data = CsvData {
             headers: self.headers.clone(),
             rows: self.rows.clone(),
@@ -367,5 +374,20 @@ impl DataTable {
             errors: vec![],
             path: self.path.clone(),
         })
+    }
+
+    pub fn save_toml_command(&self) -> IoCommand {
+        let data = self
+            .rows
+            .iter()
+            .map(|row| {
+                let mut map = IndexMap::new();
+                row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
+                    map.insert(k, v.to_owned());
+                });
+                map
+            })
+            .collect_vec();
+        IoCommand::SaveToml(TomlDescription { rows: data })
     }
 }

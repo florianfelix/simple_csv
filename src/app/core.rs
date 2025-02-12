@@ -5,8 +5,8 @@ use tracing::info;
 
 use crate::{
     backend::{
-        key_bindings::KeyBindings, tasks::events::IoCommand, CsvDescription, IoCommandError,
-        IoCommandResult,
+        file_formats::file_csv::CsvDescription, key_bindings::KeyBindings,
+        tasks::events::IoCommand, IoCommandError, IoCommandResult,
     },
     utils::cli::Cli,
 };
@@ -96,7 +96,13 @@ impl App {
 
     pub fn save(&mut self) {
         self.io_command_sender
-            .send(self.data.save_command())
+            .send(self.data.save_csv_command())
+            .expect("IoCommand Receiver Closed. Quitting");
+    }
+
+    pub fn save_as_toml(&mut self) {
+        self.io_command_sender
+            .send(self.data.save_toml_command())
             .expect("IoCommand Receiver Closed. Quitting");
     }
 

@@ -1,10 +1,13 @@
+use std::path::PathBuf;
+
 use tokio::sync::mpsc;
 
 #[allow(unused)]
 use tracing::info;
 
 use crate::backend::{
-    csv::load_csv, key_bindings::KeyBindings, tasks::events::IoEvent, utils::save_file,
+    file_formats::file_csv::load_csv, key_bindings::KeyBindings, tasks::events::IoEvent,
+    utils::save_file,
 };
 
 use super::events::{BackendEvent, IoCommand};
@@ -39,6 +42,12 @@ pub async fn io_task(
                     IoCommand::SaveKeyBindings(key_bindings) => {
                         key_bindings.save().await.unwrap();
                     }
+                    IoCommand::SaveToml(data) => {
+                        let data = data.to_toml_string().unwrap();
+                        info!("{:#?}", data);
+                        save_file(&PathBuf::from("export.toml"), &data).await.unwrap()
+                    }
+
                 }
             }
         }

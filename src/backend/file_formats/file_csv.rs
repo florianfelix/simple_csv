@@ -2,9 +2,10 @@ use csv::WriterBuilder;
 use itertools::Itertools;
 use std::path::PathBuf;
 
-use crate::AppResult;
-
-use super::{utils::read_file, IoCommandError, IoCommandResult};
+use crate::{
+    backend::{utils::read_file, IoCommandError, IoCommandResult},
+    AppResult,
+};
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvData {
