@@ -14,16 +14,16 @@ pub enum Action {
     CursorLeft,
     Save,
     SaveKeyBindings,
-    SelectRight,
-    SelectLeft,
-    SelectUp,
-    SelectDown,
+    SelectCellRight,
+    SelectCellLeft,
+    SelectCellUp,
+    SelectCellDown,
     SelectFirstRow,
     SelectLastRow,
-    ConfirmSelectRight,
-    ConfirmSelectLeft,
-    ConfirmSelectUp,
-    ConfirmSelectDown,
+    ConfirmSelectCellRight,
+    ConfirmSelectCellLeft,
+    ConfirmSelectCellUp,
+    ConfirmSelectCellDown,
     AppendRow,
     AppendColumn,
     ToggleKeyBindingsDisplay,
@@ -49,25 +49,25 @@ impl App {
             CursorLeft => self.data.move_cursor_left(),
             Save => self.save(),
             SaveKeyBindings => self.save_key_bindings(),
-            SelectRight => self.data.select_cell_right(),
-            SelectLeft => self.data.select_cell_left(),
-            SelectUp => self.data.select_cell_up(),
-            SelectDown => self.data.select_cell_down(),
+            SelectCellRight => self.data.select_cell_right(),
+            SelectCellLeft => self.data.select_cell_left(),
+            SelectCellUp => self.data.select_cell_up(),
+            SelectCellDown => self.data.select_cell_down(),
             SelectFirstRow => self.data.table_state.select_first(),
             SelectLastRow => self.data.table_state.select_last(),
-            ConfirmSelectRight => {
+            ConfirmSelectCellRight => {
                 self.data.apply_edit();
                 self.data.select_cell_right();
             }
-            ConfirmSelectLeft => {
+            ConfirmSelectCellLeft => {
                 self.data.apply_edit();
                 self.data.select_cell_left();
             }
-            ConfirmSelectUp => {
+            ConfirmSelectCellUp => {
                 self.data.apply_edit();
                 self.data.select_cell_up();
             }
-            ConfirmSelectDown => {
+            ConfirmSelectCellDown => {
                 self.data.apply_edit();
                 self.data.select_cell_down();
             }

@@ -44,7 +44,7 @@ pub fn default_keymap_normal() -> IndexMap<KeyEvent, Action> {
         ),
         (
             KeyEvent::new(KeyCode::Down, KeyModifiers::empty()),
-            Action::SelectDown,
+            Action::SelectCellDown,
         ),
         (
             KeyEvent::new(KeyCode::Char('r'), KeyModifiers::empty()),
@@ -86,7 +86,7 @@ pub fn default_keymap_edit() -> IndexMap<KeyEvent, Action> {
         ),
         (
             KeyEvent::new(KeyCode::Down, KeyModifiers::SHIFT),
-            Action::ConfirmSelectDown,
+            Action::ConfirmSelectCellDown,
         ),
         (
             KeyEvent::new(KeyCode::Right, KeyModifiers::empty()),

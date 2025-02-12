@@ -146,7 +146,7 @@ impl DataTable {
         let title = format!("{path:}  -  help(<?>)");
         let bottom_title = match self.edit_target {
             EditTarget::None => String::from(
-                "help: ?, new column: c, new row: r, rename file: f, rename column: alt-enter, save: ctrl-s",
+                "help: ?, new column: c, rename column: h, new row: r, rename file: f, save: ctrl-s",
             ),
             _ => String::from("accept: enter"),
         };

@@ -1,23 +1,25 @@
 normal:
   q: Quit
+  ctrl-c: Quit
   enter: EditCell
-  alt-enter: EditHeader
+  r: AppendRow
+  c: AppendColumn
+  h: EditHeader
   f: EditFileName
   ctrl-s: Save
   alt-s: SaveKeyBindings
-  right: SelectRight
-  left: SelectLeft
-  up: SelectUp
-  down: SelectDown
-  r: AppendRow
-  c: AppendColumn
+  right: SelectCellRight
+  left: SelectCellLeft
+  up: SelectCellUp
+  down: SelectCellDown
   "?": ToggleKeyBindingsDisplay
 edit:
   enter: ApplyEdit
   esc: CancelEdit
-  shift-right: ConfirmSelectRight
-  shift-left: ConfirmSelectLeft
-  shift-up: ConfirmSelectRight
-  shift-down: ConfirmSelectDown
+  tab: ConfirmSelectCellRight
+  shift-right: ConfirmSelectCellRight
+  shift-left: ConfirmSelectCellLeft
+  shift-up: ConfirmSelectCellRight
+  shift-down: ConfirmSelectCellDown
   right: CursorRight
   left: CursorLeft
