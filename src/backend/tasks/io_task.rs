@@ -31,7 +31,7 @@ pub async fn io_task(
                     },
                     IoCommand::SaveCsv(data) => {
                         let content = data.data_to_string().unwrap();
-                        save_file(&data.path.unwrap(), &content).await.unwrap();
+                        save_file(&data.path.unwrap_or(PathBuf::from("export.csv")), &content).await.unwrap();
                         event_sender.send(BackendEvent::IoEvent(IoEvent::SavedCsv)).unwrap();
                     }
                     IoCommand::LoadKeyBindings => {
@@ -43,9 +43,8 @@ pub async fn io_task(
                         key_bindings.save().await.unwrap();
                     }
                     IoCommand::SaveToml(data) => {
-                        let data = data.to_toml_string().unwrap();
-                        info!("{:#?}", data);
-                        save_file(&PathBuf::from("export.toml"), &data).await.unwrap()
+                        let data_string = data.to_toml_string().unwrap();
+                        save_file(&data.path, &data_string).await.unwrap();
                     }
 
                 }

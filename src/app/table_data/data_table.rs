@@ -388,6 +388,14 @@ impl DataTable {
                 map
             })
             .collect_vec();
-        IoCommand::SaveToml(TomlDescription { rows: data })
+        let path = match self.path {
+            Some(ref path) => {
+                let mut path = path.clone();
+                path.set_extension("toml");
+                path
+            }
+            None => PathBuf::from("export.toml"),
+        };
+        IoCommand::SaveToml(TomlDescription { rows: data, path })
     }
 }

@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
@@ -6,6 +8,7 @@ use crate::AppResult;
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct TomlDescription {
     pub rows: Vec<IndexMap<String, String>>,
+    pub path: PathBuf,
 }
 
 impl TomlDescription {
