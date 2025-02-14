@@ -664,6 +664,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "fuzzy-muff"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "153f892e3b3fa9776c089671da4b88fde31b32764f06fd9715afa513fc462704"
+dependencies = [
+ "thread_local",
+]
+
+[[package]]
 name = "generic-array"
 version = "0.14.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1856,6 +1865,7 @@ dependencies = [
  "derive_setters",
  "directories",
  "futures",
+ "fuzzy-muff",
  "indexmap",
  "itertools 0.14.0",
  "json5",

@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
 use indexmap::IndexMap;
 use itertools::Itertools;
 use ratatui::{
@@ -39,6 +40,7 @@ pub struct DataTable {
     pub table_state: TableState,
     pub textbuffer: text_buffer::Buffer,
     pub edit_target: EditTarget,
+    pub skim: Vec<String>,
     pub path: Option<PathBuf>,
     pub delim: char,
     pub is_dirty: bool,
@@ -53,6 +55,7 @@ impl Default for DataTable {
             table_state: TableState::default(),
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
+            skim: vec![],
             path: None,
             delim: ';',
             is_dirty: true,
@@ -314,10 +317,12 @@ impl DataTable {
         }
         self.edit_target = EditTarget::None;
         self.textbuffer = Buffer::new();
+        self.skim.clear();
     }
     pub fn edit_cancel(&mut self) {
         self.edit_target = EditTarget::None;
         self.textbuffer = Buffer::new();
+        self.skim.clear();
     }
     pub fn move_cursor_right(&mut self) {
         let current = self.textbuffer.cursor().chars();
@@ -331,12 +336,43 @@ impl DataTable {
     }
     pub fn insert_char(&mut self, c: char) {
         self.textbuffer.insert_char(c);
+        if let EditTarget::Cell((_, col)) = self.edit_target {
+            self.skim_update(col);
+        }
     }
     pub fn delete_backwards(&mut self) {
         self.textbuffer.delete_backwards(1);
+        if let EditTarget::Cell((_, col)) = self.edit_target {
+            self.skim_update(col);
+        }
     }
     pub fn delete_forwards(&mut self) {
         self.textbuffer.delete_forwards(1);
+    }
+    fn skim_update(&mut self, col: usize) {
+        let matcher = SkimMatcherV2::default();
+        let mut choices = self
+            .rows
+            .get_column(col)
+            .iter()
+            .map(|s| (s.to_owned(), 0 as i64))
+            .collect_vec();
+        let pattern = self.textbuffer.as_str();
+        let mut scores = choices
+            .iter_mut()
+            .map(|c| {
+                let score = matcher.fuzzy_match(&c.0, pattern).unwrap_or_default();
+                c.1 = score;
+                c
+            })
+            .filter(|c| c.1 > 0)
+            .sorted_unstable_by(|a, b| b.1.cmp(&a.1))
+            .map(|c| c.0.clone())
+            .take(3)
+            .collect_vec();
+        // scores.sort_unstable_by(|a, b| b.1.cmp(&a.1));
+        info!("{:#?}", scores);
+        self.skim = scores;
     }
 }
 
