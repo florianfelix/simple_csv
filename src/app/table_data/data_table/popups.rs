@@ -4,9 +4,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::app::table_data::extensions::BufferExt;
-
-use super::DataTable;
+use super::{extensions::BufferExt, DataTable};
 
 impl DataTable {
     pub fn render_popup_edit_cell(&mut self, frame: &mut Frame, area: Rect) {

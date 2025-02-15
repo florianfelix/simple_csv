@@ -11,6 +11,7 @@ use ratatui::{
 };
 
 mod cell_select;
+mod extensions;
 mod popups;
 mod skim;
 
@@ -19,7 +20,6 @@ use text_buffer::Buffer;
 #[allow(unused)]
 use tracing::info;
 
-use super::{extensions::BufferExt, extensions::RowsExt};
 use crate::backend::{
     file_formats::{
         file_csv::{CsvData, CsvDescription},
@@ -27,6 +27,7 @@ use crate::backend::{
     },
     tasks::events::IoCommand,
 };
+use extensions::{BufferExt, RowsExt};
 
 #[derive(Default, Debug, Clone)]
 pub enum EditTarget {
