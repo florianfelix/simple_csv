@@ -1,13 +1,12 @@
 use std::path::PathBuf;
 
-// use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
 use indexmap::IndexMap;
 use itertools::Itertools;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Style, Stylize},
     text::{Text, ToLine},
-    widgets::{self, Block, Borders, Clear, Paragraph, Table, TableState, Wrap},
+    widgets::{self, Block, Borders, Paragraph, Table, TableState},
     Frame,
 };
 
@@ -19,7 +18,7 @@ use text_buffer::Buffer;
 #[allow(unused)]
 use tracing::info;
 
-use super::{extensions::BufferExt, extensions::RowsExt, popup::Popup};
+use super::{extensions::BufferExt, extensions::RowsExt};
 use crate::backend::{
     file_formats::{
         file_csv::{CsvData, CsvDescription},
@@ -98,13 +97,10 @@ impl DataTable {
 
         match self.edit_target {
             EditTarget::Cell((_, _)) => self.render_popup_edit_cell(frame, area),
-            _ => {}
+            EditTarget::FileName => self.render_popup_edit(frame, area),
+            EditTarget::Header(_) => self.render_popup_edit(frame, area),
+            EditTarget::None => {}
         }
-
-        // if let Some((edit_popup, popup_area)) = self.edit_popup(top) {
-        //     frame.render_widget(edit_popup, popup_area);
-        //     // edit_popup.render(popup_area, frame.buffer_mut());
-        // }
 
         if !self.parse_errors.is_empty() {
             let lines = self.parse_errors.iter().map(|e| e.to_line()).collect_vec();
@@ -193,48 +189,6 @@ impl DataTable {
         width_constraints
     }
 
-    fn edit_popup(&self, area: Rect) -> Option<(Popup<'static>, Rect)> {
-        let popup_area = Rect {
-            x: area.width / 4,
-            y: area.height / 3,
-            width: area.width / 2,
-            height: 5,
-        };
-
-        match self.edit_target {
-            EditTarget::Cell((_row, col)) => {
-                let popup = Popup::default()
-                    .content(self.textbuffer.to_cursor_string())
-                    .style(Style::new().yellow())
-                    .title(self.cell_get_header(col))
-                    .title_bottom("Edit cell".to_string())
-                    .title_style(Style::new().white().bold())
-                    .border_style(Style::new().red());
-                Some((popup, popup_area))
-            }
-            EditTarget::Header(col) => {
-                let popup = Popup::default()
-                    .content(self.textbuffer.to_cursor_string())
-                    .style(Style::new().yellow())
-                    .title(self.cell_get_header(col))
-                    .title_bottom("Edit column name".to_string())
-                    .title_style(Style::new().white().bold())
-                    .border_style(Style::new().red());
-                Some((popup, popup_area))
-            }
-            EditTarget::FileName => {
-                let popup = Popup::default()
-                    .content(self.textbuffer.to_cursor_string())
-                    .style(Style::new().yellow())
-                    // .title(self.cell_get_header(col))
-                    .title_bottom("Edit filename".to_string())
-                    .title_style(Style::new().white().bold())
-                    .border_style(Style::new().red());
-                Some((popup, popup_area))
-            }
-            EditTarget::None => None,
-        }
-    }
     fn set_dirty(&mut self) {
         self.is_dirty = true;
         self.parse_errors = vec![];
@@ -279,7 +233,8 @@ impl DataTable {
     pub fn edit_column_name(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
             self.edit_target = EditTarget::Header(col);
-            self.textbuffer = Buffer::from(self.headers.get(col).unwrap().clone());
+            self.textbuffer = Buffer::from(self.cell_get_header(col));
+            // self.textbuffer = Buffer::from(self.headers.get(col).unwrap().clone());
             self.textbuffer.set_cursor(self.textbuffer.len_chars());
         }
     }
