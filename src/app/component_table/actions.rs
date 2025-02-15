@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use text_buffer::Buffer;
 
 use super::{extensions::RowsExt, skim::Skim, DataTable, EditTarget};
@@ -96,6 +97,9 @@ impl DataTable {
     }
     pub fn delete_forwards(&mut self) {
         self.textbuffer.delete_forwards(1);
+        if let Some(sk) = &mut self.skim {
+            sk.update(self.textbuffer.as_str());
+        }
     }
     pub fn append_row(&mut self) {
         self.rows.push(vec![String::new(); self.width()]);
@@ -103,5 +107,59 @@ impl DataTable {
     pub fn append_column(&mut self) {
         self.headers.push(String::from("NewColumn"));
         self.rows.append_column();
+    }
+}
+
+impl DataTable {
+    fn set_dirty(&mut self) {
+        self.is_dirty = true;
+        self.parse_errors = vec![];
+    }
+    fn cell_set_row_col(&mut self, row: usize, col: usize, content: String) {
+        if self.rows.is_valid_coords(row, col) {
+            self.rows.set_content(row, col, content);
+        }
+        self.set_dirty();
+    }
+    fn cell_get_row_col(&self, row: usize, col: usize) -> String {
+        if self.rows.is_valid_coords(row, col) {
+            self.rows.get_owned(row, col).unwrap_or_default()
+        } else {
+            // should never happen
+            String::new()
+        }
+    }
+    fn cell_get_header(&self, col: usize) -> String {
+        if col <= self.width() {
+            self.headers.get(col).unwrap().to_owned()
+        } else {
+            String::new()
+        }
+    }
+
+    pub fn append_column_named(&mut self, name: &str) {
+        self.headers.push(String::from(name));
+        self.rows.append_column();
+    }
+    fn set_column_name(&mut self, col: usize, content: String) {
+        let value = self.headers.get_mut(col).unwrap();
+        *value = content;
+    }
+
+    pub fn height(&self) -> usize {
+        self.rows.len()
+    }
+    pub fn width(&self) -> usize {
+        self.headers.len()
+    }
+    pub fn has_data(&self) -> bool {
+        self.height() > 0 && self.width() > 0
+    }
+    pub fn header_widths(&self) -> Vec<u16> {
+        self.headers
+            .clone()
+            .into_iter()
+            .map(|h| h.len() as u16)
+            .collect_vec()
     }
 }

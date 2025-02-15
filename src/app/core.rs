@@ -73,7 +73,7 @@ impl App {
         match data {
             Ok(csv_description) => {
                 self.io_error = None;
-                self.data.from_csv_description(csv_description);
+                self.data = csv_description.into();
             }
             Err(e) => {
                 self.io_error = Some(e);
