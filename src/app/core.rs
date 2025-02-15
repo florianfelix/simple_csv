@@ -12,7 +12,7 @@ use crate::{
 };
 
 use super::{
-    component_keybindings::KeyBindingsDisplay, component_table::data_table::DataTable,
+    component_keybindings::KeyBindingsDisplay, component_table::DataTable,
     layout::header_body_footer_areas,
 };
 

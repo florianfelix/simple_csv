@@ -3,7 +3,7 @@ use crossterm::event::{KeyCode, KeyEvent};
 #[allow(unused)]
 use tracing::info;
 
-use crate::app::{component_table::data_table::EditTarget, App};
+use crate::app::{component_table::EditTarget, App};
 
 impl App {
     pub fn handle_key_events(&mut self, key_event: KeyEvent) {
