@@ -17,7 +17,7 @@ normal:
 edit:
   enter: ApplyEdit
   esc: CancelEdit
-  tab: ConfirmSelectCellRight
+  tab: NextSuggestion
   shift-right: ConfirmSelectCellRight
   shift-left: ConfirmSelectCellLeft
   shift-up: ConfirmSelectCellRight

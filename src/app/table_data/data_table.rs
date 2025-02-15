@@ -1,16 +1,20 @@
 use std::path::PathBuf;
 
-use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
+// use fuzzy_matcher::{skim::SkimMatcherV2, FuzzyMatcher};
 use indexmap::IndexMap;
 use itertools::Itertools;
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Style, Stylize},
     text::{Text, ToLine},
-    widgets::{self, Block, Borders, Paragraph, Table, TableState},
+    widgets::{self, Block, Borders, Clear, Paragraph, Table, TableState, Wrap},
     Frame,
 };
 
+mod popups;
+mod skim;
+
+use skim::Skim;
 use text_buffer::Buffer;
 #[allow(unused)]
 use tracing::info;
@@ -40,7 +44,7 @@ pub struct DataTable {
     pub table_state: TableState,
     pub textbuffer: text_buffer::Buffer,
     pub edit_target: EditTarget,
-    pub skim: Vec<String>,
+    pub skim: Option<Skim>,
     pub path: Option<PathBuf>,
     pub delim: char,
     pub is_dirty: bool,
@@ -55,7 +59,7 @@ impl Default for DataTable {
             table_state: TableState::default(),
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
-            skim: vec![],
+            skim: None,
             path: None,
             delim: ';',
             is_dirty: true,
@@ -76,15 +80,6 @@ impl DataTable {
         self.is_dirty = false;
         self.parse_errors = csv_description.errors;
     }
-    // pub fn new_simple() -> Self {
-    //     let mut new = Self::default();
-    //     new.append_column_named("key");
-    //     new.append_column_named("value");
-    //     new.append_row();
-    //     new.select_cell_right();
-    //     new.path = Some(PathBuf::from("file.csv"));
-    //     new
-    // }
 }
 
 impl DataTable {
@@ -101,10 +96,15 @@ impl DataTable {
         let table = self.rat_table();
         frame.render_stateful_widget(table, top, &mut self.table_state);
 
-        if let Some((edit_popup, popup_area)) = self.edit_popup(top) {
-            frame.render_widget(edit_popup, popup_area);
-            // edit_popup.render(popup_area, frame.buffer_mut());
+        match self.edit_target {
+            EditTarget::Cell((_, _)) => self.render_popup_edit_cell(frame, area),
+            _ => {}
         }
+
+        // if let Some((edit_popup, popup_area)) = self.edit_popup(top) {
+        //     frame.render_widget(edit_popup, popup_area);
+        //     // edit_popup.render(popup_area, frame.buffer_mut());
+        // }
 
         if !self.parse_errors.is_empty() {
             let lines = self.parse_errors.iter().map(|e| e.to_line()).collect_vec();
@@ -288,6 +288,9 @@ impl DataTable {
             self.edit_target = EditTarget::Cell((row, col));
             self.textbuffer = Buffer::from(self.cell_get_row_col(row, col));
             self.textbuffer.set_cursor(self.textbuffer.len_chars());
+            let mut sk = Skim::new(self.textbuffer.as_str(), self.rows.get_column(col));
+            sk.update(self.textbuffer.as_str());
+            self.skim = Some(sk);
         }
     }
     pub fn edit_file_name(&mut self) {
@@ -304,7 +307,18 @@ impl DataTable {
         match self.edit_target {
             EditTarget::Header(col) => self.set_column_name(col, self.textbuffer.to_string()),
             EditTarget::Cell((row, col)) => {
-                self.cell_set_row_col(row, col, self.textbuffer.to_string())
+                let content = match self.skim {
+                    Some(ref sk) => {
+                        if let Some(suggestion) = sk.selected() {
+                            suggestion
+                        } else {
+                            self.textbuffer.to_string()
+                        }
+                    }
+                    None => self.textbuffer.to_string(),
+                };
+                self.cell_set_row_col(row, col, content);
+                // self.cell_set_row_col(row, col, self.textbuffer.to_string())
             }
             EditTarget::FileName => {
                 if self.textbuffer.is_empty() {
@@ -317,12 +331,17 @@ impl DataTable {
         }
         self.edit_target = EditTarget::None;
         self.textbuffer = Buffer::new();
-        self.skim.clear();
+        self.skim = None;
+    }
+    pub fn skim_select_next(&mut self) {
+        if let Some(sk) = &mut self.skim {
+            sk.select_next();
+        }
     }
     pub fn edit_cancel(&mut self) {
         self.edit_target = EditTarget::None;
         self.textbuffer = Buffer::new();
-        self.skim.clear();
+        self.skim = None;
     }
     pub fn move_cursor_right(&mut self) {
         let current = self.textbuffer.cursor().chars();
@@ -336,43 +355,43 @@ impl DataTable {
     }
     pub fn insert_char(&mut self, c: char) {
         self.textbuffer.insert_char(c);
-        if let EditTarget::Cell((_, col)) = self.edit_target {
-            self.skim_update(col);
+        if let Some(sk) = &mut self.skim {
+            sk.update(self.textbuffer.as_str());
         }
     }
     pub fn delete_backwards(&mut self) {
         self.textbuffer.delete_backwards(1);
-        if let EditTarget::Cell((_, col)) = self.edit_target {
-            self.skim_update(col);
+        if let Some(sk) = &mut self.skim {
+            sk.update(self.textbuffer.as_str());
         }
     }
     pub fn delete_forwards(&mut self) {
         self.textbuffer.delete_forwards(1);
     }
-    fn skim_update(&mut self, col: usize) {
-        let matcher = SkimMatcherV2::default();
-        let mut choices = self
-            .rows
-            .get_column(col)
-            .iter()
-            .map(|s| (s.to_owned(), 0_i64))
-            .collect_vec();
-        let pattern = self.textbuffer.as_str();
-        #[allow(clippy::manual_inspect)]
-        let scores = choices
-            .iter_mut()
-            .map(|c| {
-                c.1 = matcher.fuzzy_match(&c.0, pattern).unwrap_or_default();
-                c
-            })
-            .filter(|c| c.1 > 0)
-            .sorted_unstable_by(|a, b| b.1.cmp(&a.1))
-            .map(|c| c.0.clone())
-            .take(3)
-            .collect_vec();
-        info!("{:#?}", scores);
-        self.skim = scores;
-    }
+    // fn skim_update(&mut self, col: usize) {
+    //     let matcher = SkimMatcherV2::default();
+    //     let mut choices = self
+    //         .rows
+    //         .get_column(col)
+    //         .iter()
+    //         .map(|s| (s.to_owned(), 0_i64))
+    //         .collect_vec();
+    //     let pattern = self.textbuffer.as_str();
+    //     #[allow(clippy::manual_inspect)]
+    //     let scores = choices
+    //         .iter_mut()
+    //         .map(|c| {
+    //             c.1 = matcher.fuzzy_match(&c.0, pattern).unwrap_or_default();
+    //             c
+    //         })
+    //         .filter(|c| c.1 > 0)
+    //         .sorted_unstable_by(|a, b| b.1.cmp(&a.1))
+    //         .map(|c| c.0.clone())
+    //         .take(3)
+    //         .collect_vec();
+    //     info!("{:#?}", scores);
+    //     self.skim = scores;
+    // }
 }
 
 impl DataTable {
