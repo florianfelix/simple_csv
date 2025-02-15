@@ -10,6 +10,7 @@ use ratatui::{
     Frame,
 };
 
+mod cell_select;
 mod popups;
 mod skim;
 

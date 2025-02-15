@@ -1,7 +1,9 @@
 #[allow(unused)]
 use tracing::info;
 
-use super::{data_table::DataTable, extensions::RowsExt};
+use crate::app::table_data::extensions::RowsExt;
+
+use super::DataTable;
 
 impl DataTable {
     pub fn select_cell_right(&mut self) {
