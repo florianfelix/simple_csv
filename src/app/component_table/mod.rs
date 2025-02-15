@@ -3,7 +3,7 @@ use ratatui::widgets::TableState;
 use std::path::PathBuf;
 
 mod actions;
-mod cell_select;
+mod actions_cell_select;
 mod commands;
 mod extensions;
 mod popups;
@@ -107,9 +107,7 @@ impl DataTable {
         let value = self.headers.get_mut(col).unwrap();
         *value = content;
     }
-}
 
-impl DataTable {
     pub fn height(&self) -> usize {
         self.rows.len()
     }
