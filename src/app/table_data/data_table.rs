@@ -355,14 +355,14 @@ impl DataTable {
             .rows
             .get_column(col)
             .iter()
-            .map(|s| (s.to_owned(), 0 as i64))
+            .map(|s| (s.to_owned(), 0_i64))
             .collect_vec();
         let pattern = self.textbuffer.as_str();
-        let mut scores = choices
+        #[allow(clippy::manual_inspect)]
+        let scores = choices
             .iter_mut()
             .map(|c| {
-                let score = matcher.fuzzy_match(&c.0, pattern).unwrap_or_default();
-                c.1 = score;
+                c.1 = matcher.fuzzy_match(&c.0, pattern).unwrap_or_default();
                 c
             })
             .filter(|c| c.1 > 0)
@@ -370,7 +370,6 @@ impl DataTable {
             .map(|c| c.0.clone())
             .take(3)
             .collect_vec();
-        // scores.sort_unstable_by(|a, b| b.1.cmp(&a.1));
         info!("{:#?}", scores);
         self.skim = scores;
     }
