@@ -12,8 +12,8 @@ use crate::{
 };
 
 use super::{
-    layout::header_body_footer_areas, table_data::data_table::DataTable,
-    widget_keybindings::KeyBindingsDisplay,
+    component_keybindings::KeyBindingsDisplay, component_table::data_table::DataTable,
+    layout::header_body_footer_areas,
 };
 
 /// Application.
