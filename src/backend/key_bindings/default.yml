@@ -16,10 +16,10 @@ normal:
   left: SelectCellLeft
   up: SelectCellUp
   down: SelectCellDown
-  l: SelectCellRight
   h: SelectCellLeft
-  k: SelectCellUp
   j: SelectCellDown
+  k: SelectCellUp
+  l: SelectCellRight
   alt-right: MoveColumnRight
   alt-left: MoveColumnLeft
   alt-up: MoveRowUp

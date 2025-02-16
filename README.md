@@ -1,7 +1,7 @@
 # Simple Csv Terminal Application
 tui app to quickly create/edit small csv tables
 the main drawback is that atm all values are treated as strings.
-Typed columns maybe later.
+Typed columns maybe later. Also no mouse support yet.
 
 ## Install
 `cargo install --git <thisrepo> --locked`

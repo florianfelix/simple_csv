@@ -48,16 +48,21 @@ impl DataTable {
             .iter()
             .map(|s| widgets::Cell::new(Text::raw(s.to_owned())))
             .collect_vec();
-        widgets::Row::new(cells)
+        widgets::Row::new(cells).bold()
     }
     pub fn rat_rows(&self) -> Vec<widgets::Row<'static>> {
         let mut rows = vec![];
-        for r in self.rows.iter() {
+        for (i, r) in self.rows.iter().enumerate() {
             let cells = r
                 .iter()
                 .map(|s| widgets::Cell::new(s.to_owned()))
                 .collect_vec();
-            let row = widgets::Row::new(cells);
+            // let row = widgets::Row::new(cells);
+            let row = if i % 2 == 1 {
+                widgets::Row::new(cells).style(Style::default().dim())
+            } else {
+                widgets::Row::new(cells)
+            };
             rows.push(row);
         }
         rows
