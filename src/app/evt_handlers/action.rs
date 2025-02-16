@@ -24,6 +24,8 @@ pub enum Action {
     SelectLastRow,
     MoveColumnRight,
     MoveColumnLeft,
+    SortByColumn,
+    SortByColumnReversed,
     ConfirmSelectCellRight,
     ConfirmSelectCellLeft,
     ConfirmSelectCellUp,
@@ -64,6 +66,8 @@ impl App {
             SelectLastRow => self.data.table_state.select_last(),
             MoveColumnRight => self.data.move_column_right(),
             MoveColumnLeft => self.data.move_column_left(),
+            SortByColumn => self.data.sort_by_column(),
+            SortByColumnReversed => self.data.sort_by_column_reversed(),
             ConfirmSelectCellRight => {
                 self.data.apply_edit();
                 self.data.select_cell_right();

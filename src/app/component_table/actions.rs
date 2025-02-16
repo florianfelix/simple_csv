@@ -137,6 +137,16 @@ impl DataTable {
             }
         }
     }
+    pub fn sort_by_column(&mut self) {
+        if let Some(col) = self.table_state.selected_column() {
+            self.rows.sort(col);
+        }
+    }
+    pub fn sort_by_column_reversed(&mut self) {
+        if let Some(col) = self.table_state.selected_column() {
+            self.rows.sort_reversed(col);
+        }
+    }
 }
 
 impl DataTable {

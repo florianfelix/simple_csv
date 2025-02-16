@@ -37,9 +37,17 @@ pub trait TableExt {
     fn move_column_right(&mut self, col: usize) -> Option<usize>;
     fn move_column_left(&mut self, col: usize) -> Option<usize>;
     fn width(&self) -> usize;
+    fn sort(&mut self, col: usize);
+    fn sort_reversed(&mut self, col: usize);
 }
 
 impl TableExt for Vec<Vec<String>> {
+    fn sort(&mut self, col: usize) {
+        self.sort_unstable_by(|a, b| a.get(col).unwrap().cmp(b.get(col).unwrap()));
+    }
+    fn sort_reversed(&mut self, col: usize) {
+        self.sort_unstable_by(|a, b| b.get(col).unwrap().cmp(a.get(col).unwrap()));
+    }
     fn width(&self) -> usize {
         if let Some(row) = self.first() {
             row.len()
