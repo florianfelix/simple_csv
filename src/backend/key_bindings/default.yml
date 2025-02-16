@@ -3,7 +3,9 @@ normal:
   ctrl-c: Quit
   enter: EditCell
   r: AppendRow
+  alt-r: DeleteRow
   c: AppendColumn
+  alt-c: DeleteColumn
   v: EditHeader
   f: EditFileName
   ctrl-s: Save

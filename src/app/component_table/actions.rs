@@ -163,6 +163,17 @@ impl DataTable {
             }
         }
     }
+    pub fn delete_row(&mut self) {
+        if let Some(row) = self.table_state.selected() {
+            self.rows.delete_row(row);
+        }
+    }
+    pub fn delete_column(&mut self) {
+        if let Some(col) = self.table_state.selected_column() {
+            self.rows.delete_column(col);
+            self.headers.remove(col);
+        }
+    }
 }
 
 impl DataTable {

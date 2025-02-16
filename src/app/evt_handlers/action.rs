@@ -24,6 +24,8 @@ pub enum Action {
     SelectLastRow,
     MoveColumnRight,
     MoveColumnLeft,
+    DeleteRow,
+    DeleteColumn,
     MoveRowUp,
     MoveRowDown,
     SortByColumn,
@@ -73,6 +75,8 @@ impl App {
             MoveRowUp => self.data.move_row_up(),
             MoveRowDown => self.data.move_row_down(),
             MoveColumnLeft => self.data.move_column_left(),
+            DeleteRow => self.data.delete_row(),
+            DeleteColumn => self.data.delete_column(),
             SortByColumn => self.data.sort_by_column(),
             SortByColumnReversed => self.data.sort_by_column_reversed(),
             ConfirmSelectCellRight => {
