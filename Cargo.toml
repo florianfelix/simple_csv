@@ -1,6 +1,5 @@
-
 [package]
-name = "tui_data_entry"
+name = "simple_csv"
 version = "0.1.0"
 authors = ["felix <florianfelixmeyer@gmail.com>"]
 license = "MIT"
