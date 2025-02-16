@@ -38,6 +38,7 @@ pub enum Action {
     SaveToml,
     SaveJson,
     SaveYml,
+    SaveRon,
 }
 
 impl std::fmt::Display for Action {
@@ -96,6 +97,7 @@ impl App {
             SaveToml => self.save_as_toml(),
             SaveJson => self.save_as_json(),
             SaveYml => self.save_as_yml(),
+            SaveRon => self.save_as_ron(),
         }
     }
 }
