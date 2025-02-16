@@ -1,19 +1,21 @@
 #![allow(unused)]
-use stacked_errors::StackableErr;
+// use stacked_errors::StackableErr;
 use std::path::PathBuf;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter, Layer};
 
+use crate::AppResult;
+
 pub struct EzLog {}
 
 impl EzLog {
-    pub fn init() -> stacked_errors::Result<()> {
+    pub fn init() -> AppResult<()> {
         let env_filter = EnvFilter::builder()
             .with_default_directive(tracing::Level::INFO.into())
             .try_from_env()
             .unwrap_or(EnvFilter::new("info"));
 
-        let log_file = std::fs::File::create(PathBuf::from("./atui.log")).stack()?;
+        let log_file = std::fs::File::create(PathBuf::from("./atui.log"))?;
         let file_subscriber = tracing_subscriber::fmt::layer()
             // .json()
             .with_file(true)
@@ -42,7 +44,7 @@ impl EzLog {
             // .with(std_subscriber)
             .with(ErrorLayer::default());
 
-        registry.try_init().stack_err("Failed to init Registry")?;
+        registry.try_init()?;
 
         Ok(())
     }
