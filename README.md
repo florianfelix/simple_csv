@@ -7,7 +7,7 @@ The main drawback is that atm all values are treated as strings.
 Typed columns maybe later. Also no mouse support yet.
 
 ## Install
-`cargo install --git <thisrepo> --locked`
+`cargo install --git https://github.com/florianfelix/simple_csv --locked`
 
 ## Usage
 `scsv <filename> <delimiter>`
