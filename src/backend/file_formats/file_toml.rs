@@ -16,4 +16,8 @@ impl TomlDescription {
         let res = toml::to_string(self)?;
         Ok(res)
     }
+    pub fn to_json_string(&self) -> AppResult<String> {
+        let res = serde_json::to_string(&self.rows)?;
+        Ok(res)
+    }
 }

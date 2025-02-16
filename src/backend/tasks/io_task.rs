@@ -46,7 +46,10 @@ pub async fn io_task(
                         let data_string = data.to_toml_string().unwrap();
                         save_file(&data.path, &data_string).await.unwrap();
                     }
-
+                    IoCommand::SaveJson(data) => {
+                        let data_string = data.to_json_string().unwrap();
+                        save_file(&data.path, &data_string).await.unwrap();
+                    }
                 }
             }
         }

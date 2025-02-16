@@ -36,6 +36,7 @@ pub enum Action {
     AppendColumn,
     ToggleKeyBindingsDisplay,
     SaveToml,
+    SaveJson,
 }
 
 impl std::fmt::Display for Action {
@@ -92,6 +93,7 @@ impl App {
             AppendColumn => self.data.append_column(),
             ToggleKeyBindingsDisplay => self.toggle_keybindings(),
             SaveToml => self.save_as_toml(),
+            SaveJson => self.save_as_json(),
         }
     }
 }

@@ -6,6 +6,7 @@ use itertools::Itertools;
 use crate::backend::{
     file_formats::{
         file_csv::{CsvData, CsvDescription},
+        file_json::JsonDescription,
         file_toml::TomlDescription,
     },
     tasks::events::IoCommand,
@@ -25,6 +26,29 @@ impl DataTable {
             errors: vec![],
             path: self.path.clone(),
         })
+    }
+
+    pub fn save_json_command(&self) -> IoCommand {
+        let rows = self
+            .rows
+            .iter()
+            .map(|row| {
+                let mut map = IndexMap::new();
+                row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
+                    map.insert(k, v.to_owned());
+                });
+                map
+            })
+            .collect_vec();
+        let path = match self.path {
+            Some(ref path) => {
+                let mut path = path.clone();
+                path.set_extension("json");
+                path
+            }
+            None => PathBuf::from("export.json"),
+        };
+        IoCommand::SaveJson(JsonDescription { path, rows })
     }
 
     pub fn save_toml_command(&self) -> IoCommand {

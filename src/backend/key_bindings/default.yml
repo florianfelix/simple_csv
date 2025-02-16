@@ -8,6 +8,7 @@ normal:
   f: EditFileName
   ctrl-s: Save
   ctrl-t: SaveToml
+  ctrl-j: SaveJson
   ctrl-k: SaveKeyBindings
   right: SelectCellRight
   left: SelectCellLeft
