@@ -1,5 +1,3 @@
-path = "sample.toml"
-
 [[rows]]
 Index = "1"
 "User Id" = "88F7B33d2bcf9f5"

@@ -7,6 +7,7 @@ use crate::AppResult;
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct FileDescription {
+    #[serde(skip)]
     pub path: PathBuf,
     pub rows: Vec<IndexMap<String, String>>,
 }
