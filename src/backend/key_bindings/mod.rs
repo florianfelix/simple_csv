@@ -22,7 +22,7 @@ fn maybe_existing_keymap_file() -> Option<PathBuf> {
 }
 
 fn keymap_path() -> Option<PathBuf> {
-    if let Some(proj_dirs) = directories::ProjectDirs::from("de", "hil", "tui_data_entry") {
+    if let Some(proj_dirs) = directories::ProjectDirs::from("de", "hil", "simple_csv") {
         let conf_dir = proj_dirs.config_dir().to_path_buf();
         let conf_path = conf_dir.join(Path::new("keymap.yml"));
         return Some(conf_path);
