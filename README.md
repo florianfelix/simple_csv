@@ -1,6 +1,9 @@
 # Simple Csv Terminal Application
-tui app to quickly create/edit small csv tables
-the main drawback is that atm all values are treated as strings.
+
+![Alt text](simple_csv.png "Optional Title")
+
+Tui app to quickly create/edit small csv tables and export them into more useful formats.
+The main drawback is that atm all values are treated as strings.
 Typed columns maybe later. Also no mouse support yet.
 
 ## Install
@@ -9,7 +12,7 @@ Typed columns maybe later. Also no mouse support yet.
 ## Usage
 `scsv <filename> <delimiter>`
 
-if <delimiter> is ommitted the default delimiter is <,> for now
+if delimiter is ommitted the default delimiter is `,` for now
 
 ### export
 - csv: ctrl-s
