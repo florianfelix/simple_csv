@@ -39,6 +39,7 @@ pub trait TableExt {
     fn width(&self) -> usize;
     fn sort(&mut self, col: usize);
     fn sort_reversed(&mut self, col: usize);
+    // fn move_row_down(&mut self, row: usize);
 }
 
 impl TableExt for Vec<Vec<String>> {
@@ -129,6 +130,11 @@ impl TableExt for Vec<Vec<String>> {
             .map(|r| r.get(col).unwrap_or(&String::new()).to_owned())
             .collect::<Vec<String>>()
     }
+    // fn move_row_down(&mut self, row: usize) {
+    //     if row < self.len() - 1 {
+    //         self.swap(row, row + 1);
+    //     }
+    // }
 }
 
 pub trait BufferExt {

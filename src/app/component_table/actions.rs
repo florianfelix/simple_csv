@@ -147,6 +147,18 @@ impl DataTable {
             self.rows.sort_reversed(col);
         }
     }
+    pub fn move_row_down(&mut self) {
+        if let Some(row) = self.table_state.selected() {
+            let moved_to = self.rows.move_right(row);
+            self.table_state.select(moved_to);
+        }
+    }
+    pub fn move_row_up(&mut self) {
+        if let Some(row) = self.table_state.selected() {
+            let moved_to = self.rows.move_left(row);
+            self.table_state.select(moved_to);
+        }
+    }
 }
 
 impl DataTable {
