@@ -8,7 +8,7 @@ normal:
   f: EditFileName
   ctrl-s: Save
   ctrl-t: SaveToml
-  alt-s: SaveKeyBindings
+  ctrl-k: SaveKeyBindings
   right: SelectCellRight
   left: SelectCellLeft
   up: SelectCellUp
@@ -16,6 +16,8 @@ normal:
   "?": ToggleKeyBindingsDisplay
 edit:
   enter: ApplyEdit
+  ctrl-enter: ConfirmSelectCellRight
+  alt-enter: ConfirmSelectCellDown
   esc: CancelEdit
   tab: NextSuggestion
   down: NextSuggestion
