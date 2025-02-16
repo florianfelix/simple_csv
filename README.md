@@ -1,19 +1,24 @@
 # Simple Csv Terminal Application
 tui app to quickly create/edit small csv tables
 
+## Install
+`cargo install --git <thisrepo> --locked`
+
 ## Usage
 `scsv <filename> <delimiter>`
 
 if <delimiter> is ommitted the default delimiter is <;> for now
 
 ### export
-save: ctrl-s
-
-export as toml: ctrl-t
+- csv: ctrl-s
+- toml: ctrl-t
+- json: ctrl-j
+- yaml: ctrl-y
+- ron: ctrl-r
 
 
 ## keys normal mode
-| KEY | ACTION|
+| KEY | ACTION |
 | - | - |
 | q | Quit |
 | ctrl-c | Quit |
@@ -24,6 +29,9 @@ export as toml: ctrl-t
 | f | EditFileName |
 | ctrl-s | Save |
 | ctrl-t | SaveToml |
+| ctrl-j | SaveJson |
+| ctrl-y | SaveYml |
+| ctrl-r | SaveRon |
 | ctrl-k | SaveKeyBindings |
 | right | SelectCellRight |
 | left | SelectCellLeft |
@@ -38,21 +46,21 @@ export as toml: ctrl-t
 | "?" | ToggleKeyBindingsDisplay |
 
 ## keys edit mode
-| KEY | ACTION|
+| KEY | ACTION |
 | - | - |
 | enter | ApplyEdit |
-  | ctrl-enter | ConfirmSelectCellRight |
-  | alt-enter | ConfirmSelectCellDown |
-  | esc | CancelEdit |
-  | tab | NextSuggestion |
-  | down | NextSuggestion |
-  | up | PreviousSuggestion |
-  | shift-right | ConfirmSelectCellRight |
-  | shift-left | ConfirmSelectCellLeft |
-  | shift-up | ConfirmSelectCellRight |
-  | shift-down | ConfirmSelectCellDown |
-  | right | CursorRight |
-  | left | CursorLeft |
+| ctrl-enter | ConfirmSelectCellRight |
+| alt-enter | ConfirmSelectCellDown |
+| esc | CancelEdit |
+| tab | NextSuggestion |
+| down | NextSuggestion |
+| up | PreviousSuggestion |
+| shift-right | ConfirmSelectCellRight |
+| shift-left | ConfirmSelectCellLeft |
+| shift-up | ConfirmSelectCellRight |
+| shift-down | ConfirmSelectCellDown |
+| right | CursorRight |
+| left | CursorLeft |
 
   ### keybindings file
   Save the default keybindings with ctrl-k into `$HOME/.config/simple_csv/keymap.toml`.

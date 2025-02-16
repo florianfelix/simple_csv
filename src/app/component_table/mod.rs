@@ -48,7 +48,7 @@ impl Default for DataTable {
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
             skim: None,
-            path: None,
+            path: Some(PathBuf::from("new.csv")),
             delim: ';',
             is_dirty: true,
             parse_errors: vec![],
