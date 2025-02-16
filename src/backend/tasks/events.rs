@@ -5,6 +5,7 @@ use crossterm::event::{KeyEvent, MouseEvent};
 use crate::backend::{
     file_formats::{
         file_csv::CsvDescription, file_json::JsonDescription, file_toml::TomlDescription,
+        file_yml::YmlDescription,
     },
     key_bindings::KeyBindings,
     IoCommandResult,
@@ -27,6 +28,7 @@ pub enum IoCommand {
     SaveKeyBindings(KeyBindings),
     SaveToml(TomlDescription),
     SaveJson(JsonDescription),
+    SaveYml(YmlDescription),
 }
 
 #[derive(Clone, Debug)]

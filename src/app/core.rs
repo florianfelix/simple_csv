@@ -112,6 +112,12 @@ impl App {
             .expect("IoCommand Receiver Closed. Quitting");
     }
 
+    pub fn save_as_yml(&mut self) {
+        self.io_command_sender
+            .send(self.data.save_yml_command())
+            .expect("IoCommand Receiver Closed. Quitting");
+    }
+
     pub fn save_key_bindings(&self) {
         self.io_command_sender
             .send(IoCommand::SaveKeyBindings(self.key_bindings.clone()))

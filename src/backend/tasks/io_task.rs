@@ -50,6 +50,10 @@ pub async fn io_task(
                         let data_string = data.to_json_string().unwrap();
                         save_file(&data.path, &data_string).await.unwrap();
                     }
+                    IoCommand::SaveYml(data) => {
+                        let data_string = data.to_yml_string().unwrap();
+                        save_file(&data.path, &data_string).await.unwrap();
+                    }
                 }
             }
         }

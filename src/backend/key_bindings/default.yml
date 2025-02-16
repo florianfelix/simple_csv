@@ -9,6 +9,7 @@ normal:
   ctrl-s: Save
   ctrl-t: SaveToml
   ctrl-j: SaveJson
+  ctrl-y: SaveYml
   ctrl-k: SaveKeyBindings
   right: SelectCellRight
   left: SelectCellLeft

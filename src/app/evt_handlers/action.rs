@@ -37,6 +37,7 @@ pub enum Action {
     ToggleKeyBindingsDisplay,
     SaveToml,
     SaveJson,
+    SaveYml,
 }
 
 impl std::fmt::Display for Action {
@@ -94,6 +95,7 @@ impl App {
             ToggleKeyBindingsDisplay => self.toggle_keybindings(),
             SaveToml => self.save_as_toml(),
             SaveJson => self.save_as_json(),
+            SaveYml => self.save_as_yml(),
         }
     }
 }

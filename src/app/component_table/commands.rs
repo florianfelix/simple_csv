@@ -8,6 +8,7 @@ use crate::backend::{
         file_csv::{CsvData, CsvDescription},
         file_json::JsonDescription,
         file_toml::TomlDescription,
+        file_yml::YmlDescription,
     },
     tasks::events::IoCommand,
 };
@@ -49,6 +50,29 @@ impl DataTable {
             None => PathBuf::from("export.json"),
         };
         IoCommand::SaveJson(JsonDescription { path, rows })
+    }
+
+    pub fn save_yml_command(&self) -> IoCommand {
+        let rows = self
+            .rows
+            .iter()
+            .map(|row| {
+                let mut map = IndexMap::new();
+                row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
+                    map.insert(k, v.to_owned());
+                });
+                map
+            })
+            .collect_vec();
+        let path = match self.path {
+            Some(ref path) => {
+                let mut path = path.clone();
+                path.set_extension("yml");
+                path
+            }
+            None => PathBuf::from("export.yml"),
+        };
+        IoCommand::SaveYml(YmlDescription { path, rows })
     }
 
     pub fn save_toml_command(&self) -> IoCommand {
