@@ -10,7 +10,6 @@ pub use error::{AppError, AppResult};
 pub mod app;
 pub mod backend;
 mod error;
-// pub mod tmp;
 pub mod tui;
 pub mod utils;
 
@@ -43,7 +42,6 @@ async fn main() -> AppResult<()> {
 
     // Start the main loop.
     info!("{:#?}", "Starting main loop");
-    // backend::key_bindings::map2::test();
     while app.running {
         // Render the user interface.
         tui.draw(&mut app)?;
