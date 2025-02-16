@@ -3,10 +3,7 @@ use std::path::PathBuf;
 use crossterm::event::{KeyEvent, MouseEvent};
 
 use crate::backend::{
-    file_formats::{
-        file_csv::CsvDescription, file_json::JsonDescription, file_ron::RonDescription,
-        file_toml::TomlDescription, file_yml::YmlDescription,
-    },
+    file_formats::{file_csv::CsvDescription, file_multi::FileDescription},
     key_bindings::KeyBindings,
     IoCommandResult,
 };
@@ -26,10 +23,10 @@ pub enum IoCommand {
     LoadCsv { path: PathBuf, delim: char },
     LoadKeyBindings,
     SaveKeyBindings(KeyBindings),
-    SaveToml(TomlDescription),
-    SaveJson(JsonDescription),
-    SaveYml(YmlDescription),
-    SaveRon(RonDescription),
+    SaveToml(FileDescription),
+    SaveJson(FileDescription),
+    SaveYml(FileDescription),
+    SaveRon(FileDescription),
 }
 
 #[derive(Clone, Debug)]

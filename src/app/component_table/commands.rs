@@ -6,10 +6,7 @@ use itertools::Itertools;
 use crate::backend::{
     file_formats::{
         file_csv::{CsvData, CsvDescription},
-        file_json::JsonDescription,
-        file_ron::RonDescription,
-        file_toml::TomlDescription,
-        file_yml::YmlDescription,
+        file_multi::FileDescription,
     },
     tasks::events::IoCommand,
 };
@@ -50,7 +47,7 @@ impl DataTable {
             }
             None => PathBuf::from("export.json"),
         };
-        IoCommand::SaveJson(JsonDescription { path, rows })
+        IoCommand::SaveJson(FileDescription { path, rows })
     }
 
     pub fn save_yml_command(&self) -> IoCommand {
@@ -73,7 +70,7 @@ impl DataTable {
             }
             None => PathBuf::from("export.yml"),
         };
-        IoCommand::SaveYml(YmlDescription { path, rows })
+        IoCommand::SaveYml(FileDescription { path, rows })
     }
 
     pub fn save_ron_command(&self) -> IoCommand {
@@ -96,7 +93,7 @@ impl DataTable {
             }
             None => PathBuf::from("export.ron"),
         };
-        IoCommand::SaveRon(RonDescription { path, rows })
+        IoCommand::SaveRon(FileDescription { path, rows })
     }
 
     pub fn save_toml_command(&self) -> IoCommand {
@@ -119,6 +116,6 @@ impl DataTable {
             }
             None => PathBuf::from("export.toml"),
         };
-        IoCommand::SaveToml(TomlDescription { rows: data, path })
+        IoCommand::SaveToml(FileDescription { rows: data, path })
     }
 }
