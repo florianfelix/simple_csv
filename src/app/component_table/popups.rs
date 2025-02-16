@@ -17,7 +17,7 @@ impl DataTable {
         frame.render_widget(Clear, popup_area);
         let [left, right] = Layout::new(
             Direction::Horizontal,
-            [Constraint::Percentage(50), Constraint::Percentage(50)],
+            [Constraint::Percentage(70), Constraint::Fill(1)],
         )
         .areas(popup_area);
         let block = Block::new().borders(Borders::all());

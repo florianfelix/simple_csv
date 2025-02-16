@@ -39,7 +39,10 @@ pub struct Skim {
 }
 impl Skim {
     pub fn render(&mut self, frame: &mut Frame, area: Rect) {
-        let block = Block::new().borders(Borders::all());
+        let block = Block::new()
+            .borders(Borders::all())
+            .title("Suggestions")
+            .title_style(Style::default().dim());
         let list = List::new(self.matches.clone())
             .block(block)
             .highlight_style(Style::default().reversed());
