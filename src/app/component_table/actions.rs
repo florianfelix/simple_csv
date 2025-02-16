@@ -68,6 +68,11 @@ impl DataTable {
             sk.select_next();
         }
     }
+    pub fn skim_select_previous(&mut self) {
+        if let Some(sk) = &mut self.skim {
+            sk.select_previous();
+        }
+    }
     pub fn edit_cancel(&mut self) {
         self.edit_target = EditTarget::None;
         self.textbuffer = Buffer::new();

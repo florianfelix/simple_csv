@@ -53,7 +53,11 @@ impl Skim {
         }
     }
     pub fn select_previous(&mut self) {
-        self.state.select_previous();
+        if self.state.selected() == Some(0) {
+            self.state.select(None);
+        } else {
+            self.state.select_previous();
+        }
     }
     pub fn selected(&self) -> Option<String> {
         if let Some(sel) = self.state.selected() {

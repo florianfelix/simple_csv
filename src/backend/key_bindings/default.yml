@@ -18,6 +18,8 @@ edit:
   enter: ApplyEdit
   esc: CancelEdit
   tab: NextSuggestion
+  down: NextSuggestion
+  up: PreviousSuggestion
   shift-right: ConfirmSelectCellRight
   shift-left: ConfirmSelectCellLeft
   shift-up: ConfirmSelectCellRight
