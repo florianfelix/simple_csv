@@ -108,10 +108,12 @@ impl DataTable {
     }
     pub fn append_row(&mut self) {
         self.rows.push(vec![String::new(); self.width()]);
+        self.table_state.select(Some(self.height()));
     }
     pub fn append_column(&mut self) {
         self.headers.push(String::from("NewColumn"));
         self.rows.append_column();
+        self.table_state.select_column(Some(self.width()));
     }
 }
 
