@@ -1,4 +1,4 @@
-pub trait RowsExt {
+pub trait TableExt {
     fn get_ref(&self, row: usize, column: usize) -> Option<&str>;
     fn get_owned(&self, row: usize, column: usize) -> Option<String>;
     fn set_content(&mut self, row: usize, col: usize, content: &str);
@@ -6,7 +6,7 @@ pub trait RowsExt {
     fn is_valid_coords(&self, row: usize, col: usize) -> bool;
 }
 
-impl RowsExt for Vec<Vec<String>> {
+impl TableExt for Vec<Vec<String>> {
     fn get_ref(&self, row: usize, column: usize) -> Option<&str> {
         if let Some(r) = self.get(row) {
             if let Some(c) = r.get(column) {

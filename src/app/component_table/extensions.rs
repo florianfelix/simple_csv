@@ -3,7 +3,30 @@ use std::path::PathBuf;
 
 use text_buffer::Buffer;
 
-pub trait RowsExt {
+pub trait RowExt {
+    fn move_right(&mut self, col: usize) -> Option<usize>;
+    fn move_left(&mut self, col: usize) -> Option<usize>;
+}
+
+impl<T> RowExt for Vec<T> {
+    fn move_left(&mut self, col: usize) -> Option<usize> {
+        if col > 0 {
+            self.swap(col, col - 1);
+            return Some(col - 1);
+        }
+        None
+    }
+    fn move_right(&mut self, col: usize) -> Option<usize> {
+        let col_right = col + 1;
+        if col_right < self.len() {
+            self.swap(col, col_right);
+            return Some(col_right);
+        }
+        None
+    }
+}
+
+pub trait TableExt {
     fn append_column(&mut self);
     fn get_ref(&self, row: usize, column: usize) -> Option<&str>;
     fn get_owned(&self, row: usize, column: usize) -> Option<String>;
@@ -11,9 +34,39 @@ pub trait RowsExt {
     fn column_widths_min(&self, widths: Vec<u16>) -> Vec<u16>;
     fn is_valid_coords(&self, row: usize, col: usize) -> bool;
     fn get_column(&self, col: usize) -> Vec<String>;
+    fn move_column_right(&mut self, col: usize) -> Option<usize>;
+    fn move_column_left(&mut self, col: usize) -> Option<usize>;
+    fn width(&self) -> usize;
 }
 
-impl RowsExt for Vec<Vec<String>> {
+impl TableExt for Vec<Vec<String>> {
+    fn width(&self) -> usize {
+        if let Some(row) = self.first() {
+            row.len()
+        } else {
+            0
+        }
+    }
+    fn move_column_right(&mut self, col: usize) -> Option<usize> {
+        let col_right = col + 1;
+        if col_right < self.width() {
+            for row in self.iter_mut() {
+                row.swap(col, col_right);
+            }
+            return Some(col_right);
+        }
+        None
+    }
+    fn move_column_left(&mut self, col: usize) -> Option<usize> {
+        if col > 0 {
+            for row in self.iter_mut() {
+                row.swap(col, col - 1);
+            }
+            return Some(col - 1);
+        }
+        None
+    }
+
     fn append_column(&mut self) {
         for row in self.iter_mut() {
             row.push(String::new());

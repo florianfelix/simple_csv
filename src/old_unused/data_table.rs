@@ -27,7 +27,7 @@ use crate::backend::{
     },
     tasks::events::IoCommand,
 };
-use extensions::{BufferExt, RowsExt};
+use extensions::{BufferExt, TableExt};
 
 #[derive(Default, Debug, Clone)]
 pub enum EditTarget {

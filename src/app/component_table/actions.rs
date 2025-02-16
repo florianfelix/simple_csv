@@ -1,7 +1,11 @@
 use itertools::Itertools;
 use text_buffer::Buffer;
 
-use super::{extensions::RowsExt, skim::Skim, DataTable, EditTarget};
+use super::{
+    extensions::{RowExt, TableExt},
+    skim::Skim,
+    DataTable, EditTarget,
+};
 
 impl DataTable {
     pub fn edit_column_name(&mut self) {
@@ -114,6 +118,24 @@ impl DataTable {
         self.headers.push(String::from("NewColumn"));
         self.rows.append_column();
         self.table_state.select_column(Some(self.width()));
+    }
+    pub fn move_column_right(&mut self) {
+        if let Some(col) = self.table_state.selected_column() {
+            let col_right = self.rows.move_column_right(col);
+            if col_right.is_some() {
+                self.headers.move_right(col);
+                self.table_state.select_column(col_right);
+            }
+        }
+    }
+    pub fn move_column_left(&mut self) {
+        if let Some(col) = self.table_state.selected_column() {
+            let col_left = self.rows.move_column_left(col);
+            if col_left.is_some() {
+                self.headers.move_left(col);
+                self.table_state.select_column(col_left);
+            }
+        }
     }
 }
 

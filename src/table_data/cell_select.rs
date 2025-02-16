@@ -1,7 +1,7 @@
 #[allow(unused)]
 use tracing::info;
 
-use super::{data_table::DataTable, RowsExt};
+use super::{data_table::DataTable, TableExt};
 
 impl DataTable {
     pub fn select_cell_right(&mut self) {

@@ -8,7 +8,7 @@ use ratatui::{
 };
 
 use super::{
-    extensions::{BufferExt, RowsExt},
+    extensions::{BufferExt, TableExt},
     DataTable, EditTarget,
 };
 

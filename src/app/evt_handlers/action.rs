@@ -22,6 +22,8 @@ pub enum Action {
     SelectCellDown,
     SelectFirstRow,
     SelectLastRow,
+    MoveColumnRight,
+    MoveColumnLeft,
     ConfirmSelectCellRight,
     ConfirmSelectCellLeft,
     ConfirmSelectCellUp,
@@ -60,6 +62,8 @@ impl App {
             SelectCellDown => self.data.select_cell_down(),
             SelectFirstRow => self.data.table_state.select_first(),
             SelectLastRow => self.data.table_state.select_last(),
+            MoveColumnRight => self.data.move_column_right(),
+            MoveColumnLeft => self.data.move_column_left(),
             ConfirmSelectCellRight => {
                 self.data.apply_edit();
                 self.data.select_cell_right();

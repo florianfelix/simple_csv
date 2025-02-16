@@ -13,6 +13,8 @@ normal:
   left: SelectCellLeft
   up: SelectCellUp
   down: SelectCellDown
+  alt-right: MoveColumnRight
+  alt-left: MoveColumnLeft
   "?": ToggleKeyBindingsDisplay
 edit:
   enter: ApplyEdit
