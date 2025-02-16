@@ -5,6 +5,6 @@ use clio::*;
 #[derive(Parser, Debug, Clone)]
 pub struct Cli {
     pub path: Option<ClioPath>,
-    #[clap(value_parser, default_value = ";")]
+    #[clap(value_parser, default_value = ",")]
     pub delim: char,
 }

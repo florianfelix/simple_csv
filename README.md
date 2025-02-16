@@ -1,6 +1,7 @@
 # Simple Csv Terminal Application
 tui app to quickly create/edit small csv tables
 the main drawback is that atm all values are treated as strings.
+Typed columns maybe later.
 
 ## Install
 `cargo install --git <thisrepo> --locked`
@@ -8,7 +9,7 @@ the main drawback is that atm all values are treated as strings.
 ## Usage
 `scsv <filename> <delimiter>`
 
-if <delimiter> is ommitted the default delimiter is <;> for now
+if <delimiter> is ommitted the default delimiter is <,> for now
 
 ### export
 - csv: ctrl-s
@@ -26,7 +27,7 @@ if <delimiter> is ommitted the default delimiter is <;> for now
 | enter | EditCell |
 | r | AppendRow |
 | c | AppendColumn |
-| h | EditHeader |
+| v | EditHeader |
 | f | EditFileName |
 | ctrl-s | Save |
 | ctrl-t | SaveToml |
@@ -38,6 +39,10 @@ if <delimiter> is ommitted the default delimiter is <;> for now
 | left | SelectCellLeft |
 | up | SelectCellUp |
 | down | SelectCellDown |
+| h | SelectCellLeft |
+| j | SelectCellDown |
+| k | SelectCellUp |
+| l | SelectCellRight |
 | alt-right | MoveColumnRight |
 | alt-left | MoveColumnLeft |
 | alt-up | MoveRowUp |

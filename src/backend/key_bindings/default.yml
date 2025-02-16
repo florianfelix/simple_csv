@@ -4,7 +4,7 @@ normal:
   enter: EditCell
   r: AppendRow
   c: AppendColumn
-  h: EditHeader
+  v: EditHeader
   f: EditFileName
   ctrl-s: Save
   ctrl-t: SaveToml
@@ -16,6 +16,10 @@ normal:
   left: SelectCellLeft
   up: SelectCellUp
   down: SelectCellDown
+  l: SelectCellRight
+  h: SelectCellLeft
+  k: SelectCellUp
+  j: SelectCellDown
   alt-right: MoveColumnRight
   alt-left: MoveColumnLeft
   alt-up: MoveRowUp
