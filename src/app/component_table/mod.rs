@@ -1,3 +1,4 @@
+use dataframe::DataFrame;
 use ratatui::widgets::TableState;
 use std::path::PathBuf;
 
@@ -27,6 +28,7 @@ pub enum EditTarget {
 
 #[derive(Debug)]
 pub struct DataTable {
+    pub df: DataFrame,
     pub headers: Vec<String>,
     pub rows: Vec<Vec<String>>,
     pub table_state: TableState,
@@ -42,6 +44,7 @@ pub struct DataTable {
 impl Default for DataTable {
     fn default() -> Self {
         Self {
+            df: DataFrame::default(),
             headers: vec![String::from("key"), String::from("value")],
             rows: vec![vec![String::from(""), String::from("")]],
             table_state: TableState::default(),

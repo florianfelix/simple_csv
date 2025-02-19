@@ -1,5 +1,4 @@
 use crokey::Combiner;
-use dataframe::DataFrame;
 use ratatui::{text::Line, Frame};
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::info;
@@ -26,7 +25,6 @@ pub struct App {
     pub io_command_sender: UnboundedSender<IoCommand>,
     pub running: bool,
     pub data: DataTable,
-    pub df: DataFrame,
     pub io_error: Option<IoCommandError>,
     pub show_key_bindings: bool,
     pub key_bindings_display: KeyBindingsDisplay,
@@ -65,7 +63,6 @@ impl App {
             io_command_sender,
             running: true,
             data: DataTable::default(),
-            df: DataFrame::default(),
             io_error: None,
             show_key_bindings: false,
             key_bindings_display: KeyBindingsDisplay::default(),
