@@ -1,5 +1,5 @@
 [[rows]]
-Index = 1
+Index = 13
 "User Id" = "88F7B33d2bcf9f5"
 "First Name" = "Shelby"
 "Last Name" = "Terrell"
@@ -85,14 +85,3 @@ Email = "wyattbishop@example.com"
 Phone = "001-447-699-7998x88612"
 "Date of birth" = "1924-03-26"
 "Job Title" = "Hydrogeologist"
-
-[[rows]]
-Index = 9
-"User Id" = "baDcC4DeefD8dEB"
-"First Name" = "Dave"
-"Last Name" = "Farrell"
-Sex = "Male"
-Email = "nmccann@example.net"
-Phone = "603-428-2429x27392"
-"Date of birth" = "2018-10-06"
-"Job Title" = "Lawyer"
