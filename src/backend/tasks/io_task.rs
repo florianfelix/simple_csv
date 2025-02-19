@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use dataframe::DataFrame;
 use tokio::sync::mpsc;
 
 #[allow(unused)]
@@ -30,7 +31,7 @@ pub async fn io_task(
                         event_sender.send(BackendEvent::IoEvent(evt)).unwrap();
                     },
                     IoCommand::SaveCsv(data) => {
-                        let content = data.data_to_string().unwrap();
+                        let content = DataFrame::to_csv(&data.df).unwrap();
                         save_file(&data.path.unwrap_or(PathBuf::from("export.csv")), &content).await.unwrap();
                         event_sender.send(BackendEvent::IoEvent(IoEvent::SavedCsv)).unwrap();
                     }

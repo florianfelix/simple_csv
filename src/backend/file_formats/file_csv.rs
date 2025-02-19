@@ -1,11 +1,7 @@
-use csv::WriterBuilder;
-use itertools::Itertools;
+use dataframe::DataFrame;
 use std::path::PathBuf;
 
-use crate::{
-    backend::{utils::read_file, IoCommandError, IoCommandResult},
-    AppResult,
-};
+use crate::backend::{utils::read_file, IoCommandError, IoCommandResult};
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvData {
@@ -15,8 +11,8 @@ pub struct CsvData {
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvDescription {
+    pub df: DataFrame,
     pub errors: Vec<String>,
-    pub data: CsvData,
     pub path: Option<PathBuf>,
     pub delim: char,
 }
@@ -29,56 +25,29 @@ pub async fn load_csv(path: PathBuf, delim: char) -> IoCommandResult<CsvDescript
             error: e.to_string(),
         }),
         Ok(res) => {
-            let input: &[u8] = res.as_bytes();
-            let mut rdr = csv::ReaderBuilder::default()
-                .delimiter(delim as u8)
-                .trim(csv::Trim::All)
-                .has_headers(true)
-                // .flexible(true)
-                .from_reader(input);
-
-            let mut rows: Vec<Vec<String>> = vec![];
-            let mut errors: Vec<String> = vec![];
-
-            let headers = rdr
-                .headers()
-                .map_err(|e| errors.push(format!("{:#?}", e)))
-                .unwrap();
-
-            let headers = headers.iter().map(|h| h.to_string()).collect_vec();
-
-            for res in rdr.deserialize::<Vec<String>>() {
-                match res {
-                    Ok(record) => rows.push(record),
-                    Err(e) => {
-                        // error!("{:#?}", &e);
-                        errors.push(format!("{}", e));
-                    }
-                }
-            }
-            let data = CsvData { headers, rows };
+            let data_frame_csv_result = DataFrame::parsed_from_csv(&res, delim)?;
 
             Ok(CsvDescription {
-                errors,
-                data,
                 path: Some(path),
                 delim,
+                df: data_frame_csv_result.df,
+                errors: data_frame_csv_result.errors,
             })
         }
     }
 }
 
-impl CsvDescription {
-    pub fn data_to_string(&self) -> AppResult<String> {
-        let mut wtr = WriterBuilder::new()
-            .delimiter(self.delim as u8)
-            .from_writer(vec![]);
-        wtr.write_record(self.data.headers.clone())?;
+// impl CsvDescription {
+//     pub fn data_to_string(&self) -> AppResult<String> {
+//         let mut wtr = WriterBuilder::new()
+//             .delimiter(self.delim as u8)
+//             .from_writer(vec![]);
+//         wtr.write_record(self.data.headers.clone())?;
 
-        for row in self.data.rows.clone() {
-            wtr.write_record(row)?;
-        }
-        let data = String::from_utf8(wtr.into_inner()?)?;
-        Ok(data)
-    }
-}
+//         for row in self.data.rows.clone() {
+//             wtr.write_record(row)?;
+//         }
+//         let data = String::from_utf8(wtr.into_inner()?)?;
+//         Ok(data)
+//     }
+// }

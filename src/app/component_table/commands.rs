@@ -4,10 +4,7 @@ use indexmap::IndexMap;
 use itertools::Itertools;
 
 use crate::backend::{
-    file_formats::{
-        file_csv::{CsvData, CsvDescription},
-        file_multi::FileDescription,
-    },
+    file_formats::{file_csv::CsvDescription, file_multi::FileDescription},
     tasks::events::IoCommand,
 };
 
@@ -15,12 +12,12 @@ use super::DataTable;
 
 impl DataTable {
     pub fn save_csv_command(&self) -> IoCommand {
-        let data = CsvData {
-            headers: self.headers.clone(),
-            rows: self.rows.clone(),
-        };
+        // let data = CsvData {
+        //     headers: self.headers.clone(),
+        //     rows: self.rows.clone(),
+        // };
         IoCommand::SaveCsv(CsvDescription {
-            data,
+            df: self.df.clone(),
             delim: self.delim,
             errors: vec![],
             path: self.path.clone(),

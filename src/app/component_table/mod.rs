@@ -64,11 +64,13 @@ impl From<CsvDescription> for DataTable {
     fn from(csv_description: CsvDescription) -> Self {
         let mut data_table = DataTable::default();
 
-        data_table.headers = csv_description.data.headers;
-        data_table.rows = csv_description.data.rows;
+        data_table.df = csv_description.df;
+        data_table.parse_errors = csv_description.errors;
+
+        // data_table.headers = csv_description.data.headers;
+        // data_table.rows = csv_description.data.rows;
         data_table.path = csv_description.path;
         data_table.delim = csv_description.delim;
-        data_table.parse_errors = csv_description.errors;
         data_table
     }
 }
