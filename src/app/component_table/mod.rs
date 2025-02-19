@@ -28,8 +28,6 @@ pub enum EditTarget {
 #[derive(Debug)]
 pub struct DataTable {
     pub df: DataFrame,
-    // pub headers: Vec<String>,
-    // pub rows: Vec<Vec<String>>,
     pub table_state: TableState,
     pub textbuffer: text_buffer::Buffer,
     pub edit_target: EditTarget,
@@ -44,8 +42,6 @@ impl Default for DataTable {
     fn default() -> Self {
         Self {
             df: DataFrame::default(),
-            // headers: vec![String::from("key"), String::from("value")],
-            // rows: vec![vec![String::from(""), String::from("")]],
             table_state: TableState::default(),
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
@@ -66,8 +62,6 @@ impl From<CsvDescription> for DataTable {
         data_table.df = csv_description.df;
         data_table.parse_errors = csv_description.errors;
 
-        // data_table.headers = csv_description.data.headers;
-        // data_table.rows = csv_description.data.rows;
         data_table.path = csv_description.path;
         data_table.delim = csv_description.delim;
         data_table

@@ -1,8 +1,5 @@
 use std::path::PathBuf;
 
-use indexmap::IndexMap;
-use itertools::Itertools;
-
 use crate::backend::{
     file_formats::{file_csv::CsvDescription, file_multi::FileDescription},
     tasks::events::IoCommand,
@@ -12,10 +9,6 @@ use super::DataTable;
 
 impl DataTable {
     pub fn save_csv_command(&self) -> IoCommand {
-        // let data = CsvData {
-        //     headers: self.headers.clone(),
-        //     rows: self.rows.clone(),
-        // };
         IoCommand::SaveCsv(CsvDescription {
             df: self.df.clone(),
             delim: self.delim,
@@ -25,17 +18,6 @@ impl DataTable {
     }
 
     pub fn save_json_command(&self) -> IoCommand {
-        // let rows = self
-        //     .rows
-        //     .iter()
-        //     .map(|row| {
-        //         let mut map = IndexMap::new();
-        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-        //             map.insert(k, v.to_owned());
-        //         });
-        //         map
-        //     })
-        //     .collect_vec();
         let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {
@@ -49,17 +31,6 @@ impl DataTable {
     }
 
     pub fn save_yml_command(&self) -> IoCommand {
-        // let rows = self
-        //     .rows
-        //     .iter()
-        //     .map(|row| {
-        //         let mut map = IndexMap::new();
-        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-        //             map.insert(k, v.to_owned());
-        //         });
-        //         map
-        //     })
-        //     .collect_vec();
         let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {
@@ -73,17 +44,6 @@ impl DataTable {
     }
 
     pub fn save_ron_command(&self) -> IoCommand {
-        // let rows = self
-        //     .rows
-        //     .iter()
-        //     .map(|row| {
-        //         let mut map = IndexMap::new();
-        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-        //             map.insert(k, v.to_owned());
-        //         });
-        //         map
-        //     })
-        //     .collect_vec();
         let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {
@@ -97,17 +57,6 @@ impl DataTable {
     }
 
     pub fn save_toml_command(&self) -> IoCommand {
-        // let data = self
-        //     .rows
-        //     .iter()
-        //     .map(|row| {
-        //         let mut map = IndexMap::new();
-        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-        //             map.insert(k, v.to_owned());
-        //         });
-        //         map
-        //     })
-        //     .collect_vec();
         let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {

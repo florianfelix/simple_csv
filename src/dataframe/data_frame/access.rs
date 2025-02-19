@@ -49,7 +49,6 @@ impl DataFrame {
         if self.is_valid(row, col) {
             let dtype_col = self.dtype_column(col).expect("col to be in range");
             let value = dtype_col.parse(value);
-            info!("ParseSet {row}, {col} {:?}", value);
             self.set(row, col, value);
         }
     }
@@ -64,7 +63,6 @@ impl DataFrame {
                     .set_dtype(value.dtype());
             }
             if dtype_col == value.dtype() {
-                info!("Set {row}, {col} {:#?}", value);
                 let row = self.rows.get_mut(row).expect("row to be in range");
                 let v = row.get_mut(col).expect("col to be in range");
                 *v = value;

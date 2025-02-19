@@ -19,7 +19,7 @@ impl App {
                 _ => {
                     self.intercept_edits(&key_event);
                     if let Some(action) = self.key_bindings.edit.get(&key_combination) {
-                        info!("Edit {:#?}", action);
+                        // info!("Edit {:#?}", action);
                         self.perform_action(action.clone());
                     }
                 }

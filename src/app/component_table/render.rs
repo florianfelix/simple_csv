@@ -83,11 +83,7 @@ impl DataTable {
             self.textbuffer.cursor().chars()
         );
 
-        let title = format!(
-            "{path:}  -  help(<?>) {:?} {:?}",
-            self.table_state.selected_cell(),
-            self.edit_target
-        );
+        let title = format!("{path:}  -  help(<?>)");
         let bottom_title = match self.edit_target {
             EditTarget::None => String::from(
                 "help: ?, new column: c, rename column: h, new row: r, rename file: f, save: ctrl-s, quit: q or ctrl-c",
