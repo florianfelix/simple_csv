@@ -110,7 +110,7 @@ impl DataTable {
         self.table_state.select(Some(self.df.height()));
     }
     pub fn append_column(&mut self) {
-        self.df.append_empty_column(DataType::Null);
+        self.df.append_empty_column(DataType::String);
         self.table_state.select_column(Some(self.df.width()));
     }
     pub fn move_column_right(&mut self) {
@@ -194,7 +194,7 @@ impl DataTable {
         }
     }
     pub fn append_column_named(&mut self, name: &str) {
-        self.df.append_empty_column_named(DataType::Null, name);
+        self.df.append_empty_column_named(DataType::String, name);
     }
     fn set_column_name(&mut self, col: usize, name: String) {
         self.df.header_set(col, name);

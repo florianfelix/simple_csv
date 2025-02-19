@@ -36,6 +36,6 @@ impl Header {
 }
 impl std::fmt::Display for Header {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.name)
+        write!(f, "{} <{:?}>", self.name, self.dtype)
     }
 }

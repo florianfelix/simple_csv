@@ -4,6 +4,20 @@ use tracing::info;
 use super::DataTable;
 
 impl DataTable {
+    fn select_cell(&mut self, pos: Option<(usize, usize)>) {
+        if let Some((row, col)) = pos {
+            if self.df.is_valid(row, col) {
+                self.table_state.select_cell(Some((row, col)));
+                self.active_header = Some(
+                    self.df
+                        .headers()
+                        .get(col)
+                        .expect("col to be valid")
+                        .to_owned(),
+                );
+            }
+        }
+    }
     pub fn select_cell_right(&mut self) {
         if let Some((row, col)) = self.table_state.selected_cell() {
             let col: usize = {
@@ -15,10 +29,10 @@ impl DataTable {
                 }
             };
             if self.df.is_valid(row, col) {
-                self.table_state.select_cell(Some((row, col)));
+                self.select_cell(Some((row, col)));
             }
         } else {
-            self.table_state.select_cell(Some((0, 0)));
+            self.select_cell(Some((0, 0)));
         }
     }
     pub fn select_cell_left(&mut self) {
@@ -31,10 +45,10 @@ impl DataTable {
                 }
             };
             if self.df.is_valid(row, col) {
-                self.table_state.select_cell(Some((row, col)));
+                self.select_cell(Some((row, col)));
             }
         } else {
-            self.table_state.select_cell(Some((0, 0)));
+            self.select_cell(Some((0, 0)));
         }
     }
 
@@ -49,10 +63,10 @@ impl DataTable {
                 }
             };
             if self.df.is_valid(row, col) {
-                self.table_state.select_cell(Some((row, col)));
+                self.select_cell(Some((row, col)));
             }
         } else {
-            self.table_state.select_cell(Some((0, 0)));
+            self.select_cell(Some((0, 0)));
         }
     }
 
@@ -66,10 +80,10 @@ impl DataTable {
                 }
             };
             if self.df.is_valid(row, col) {
-                self.table_state.select_cell(Some((row, col)));
+                self.select_cell(Some((row, col)));
             }
         } else {
-            self.table_state.select_cell(Some((0, 0)));
+            self.select_cell(Some((0, 0)));
         }
     }
 }

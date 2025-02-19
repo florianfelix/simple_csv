@@ -14,7 +14,10 @@ use text_buffer::Buffer;
 #[allow(unused)]
 use tracing::info;
 
-use crate::{backend::file_formats::file_csv::CsvDescription, dataframe::DataFrame};
+use crate::{
+    backend::file_formats::file_csv::CsvDescription,
+    dataframe::{DataFrame, Header},
+};
 
 #[derive(Default, Debug, Clone)]
 pub enum EditTarget {
@@ -31,6 +34,7 @@ pub struct DataTable {
     pub table_state: TableState,
     pub textbuffer: text_buffer::Buffer,
     pub edit_target: EditTarget,
+    pub active_header: Option<Header>,
     pub skim: Option<Skim>,
     pub path: Option<PathBuf>,
     pub delim: char,
@@ -45,6 +49,7 @@ impl Default for DataTable {
             table_state: TableState::default(),
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
+            active_header: None,
             skim: None,
             path: Some(PathBuf::from("new.csv")),
             delim: ';',

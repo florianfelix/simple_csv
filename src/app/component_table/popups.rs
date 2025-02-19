@@ -1,5 +1,6 @@
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
+    style::{Style, Stylize},
     widgets::{Block, Borders, Clear, Paragraph, Wrap},
     Frame,
 };
@@ -20,7 +21,14 @@ impl DataTable {
             [Constraint::Percentage(70), Constraint::Fill(1)],
         )
         .areas(popup_area);
-        let block = Block::new().borders(Borders::all());
+        let title_bottom = match self.active_header {
+            Some(ref header) => header.to_string(),
+            None => "No Header Selected".to_string(),
+        };
+        let block = Block::new()
+            .borders(Borders::all())
+            .title_bottom(title_bottom)
+            .title_style(Style::default().dim());
         let txt = Paragraph::new(self.textbuffer.to_cursor_string())
             .wrap(Wrap { trim: true })
             .block(block);

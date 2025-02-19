@@ -54,18 +54,14 @@ impl DataFrame {
     }
     pub fn set(&mut self, row: usize, col: usize, value: impl Into<DataValue>) {
         let value: DataValue = value.into();
+        info!("Setting DataValue {:?}", value);
         if self.is_valid(row, col) {
             let dtype_col = self.dtype_column(col).expect("col to be in range");
-            if dtype_col == DataType::Null {
-                self.headers
-                    .get_mut(col)
-                    .expect("col to be in range")
-                    .set_dtype(value.dtype());
-            }
+
             if dtype_col == value.dtype() {
                 let row = self.rows.get_mut(row).expect("row to be in range");
                 let v = row.get_mut(col).expect("col to be in range");
-                *v = value;
+                *v = value.clone();
             }
         }
     }
