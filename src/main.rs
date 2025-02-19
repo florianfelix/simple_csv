@@ -9,6 +9,7 @@ pub use error::{AppError, AppResult};
 
 pub mod app;
 pub mod backend;
+pub mod dataframe;
 mod error;
 pub mod tui;
 pub mod utils;

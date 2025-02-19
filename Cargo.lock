@@ -404,18 +404,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dataframe"
-version = "0.1.0"
-dependencies = [
- "csv",
- "indexmap",
- "itertools 0.14.0",
- "ron",
- "serde",
- "stacked_errors",
-]
-
-[[package]]
 name = "derive-where"
 version = "1.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1032,12 +1020,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
 
 [[package]]
-name = "owo-colors"
-version = "4.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fb37767f6569cd834a413442455e0f066d0d522de8630436e2a1761d9726ba56"
-
-[[package]]
 name = "parking_lot"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1459,7 +1441,6 @@ dependencies = [
  "crokey",
  "crossterm",
  "csv",
- "dataframe",
  "derive_setters",
  "directories",
  "futures",
@@ -1491,12 +1472,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "smallbox"
-version = "0.8.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43d92e0947c1c04c508c9fd39608a1557226141410fd33b5b314d73fa76508d3"
-
-[[package]]
 name = "smallvec"
 version = "1.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1510,18 +1485,6 @@ checksum = "c970269d99b64e60ec3bd6ad27270092a5394c4e309314b18ae3fe575695fbe8"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
-]
-
-[[package]]
-name = "stacked_errors"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2fc648e4e1100d677001e8c738f1eb387943a0dd9efce05a97d32817e71cf57"
-dependencies = [
- "owo-colors",
- "smallbox",
- "thin-vec",
- "thiserror",
 ]
 
 [[package]]
@@ -1616,12 +1579,6 @@ dependencies = [
  "smallvec",
  "str_indices",
 ]
-
-[[package]]
-name = "thin-vec"
-version = "0.2.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a38c90d48152c236a3ab59271da4f4ae63d678c5d7ad6b7714d7cb9760be5e4b"
 
 [[package]]
 name = "thiserror"

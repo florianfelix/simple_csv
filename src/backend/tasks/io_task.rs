@@ -1,14 +1,16 @@
 use std::path::PathBuf;
 
-use dataframe::DataFrame;
 use tokio::sync::mpsc;
 
 #[allow(unused)]
 use tracing::info;
 
-use crate::backend::{
-    file_formats::file_csv::load_csv, key_bindings::KeyBindings, tasks::events::IoEvent,
-    utils::save_file,
+use crate::{
+    backend::{
+        file_formats::file_csv::load_csv, key_bindings::KeyBindings, tasks::events::IoEvent,
+        utils::save_file,
+    },
+    dataframe::DataFrame,
 };
 
 use super::events::{BackendEvent, IoCommand};

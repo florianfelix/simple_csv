@@ -12,7 +12,7 @@ impl App {
             match self.data.edit_target {
                 EditTarget::None => {
                     if let Some(action) = self.key_bindings.normal.get(&key_combination) {
-                        info!("Normal {:#?}", action);
+                        // info!("Normal {:#?}", action);
                         self.perform_action(action.clone());
                     }
                 }

@@ -1,5 +1,5 @@
 [[rows]]
-Index = "1"
+Index = 1
 "User Id" = "88F7B33d2bcf9f5"
 "First Name" = "Shelby"
 "Last Name" = "Terrell"
@@ -10,7 +10,7 @@ Phone = "001-084-906-7849x73518"
 "Job Title" = "Games developer"
 
 [[rows]]
-Index = "2"
+Index = 2
 "User Id" = "f90cD3E76f1A9b9"
 "First Name" = "Phillip"
 "Last Name" = "Summers"
@@ -21,7 +21,7 @@ Phone = "214.112.6044x4913"
 "Job Title" = "Phytotherapist"
 
 [[rows]]
-Index = "3"
+Index = 3
 "User Id" = "DbeAb8CcdfeFC2c"
 "First Name" = "Kristine"
 "Last Name" = "Travis"
@@ -32,7 +32,7 @@ Phone = "277.609.7938"
 "Job Title" = "Homeopath"
 
 [[rows]]
-Index = "4"
+Index = 4
 "User Id" = "A31Bee3c201ef58"
 "First Name" = "Yesenia"
 "Last Name" = "Martinez"
@@ -43,7 +43,7 @@ Phone = "584.094.6111"
 "Job Title" = "Market researcher"
 
 [[rows]]
-Index = "5"
+Index = 5
 "User Id" = "1bA7A3dc874da3c"
 "First Name" = "Lori"
 "Last Name" = "Todd"
@@ -54,7 +54,7 @@ Phone = "689-207-3558x7233"
 "Job Title" = "Veterinary surgeon"
 
 [[rows]]
-Index = "6"
+Index = 6
 "User Id" = "bfDD7CDEF5D865B"
 "First Name" = "Erin"
 "Last Name" = "Day"
@@ -65,7 +65,7 @@ Phone = "001-171-649-9856x5553"
 "Job Title" = "Waste management officer"
 
 [[rows]]
-Index = "7"
+Index = 7
 "User Id" = "bE9EEf34cB72AF7"
 "First Name" = "Katherine"
 "Last Name" = "Buck"
@@ -76,7 +76,7 @@ Phone = "+1-773-151-6685x49162"
 "Job Title" = "Intelligence analyst"
 
 [[rows]]
-Index = "8"
+Index = 8
 "User Id" = "2EFC6A4e77FaEaC"
 "First Name" = "Ricardo"
 "Last Name" = "Hinton"
@@ -87,7 +87,7 @@ Phone = "001-447-699-7998x88612"
 "Job Title" = "Hydrogeologist"
 
 [[rows]]
-Index = "9"
+Index = 9
 "User Id" = "baDcC4DeefD8dEB"
 "First Name" = "Dave"
 "Last Name" = "Farrell"

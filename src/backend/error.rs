@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use dataframe::FrameError;
+use crate::dataframe::FrameError;
 
 pub type IoCommandResult<T> = std::result::Result<T, IoCommandError>;
 

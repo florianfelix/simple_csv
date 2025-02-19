@@ -3,13 +3,14 @@ use std::path::PathBuf;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
-use crate::AppResult;
+use crate::{dataframe::DataValue, AppResult};
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct FileDescription {
     #[serde(skip)]
     pub path: PathBuf,
-    pub rows: Vec<IndexMap<String, String>>,
+    pub rows: Vec<IndexMap<String, DataValue>>,
+    // pub rows: Vec<IndexMap<String, String>>,
 }
 
 impl FileDescription {

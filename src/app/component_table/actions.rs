@@ -1,6 +1,8 @@
 use itertools::Itertools;
 use text_buffer::Buffer;
 
+use crate::dataframe::DataType;
+
 use super::{
     extensions::{RowExt, TableExt},
     skim::Skim,
@@ -21,7 +23,7 @@ impl DataTable {
             self.edit_target = EditTarget::Cell((row, col));
             self.textbuffer = Buffer::from(self.cell_get_row_col(row, col));
             self.textbuffer.set_cursor(self.textbuffer.len_chars());
-            let mut sk = Skim::new(self.textbuffer.as_str(), self.rows.get_column(col));
+            let mut sk = Skim::new(self.textbuffer.as_str(), self.df.column_get_print(col));
             sk.update(self.textbuffer.as_str());
             self.skim = Some(sk);
         }
@@ -111,45 +113,49 @@ impl DataTable {
         }
     }
     pub fn append_row(&mut self) {
-        self.rows.push(vec![String::new(); self.width()]);
-        self.table_state.select(Some(self.height()));
+        self.df.append_empty_row();
+        // self.rows.push(vec![String::new(); self.width()]);
+        self.table_state.select(Some(self.df.height()));
     }
     pub fn append_column(&mut self) {
-        self.headers.push(String::from("NewColumn"));
-        self.rows.append_column();
-        self.table_state.select_column(Some(self.width()));
+        self.df.append_empty_column(DataType::Null);
+        // self.headers.push(String::from("NewColumn"));
+        // self.rows.append_column();
+        self.table_state.select_column(Some(self.df.width()));
     }
     pub fn move_column_right(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
-            let col_right = self.rows.move_column_right(col);
+            let col_right = self.df.move_column_right(col);
+            // let col_right = self.rows.move_column_right(col);
             if col_right.is_some() {
-                self.headers.move_right(col);
+                // self.headers.move_right(col);
                 self.table_state.select_column(col_right);
             }
         }
     }
     pub fn move_column_left(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
-            let col_left = self.rows.move_column_left(col);
+            let col_left = self.df.move_column_left(col);
+            // let col_left = self.rows.move_column_left(col);
             if col_left.is_some() {
-                self.headers.move_left(col);
+                // self.headers.move_left(col);
                 self.table_state.select_column(col_left);
             }
         }
     }
     pub fn sort_by_column(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
-            self.rows.sort(col);
+            self.df.column_sort(col);
         }
     }
     pub fn sort_by_column_reversed(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
-            self.rows.sort_reversed(col);
+            self.df.column_sort_desc(col);
         }
     }
     pub fn move_row_down(&mut self) {
         if let Some(row) = self.table_state.selected() {
-            let moved_to = self.rows.move_right(row);
+            let moved_to = self.df.move_row_down(row);
             if moved_to.is_some() {
                 self.table_state.select(moved_to);
             }
@@ -157,7 +163,7 @@ impl DataTable {
     }
     pub fn move_row_up(&mut self) {
         if let Some(row) = self.table_state.selected() {
-            let moved_to = self.rows.move_left(row);
+            let moved_to = self.df.move_row_up(row);
             if moved_to.is_some() {
                 self.table_state.select(moved_to);
             }
@@ -165,13 +171,14 @@ impl DataTable {
     }
     pub fn delete_row(&mut self) {
         if let Some(row) = self.table_state.selected() {
-            self.rows.delete_row(row);
+            self.df.remove_row(row);
         }
     }
     pub fn delete_column(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
-            self.rows.delete_column(col);
-            self.headers.remove(col);
+            self.df.remove_column(col);
+            // self.rows.delete_column(col);
+            // self.headers.remove(col);
         }
     }
 }
@@ -182,50 +189,46 @@ impl DataTable {
         self.parse_errors = vec![];
     }
     fn cell_set_row_col(&mut self, row: usize, col: usize, content: String) {
-        if self.rows.is_valid_coords(row, col) {
-            self.rows.set_content(row, col, content);
+        if self.df.is_valid(row, col) {
+            self.df.parse_set(row, col, &content);
         }
         self.set_dirty();
     }
     fn cell_get_row_col(&self, row: usize, col: usize) -> String {
-        if self.rows.is_valid_coords(row, col) {
-            self.rows.get_owned(row, col).unwrap_or_default()
+        if self.df.is_valid(row, col) {
+            self.df.get_print(row, col)
         } else {
             // should never happen
             String::new()
         }
     }
     fn cell_get_header(&self, col: usize) -> String {
-        if col <= self.width() {
-            self.headers.get(col).unwrap().to_owned()
+        if col <= self.df.width() {
+            self.df.headers().get(col).unwrap().name().to_owned()
         } else {
             String::new()
         }
     }
 
     pub fn append_column_named(&mut self, name: &str) {
-        self.headers.push(String::from(name));
-        self.rows.append_column();
+        self.df.append_empty_column_named(DataType::Null, name);
+        // self.headers.push(String::from(name));
+        // self.rows.append_column();
     }
-    fn set_column_name(&mut self, col: usize, content: String) {
-        let value = self.headers.get_mut(col).unwrap();
-        *value = content;
+    fn set_column_name(&mut self, col: usize, name: String) {
+        self.df.header_set(col, name);
     }
 
-    pub fn height(&self) -> usize {
-        self.rows.len()
-    }
-    pub fn width(&self) -> usize {
-        self.headers.len()
-    }
-    pub fn has_data(&self) -> bool {
-        self.height() > 0 && self.width() > 0
-    }
+    // pub fn height(&self) -> usize {
+    //     self.rows.len()
+    // }
+    // pub fn width(&self) -> usize {
+    //     self.headers.len()
+    // }
+    // pub fn has_data(&self) -> bool {
+    //     self.height() > 0 && self.width() > 0
+    // }
     pub fn header_widths(&self) -> Vec<u16> {
-        self.headers
-            .clone()
-            .into_iter()
-            .map(|h| h.len() as u16)
-            .collect_vec()
+        self.df.min_header_widths()
     }
 }

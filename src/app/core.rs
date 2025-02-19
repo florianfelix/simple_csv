@@ -42,7 +42,7 @@ impl App {
             return;
         }
 
-        if self.data.width() > 0 {
+        if self.data.df.width() > 0 {
             self.data.render(frame, area);
         } else if let Some(e) = &self.io_error {
             let txt = Line::from(e.to_string());

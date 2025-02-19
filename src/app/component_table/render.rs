@@ -7,10 +7,7 @@ use ratatui::{
     Frame,
 };
 
-use super::{
-    extensions::{BufferExt, TableExt},
-    DataTable, EditTarget,
-};
+use super::{extensions::BufferExt, DataTable, EditTarget};
 
 impl DataTable {
     pub fn render(&mut self, frame: &mut Frame, area: Rect) {
@@ -44,18 +41,19 @@ impl DataTable {
 impl DataTable {
     pub fn rat_row_header(&self) -> widgets::Row<'static> {
         let cells = self
-            .headers
+            .df
+            .headers()
             .iter()
-            .map(|s| widgets::Cell::new(Text::raw(s.to_owned())))
+            .map(|s| widgets::Cell::new(Text::raw(s.name().to_owned())))
             .collect_vec();
         widgets::Row::new(cells).bold()
     }
     pub fn rat_rows(&self) -> Vec<widgets::Row<'static>> {
         let mut rows = vec![];
-        for (i, r) in self.rows.iter().enumerate() {
+        for (i, r) in self.df.rows().iter().enumerate() {
             let cells = r
                 .iter()
-                .map(|s| widgets::Cell::new(s.to_owned()))
+                .map(|s| widgets::Cell::new(s.print()))
                 .collect_vec();
             // let row = widgets::Row::new(cells);
             let row = if i % 2 == 1 {
@@ -85,7 +83,11 @@ impl DataTable {
             self.textbuffer.cursor().chars()
         );
 
-        let title = format!("{path:}  -  help(<?>)");
+        let title = format!(
+            "{path:}  -  help(<?>) {:?} {:?}",
+            self.table_state.selected_cell(),
+            self.edit_target
+        );
         let bottom_title = match self.edit_target {
             EditTarget::None => String::from(
                 "help: ?, new column: c, rename column: h, new row: r, rename file: f, save: ctrl-s, quit: q or ctrl-c",
@@ -112,11 +114,11 @@ impl DataTable {
         table.block(block)
     }
     fn min_column_widths(&self) -> Vec<Constraint> {
-        let widths = self.rows.column_widths_min(self.header_widths());
+        let widths = self.df.min_column_widths();
         widths.into_iter().map(Constraint::Length).collect_vec()
     }
     fn equal_column_widths(&self) -> Vec<Constraint> {
-        let cols = self.width();
+        let cols = self.df.width();
         let equal: u16 = (100 / cols) as u16;
         let mut width_constraints = vec![];
         for _ in 0..cols {

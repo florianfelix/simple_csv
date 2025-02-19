@@ -8,13 +8,13 @@ impl DataTable {
         if let Some((row, col)) = self.table_state.selected_cell() {
             let col: usize = {
                 let new = col + 1;
-                if new >= self.width() {
+                if new >= self.df.width() {
                     0
                 } else {
                     new
                 }
             };
-            if self.rows.is_valid_coords(row, col) {
+            if self.df.is_valid(row, col) {
                 self.table_state.select_cell(Some((row, col)));
             }
         } else {
@@ -25,12 +25,12 @@ impl DataTable {
         if let Some((row, col)) = self.table_state.selected_cell() {
             let col: usize = {
                 if col == 0 {
-                    self.width()
+                    self.df.width() - 1
                 } else {
                     col - 1
                 }
             };
-            if self.rows.is_valid_coords(row, col) {
+            if self.df.is_valid(row, col) {
                 self.table_state.select_cell(Some((row, col)));
             }
         } else {
@@ -42,13 +42,13 @@ impl DataTable {
         if let Some((row, col)) = self.table_state.selected_cell() {
             let row: usize = {
                 let new = row + 1;
-                if new >= self.height() {
+                if new >= self.df.height() {
                     0
                 } else {
                     new
                 }
             };
-            if self.rows.is_valid_coords(row, col) {
+            if self.df.is_valid(row, col) {
                 self.table_state.select_cell(Some((row, col)));
             }
         } else {
@@ -60,12 +60,12 @@ impl DataTable {
         if let Some((row, col)) = self.table_state.selected_cell() {
             let row: usize = {
                 if row == 0 {
-                    self.rows.len() - 1
+                    self.df.height() - 1
                 } else {
                     row - 1
                 }
             };
-            if self.rows.is_valid_coords(row, col) {
+            if self.df.is_valid(row, col) {
                 self.table_state.select_cell(Some((row, col)));
             }
         } else {

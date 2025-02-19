@@ -25,17 +25,18 @@ impl DataTable {
     }
 
     pub fn save_json_command(&self) -> IoCommand {
-        let rows = self
-            .rows
-            .iter()
-            .map(|row| {
-                let mut map = IndexMap::new();
-                row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-                    map.insert(k, v.to_owned());
-                });
-                map
-            })
-            .collect_vec();
+        // let rows = self
+        //     .rows
+        //     .iter()
+        //     .map(|row| {
+        //         let mut map = IndexMap::new();
+        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
+        //             map.insert(k, v.to_owned());
+        //         });
+        //         map
+        //     })
+        //     .collect_vec();
+        let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {
                 let mut path = path.clone();
@@ -48,17 +49,18 @@ impl DataTable {
     }
 
     pub fn save_yml_command(&self) -> IoCommand {
-        let rows = self
-            .rows
-            .iter()
-            .map(|row| {
-                let mut map = IndexMap::new();
-                row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-                    map.insert(k, v.to_owned());
-                });
-                map
-            })
-            .collect_vec();
+        // let rows = self
+        //     .rows
+        //     .iter()
+        //     .map(|row| {
+        //         let mut map = IndexMap::new();
+        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
+        //             map.insert(k, v.to_owned());
+        //         });
+        //         map
+        //     })
+        //     .collect_vec();
+        let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {
                 let mut path = path.clone();
@@ -71,17 +73,18 @@ impl DataTable {
     }
 
     pub fn save_ron_command(&self) -> IoCommand {
-        let rows = self
-            .rows
-            .iter()
-            .map(|row| {
-                let mut map = IndexMap::new();
-                row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-                    map.insert(k, v.to_owned());
-                });
-                map
-            })
-            .collect_vec();
+        // let rows = self
+        //     .rows
+        //     .iter()
+        //     .map(|row| {
+        //         let mut map = IndexMap::new();
+        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
+        //             map.insert(k, v.to_owned());
+        //         });
+        //         map
+        //     })
+        //     .collect_vec();
+        let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {
                 let mut path = path.clone();
@@ -94,17 +97,18 @@ impl DataTable {
     }
 
     pub fn save_toml_command(&self) -> IoCommand {
-        let data = self
-            .rows
-            .iter()
-            .map(|row| {
-                let mut map = IndexMap::new();
-                row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
-                    map.insert(k, v.to_owned());
-                });
-                map
-            })
-            .collect_vec();
+        // let data = self
+        //     .rows
+        //     .iter()
+        //     .map(|row| {
+        //         let mut map = IndexMap::new();
+        //         row.iter().zip(self.headers.clone()).for_each(|(v, k)| {
+        //             map.insert(k, v.to_owned());
+        //         });
+        //         map
+        //     })
+        //     .collect_vec();
+        let rows = self.df.mapped_rows_owned();
         let path = match self.path {
             Some(ref path) => {
                 let mut path = path.clone();
@@ -113,6 +117,6 @@ impl DataTable {
             }
             None => PathBuf::from("export.toml"),
         };
-        IoCommand::SaveToml(FileDescription { rows: data, path })
+        IoCommand::SaveToml(FileDescription { rows, path })
     }
 }

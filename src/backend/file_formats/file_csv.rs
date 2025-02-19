@@ -1,7 +1,9 @@
-use dataframe::DataFrame;
 use std::path::PathBuf;
 
-use crate::backend::{utils::read_file, IoCommandError, IoCommandResult};
+use crate::{
+    backend::{utils::read_file, IoCommandError, IoCommandResult},
+    dataframe::DataFrame,
+};
 
 #[derive(Default, Debug, Clone)]
 pub struct CsvData {

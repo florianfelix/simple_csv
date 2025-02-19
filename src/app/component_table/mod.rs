@@ -1,4 +1,3 @@
-use dataframe::DataFrame;
 use ratatui::widgets::TableState;
 use std::path::PathBuf;
 
@@ -15,7 +14,7 @@ use text_buffer::Buffer;
 #[allow(unused)]
 use tracing::info;
 
-use crate::backend::file_formats::file_csv::CsvDescription;
+use crate::{backend::file_formats::file_csv::CsvDescription, dataframe::DataFrame};
 
 #[derive(Default, Debug, Clone)]
 pub enum EditTarget {
@@ -29,8 +28,8 @@ pub enum EditTarget {
 #[derive(Debug)]
 pub struct DataTable {
     pub df: DataFrame,
-    pub headers: Vec<String>,
-    pub rows: Vec<Vec<String>>,
+    // pub headers: Vec<String>,
+    // pub rows: Vec<Vec<String>>,
     pub table_state: TableState,
     pub textbuffer: text_buffer::Buffer,
     pub edit_target: EditTarget,
@@ -45,8 +44,8 @@ impl Default for DataTable {
     fn default() -> Self {
         Self {
             df: DataFrame::default(),
-            headers: vec![String::from("key"), String::from("value")],
-            rows: vec![vec![String::from(""), String::from("")]],
+            // headers: vec![String::from("key"), String::from("value")],
+            // rows: vec![vec![String::from(""), String::from("")]],
             table_state: TableState::default(),
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
