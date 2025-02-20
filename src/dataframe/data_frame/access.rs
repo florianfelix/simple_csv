@@ -155,14 +155,6 @@ impl DataFrame {
         None
     }
     pub fn min_header_widths(&self) -> Vec<u16> {
-        // let mut widths = vec![0_u16; self.width()];
-        // for (col, header) in self.headers.iter().enumerate() {
-        //     let width = header.name().len() as u16;
-        //     if width > widths[col] {
-        //         widths[col] = width;
-        //     }
-        // }
-        // widths;
         self.headers
             .iter()
             .map(|h| h.name().len() as u16)
@@ -197,6 +189,16 @@ impl DataFrame {
                 b.get(col)
                     .expect("valid column index")
                     .cmp(a.get(col).expect("valid column index"))
+            });
+        }
+    }
+    pub fn column_set_dtype(&mut self, col: usize, dtype: DataType) {
+        if self.is_valid_col(col) {
+            self.headers[col].set_dtype(dtype.clone());
+            self.rows.iter_mut().for_each(|row| {
+                if let Some(value) = row.get_mut(col) {
+                    value.convert_dtype(dtype.clone());
+                }
             });
         }
     }

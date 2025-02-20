@@ -27,6 +27,7 @@ impl DataTable {
             EditTarget::Cell((_, _)) => self.render_popup_edit_cell(frame, area),
             EditTarget::FileName => self.render_popup_edit(frame, area),
             EditTarget::Header(_) => self.render_popup_edit(frame, area),
+            EditTarget::ColumnType(_) => self.render_popup_dtype_select(frame, area),
             EditTarget::None => {}
         }
 

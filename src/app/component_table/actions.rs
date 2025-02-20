@@ -1,4 +1,5 @@
 use text_buffer::Buffer;
+use tracing::info;
 
 use crate::dataframe::DataType;
 
@@ -32,6 +33,13 @@ impl DataTable {
             self.textbuffer = Buffer::new();
         }
     }
+    pub fn edit_dtype_column(&mut self) {
+        if let Some(col) = self.table_state.selected_column() {
+            if let Some(dtype) = self.df.dtype_column(col) {
+                self.edit_target = EditTarget::ColumnType(dtype);
+            }
+        }
+    }
     pub fn apply_edit(&mut self) {
         match self.edit_target {
             EditTarget::Header(col) => self.set_column_name(col, self.textbuffer.to_string()),
@@ -55,6 +63,9 @@ impl DataTable {
                     self.path = Some(self.textbuffer.to_string().into());
                 };
             }
+            EditTarget::ColumnType(_) => {
+                self.set_dtype_column(self.dtype_select.to_dtype());
+            }
             EditTarget::None => {}
         }
         self.edit_target = EditTarget::None;
@@ -65,11 +76,17 @@ impl DataTable {
     pub fn skim_select_next(&mut self) {
         if let Some(sk) = &mut self.skim {
             sk.select_next();
+        } else if let EditTarget::ColumnType(_) = self.edit_target {
+            self.dtype_select.state.select_next();
+            info!("{:#?}", self.dtype_select.state.selected());
         }
     }
     pub fn skim_select_previous(&mut self) {
         if let Some(sk) = &mut self.skim {
             sk.select_previous();
+        } else if let EditTarget::ColumnType(_) = self.edit_target {
+            self.dtype_select.state.select_previous();
+            info!("{:#?}", self.dtype_select.state.selected());
         }
     }
     pub fn edit_cancel(&mut self) {
@@ -163,6 +180,14 @@ impl DataTable {
     pub fn delete_column(&mut self) {
         if let Some(col) = self.table_state.selected_column() {
             self.df.remove_column(col);
+        }
+    }
+    pub fn set_dtype_column(&mut self, dtype: DataType) {
+        if let Some(col) = self.table_state.selected_column() {
+            if self.df.is_valid_col(col) {
+                self.df.column_set_dtype(col, dtype);
+            }
+            self.set_dirty();
         }
     }
 }

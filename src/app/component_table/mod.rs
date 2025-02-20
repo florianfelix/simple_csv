@@ -4,11 +4,13 @@ use std::path::PathBuf;
 mod actions;
 mod actions_cell_select;
 mod commands;
+mod dtype_select;
 mod extensions;
 mod popups;
 mod render;
 mod skim;
 
+use dtype_select::DTypeSelect;
 use skim::Skim;
 use text_buffer::Buffer;
 #[allow(unused)]
@@ -16,7 +18,7 @@ use tracing::info;
 
 use crate::{
     backend::file_formats::file_csv::CsvDescription,
-    dataframe::{DataFrame, Header},
+    dataframe::{DataFrame, DataType, Header},
 };
 
 #[derive(Default, Debug, Clone)]
@@ -26,6 +28,7 @@ pub enum EditTarget {
     Cell((usize, usize)),
     Header(usize),
     FileName,
+    ColumnType(DataType),
 }
 
 #[derive(Debug)]
@@ -34,6 +37,7 @@ pub struct DataTable {
     pub table_state: TableState,
     pub textbuffer: text_buffer::Buffer,
     pub edit_target: EditTarget,
+    pub dtype_select: DTypeSelect,
     pub active_header: Option<Header>,
     pub skim: Option<Skim>,
     pub path: Option<PathBuf>,
@@ -49,6 +53,7 @@ impl Default for DataTable {
             table_state: TableState::default(),
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
+            dtype_select: DTypeSelect::default(),
             active_header: None,
             skim: None,
             path: Some(PathBuf::from("new.csv")),

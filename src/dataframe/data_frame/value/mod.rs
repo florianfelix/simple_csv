@@ -29,6 +29,15 @@ impl DataValue {
             DataValue::Bool(v) => v.to_string(),
         }
     }
+    pub fn convert_dtype(&mut self, dtype: DataType) {
+        match dtype {
+            DataType::Null => *self = DataValue::Null,
+            DataType::String => *self = DataValue::String(self.print()),
+            DataType::Float => *self = dtype.parse(&self.print()).unwrap_or(DataValue::Null),
+            DataType::Int => *self = dtype.parse(&self.print()).unwrap_or(DataValue::Null),
+            DataType::Bool => *self = dtype.parse(&self.print()).unwrap_or(DataValue::Null),
+        }
+    }
 }
 
 impl std::fmt::Display for DataValue {

@@ -44,6 +44,8 @@ impl DataType {
             DataType::Bool => match value {
                 "true" => Ok(DataValue::Bool(true)),
                 "false" => Ok(DataValue::Bool(false)),
+                "1" => Ok(DataValue::Bool(true)),
+                "0" => Ok(DataValue::Bool(false)),
                 _ => Err(DataTypeParseError::StringNotParseableAsBool(
                     value.to_owned(),
                 )),

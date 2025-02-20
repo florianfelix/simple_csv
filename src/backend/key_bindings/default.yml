@@ -8,6 +8,7 @@ normal:
   alt-c: DeleteColumn
   v: EditHeader
   f: EditFileName
+  t: EditColumnDataType
   ctrl-s: Save
   ctrl-t: SaveToml
   ctrl-j: SaveJson

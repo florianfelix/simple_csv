@@ -1,13 +1,31 @@
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
     style::{Style, Stylize},
-    widgets::{Block, Borders, Clear, Paragraph, Wrap},
+    widgets::{Block, Borders, Clear, ListItem, Paragraph, Wrap},
     Frame,
 };
 
+use crate::dataframe::DataType;
+
 use super::{extensions::BufferExt, DataTable};
 
+impl From<DataType> for ListItem<'static> {
+    fn from(data_type: DataType) -> Self {
+        ListItem::new(format!("{:?}", data_type))
+    }
+}
+
 impl DataTable {
+    pub fn render_popup_dtype_select(&mut self, frame: &mut Frame, area: Rect) {
+        let popup_area = Rect {
+            x: area.width / 3,
+            y: area.height / 4,
+            width: area.width / 4,
+            height: 7,
+        };
+        self.dtype_select.render(frame, popup_area);
+    }
+
     pub fn render_popup_edit_cell(&mut self, frame: &mut Frame, area: Rect) {
         let popup_area = Rect {
             x: area.width / 4,
