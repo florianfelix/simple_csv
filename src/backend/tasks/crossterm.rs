@@ -22,8 +22,8 @@ pub async fn crossterm_task(
           _ = event_sender.closed() => {
             break;
           }
-          // _ = tick_delay => {
-          //   event_sender.send(Event::Tick).unwrap();
+          // _ = _tick_delay => {
+          //   event_sender.send(BackendEvent::Tick).unwrap();
           // }
 
           Some(Ok(evt)) = crossterm_event => {
