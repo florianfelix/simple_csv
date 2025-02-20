@@ -84,7 +84,11 @@ impl DataTable {
             self.textbuffer.cursor().chars()
         );
 
-        let title = format!("{path:}  -  help(<?>)");
+        let dtypecol = match self.active_header {
+            Some(ref h) => format!("{:?}", h.dtype()),
+            None => String::new(),
+        };
+        let title = format!("{path:}  -  help(<?>) - {}", dtypecol);
         let bottom_title = match self.edit_target {
             EditTarget::None => String::from(
                 "help: ?, new column: c, rename column: h, new row: r, rename file: f, save: ctrl-s, quit: q or ctrl-c",
