@@ -88,7 +88,11 @@ impl DataTable {
             Some(h) => format!("{:?}", h.dtype()),
             None => String::new(),
         };
-        let title = format!("{path:}  -  help(<?>) - {}", dtypecol);
+        let pos = match self.table_state.selected_cell() {
+            Some((row, col)) => format!("Row: {}, Col: {}", row, col),
+            None => String::new(),
+        };
+        let title = format!("{path:} - Cell <{}> - Column type <{}>", pos, dtypecol);
         let bottom_title = match self.edit_target {
             EditTarget::None => String::from(
                 "help: ?, new column: c, rename column: h, new row: r, rename file: f, save: ctrl-s, quit: q or ctrl-c",
