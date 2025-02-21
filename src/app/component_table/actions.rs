@@ -1,7 +1,7 @@
 use text_buffer::Buffer;
 use tracing::info;
 
-use crate::dataframe::DataType;
+use crate::dataframe::{DataType, Header};
 
 use super::{skim::Skim, DataTable, EditTarget};
 
@@ -128,9 +128,10 @@ impl DataTable {
     }
     pub fn append_column(&mut self) {
         self.df.append_empty_column(DataType::String);
-        self.table_state.select_column(Some(self.df.width()));
+        self.table_state.select_column(Some(self.df.width() - 1));
     }
     pub fn move_column_right(&mut self) {
+        info!("{:#?}", "Moving right");
         if let Some(col) = self.table_state.selected_column() {
             let col_right = self.df.move_column_right(col);
             if col_right.is_some() {
@@ -187,8 +188,15 @@ impl DataTable {
             if self.df.is_valid_col(col) {
                 self.df.column_set_dtype(col, dtype);
             }
+
             self.set_dirty();
         }
+    }
+    pub fn active_header(&self) -> Option<&Header> {
+        if let Some(col) = self.table_state.selected_column() {
+            return self.df.header_get(col);
+        }
+        None
     }
 }
 

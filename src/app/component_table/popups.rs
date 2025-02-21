@@ -39,8 +39,8 @@ impl DataTable {
             [Constraint::Percentage(70), Constraint::Fill(1)],
         )
         .areas(popup_area);
-        let title_bottom = match self.active_header {
-            Some(ref header) => header.to_string(),
+        let title_bottom = match self.active_header() {
+            Some(header) => header.to_string(),
             None => "No Header Selected".to_string(),
         };
         let block = Block::new()

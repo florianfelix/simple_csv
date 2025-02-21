@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+#[allow(unused)]
+use tracing::info;
+
 use crate::app::App;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

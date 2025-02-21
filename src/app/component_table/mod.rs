@@ -18,7 +18,7 @@ use tracing::info;
 
 use crate::{
     backend::file_formats::file_csv::CsvDescription,
-    dataframe::{DataFrame, DataType, Header},
+    dataframe::{DataFrame, DataType},
 };
 
 #[derive(Default, Debug, Clone)]
@@ -38,7 +38,6 @@ pub struct DataTable {
     pub textbuffer: text_buffer::Buffer,
     pub edit_target: EditTarget,
     pub dtype_select: DTypeSelect,
-    pub active_header: Option<Header>,
     pub skim: Option<Skim>,
     pub path: Option<PathBuf>,
     pub delim: char,
@@ -54,7 +53,6 @@ impl Default for DataTable {
             textbuffer: Buffer::new(),
             edit_target: EditTarget::None,
             dtype_select: DTypeSelect::default(),
-            active_header: None,
             skim: None,
             path: Some(PathBuf::from("new.csv")),
             delim: ';',

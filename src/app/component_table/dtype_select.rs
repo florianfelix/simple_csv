@@ -17,10 +17,10 @@ impl DTypeSelect {
         frame.render_widget(Clear, area);
         let block = Block::new()
             .borders(Borders::all())
-            .title("types")
+            .title("chnage column datatype")
             .title_style(Style::default().dim());
         let items = vec![
-            DataType::Null,
+            // DataType::Null,
             DataType::Bool,
             DataType::Int,
             DataType::Float,
@@ -35,15 +35,14 @@ impl DTypeSelect {
     pub fn to_dtype(&self) -> DataType {
         if let Some(idx) = self.state.selected() {
             match idx {
-                0 => DataType::Null,
-                1 => DataType::Bool,
-                2 => DataType::Int,
-                3 => DataType::Float,
-                4 => DataType::String,
-                _ => DataType::Null,
+                // 0 => DataType::Null,
+                0 => DataType::Bool,
+                1 => DataType::Int,
+                2 => DataType::Float,
+                _ => DataType::String,
             }
         } else {
-            DataType::Null
+            DataType::String
         }
     }
 }

@@ -8,13 +8,6 @@ impl DataTable {
         if let Some((row, col)) = pos {
             if self.df.is_valid(row, col) {
                 self.table_state.select_cell(Some((row, col)));
-                self.active_header = Some(
-                    self.df
-                        .headers()
-                        .get(col)
-                        .expect("col to be valid")
-                        .to_owned(),
-                );
             }
         }
     }

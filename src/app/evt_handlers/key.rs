@@ -9,6 +9,7 @@ impl App {
     pub fn handle_key_events(&mut self, key_event: KeyEvent) {
         // info!("{:#?}", key_event);
         if let Some(key_combination) = self.combiner.transform(key_event) {
+            // info!("{:?}", key_combination);
             match self.data.edit_target {
                 EditTarget::None => {
                     if let Some(action) = self.key_bindings.normal.get(&key_combination) {

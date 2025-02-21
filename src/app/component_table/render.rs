@@ -84,8 +84,8 @@ impl DataTable {
             self.textbuffer.cursor().chars()
         );
 
-        let dtypecol = match self.active_header {
-            Some(ref h) => format!("{:?}", h.dtype()),
+        let dtypecol = match self.active_header() {
+            Some(h) => format!("{:?}", h.dtype()),
             None => String::new(),
         };
         let title = format!("{path:}  -  help(<?>) - {}", dtypecol);

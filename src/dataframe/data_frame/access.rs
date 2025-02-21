@@ -9,6 +9,9 @@ impl DataFrame {
     pub fn headers_mut(&mut self) -> &Vec<Header> {
         &mut self.headers
     }
+    pub fn header_get(&self, col: usize) -> Option<&Header> {
+        self.headers.get(col)
+    }
     pub fn header_set(&mut self, col: usize, name: String) {
         if let Some(header) = self.headers.get_mut(col) {
             header.set_name(&name);
