@@ -78,7 +78,7 @@ impl DataTable {
             sk.select_next();
         } else if let EditTarget::ColumnType(_) = self.edit_target {
             self.dtype_select.state.select_next();
-            info!("{:#?}", self.dtype_select.state.selected());
+            // info!("{:#?}", self.dtype_select.state.selected());
         }
     }
     pub fn skim_select_previous(&mut self) {

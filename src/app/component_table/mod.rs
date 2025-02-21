@@ -56,7 +56,7 @@ impl Default for DataTable {
             skim: None,
             path: Some(PathBuf::from("new.csv")),
             delim: ';',
-            is_dirty: true,
+            is_dirty: false,
             parse_errors: vec![],
         }
     }
