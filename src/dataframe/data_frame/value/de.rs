@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use serde::{de::Visitor, Deserialize, Deserializer};
 use std::fmt;
 
@@ -79,7 +80,10 @@ impl Visitor<'_> for ValueVisitor {
         if v.is_empty() {
             Ok(DataValue::Null)
         } else {
-            Ok(DataValue::String(v.to_owned()))
+            match NaiveDate::parse_from_str(v, "%Y-%m-%d") {
+                Ok(date) => Ok(DataValue::Date(date)),
+                Err(_) => Ok(DataValue::String(v.to_owned())),
+            }
         }
     }
 }

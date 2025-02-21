@@ -24,6 +24,7 @@ impl DTypeSelect {
             DataType::Bool,
             DataType::Int,
             DataType::Float,
+            DataType::Date,
             DataType::String,
         ];
         let list = List::new(items)
@@ -39,6 +40,7 @@ impl DTypeSelect {
                 0 => DataType::Bool,
                 1 => DataType::Int,
                 2 => DataType::Float,
+                3 => DataType::Date,
                 _ => DataType::String,
             }
         } else {

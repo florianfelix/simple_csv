@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 use super::DataValue;
@@ -7,6 +8,7 @@ pub enum DataTypeParseError {
     StringNotParseableAsBool(String),
     ParseIntError(String),
     ParseFloatError(String),
+    ParseDateError(String),
 }
 
 impl std::error::Error for DataTypeParseError {}
@@ -23,6 +25,7 @@ pub enum DataType {
     Int,
     Float,
     String,
+    Date,
 }
 
 impl From<&DataValue> for DataType {
@@ -33,6 +36,7 @@ impl From<&DataValue> for DataType {
             DataValue::Float(_) => DataType::Float,
             DataValue::Int(_) => DataType::Int,
             DataValue::String(_) => DataType::String,
+            DataValue::Date(_) => DataType::Date,
         }
     }
 }
@@ -59,6 +63,10 @@ impl DataType {
             DataType::String => match value.is_empty() {
                 true => Ok(DataValue::Null),
                 false => Ok(DataValue::String(value.to_owned())),
+            },
+            DataType::Date => match NaiveDate::parse_from_str(value, "%Y-%m-%d") {
+                Ok(v) => Ok(DataValue::Date(v)),
+                Err(e) => Err(DataTypeParseError::ParseDateError(e.to_string())),
             },
         }
     }

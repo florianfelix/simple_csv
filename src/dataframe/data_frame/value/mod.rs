@@ -1,6 +1,7 @@
 mod de;
 mod float;
 mod ser;
+use chrono::NaiveDate;
 pub use float::Float;
 
 use super::DataType;
@@ -12,6 +13,7 @@ pub enum DataValue {
     Float(Float),
     Int(i64),
     Bool(bool),
+    Date(NaiveDate),
 }
 impl DataValue {
     pub fn new(v: impl Into<DataValue>) -> Self {
@@ -27,6 +29,7 @@ impl DataValue {
             DataValue::Float(float) => float.to_string(),
             DataValue::Int(v) => v.to_string(),
             DataValue::Bool(v) => v.to_string(),
+            DataValue::Date(v) => v.to_string(),
         }
     }
     pub fn convert_dtype(&mut self, dtype: DataType) {
@@ -36,6 +39,10 @@ impl DataValue {
             DataType::Float => *self = dtype.parse(&self.print()).unwrap_or(DataValue::Null),
             DataType::Int => *self = dtype.parse(&self.print()).unwrap_or(DataValue::Null),
             DataType::Bool => *self = dtype.parse(&self.print()).unwrap_or(DataValue::Null),
+            DataType::Date => match NaiveDate::parse_from_str(&self.print(), "%Y-%m-%d") {
+                Ok(v) => *self = DataValue::Date(v),
+                Err(_) => *self = DataValue::Null,
+            },
         }
     }
 }

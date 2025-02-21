@@ -13,6 +13,7 @@ impl Serialize for DataValue {
             DataValue::Float(value) => serializer.serialize_f64(*value),
             DataValue::String(ref value) => serializer.serialize_str(value),
             DataValue::Bool(value) => serializer.serialize_bool(value),
+            DataValue::Date(value) => serializer.serialize_str(&value.to_string()),
         }
     }
 }
