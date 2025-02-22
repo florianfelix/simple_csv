@@ -42,13 +42,11 @@ impl App {
             return;
         }
 
-        if self.data.df.width() > 0 {
-            self.data.render(frame, area);
-        } else if let Some(e) = &self.io_error {
+        if let Some(e) = &self.io_error {
             let txt = Line::from(e.to_string());
             frame.render_widget(txt, area);
         } else {
-            frame.render_widget(Line::from("No data"), area);
+            self.data.render(frame, area);
         }
     }
 }

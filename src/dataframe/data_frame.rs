@@ -14,10 +14,22 @@ pub use error::{FrameError, FrameResult};
 pub use header::Header;
 pub use value::{DataValue, Float};
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DataFrame {
     headers: Vec<Header>,
     rows: Vec<DataRow>,
+}
+
+impl Default for DataFrame {
+    fn default() -> Self {
+        Self {
+            headers: vec![
+                Header::new("column0").with_dtype(DataType::String),
+                Header::new("column1").with_dtype(DataType::String),
+            ],
+            rows: vec![DataRow::new(2)],
+        }
+    }
 }
 
 impl DataFrame {

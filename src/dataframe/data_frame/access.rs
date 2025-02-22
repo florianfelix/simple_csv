@@ -6,7 +6,7 @@ impl DataFrame {
     pub fn headers(&self) -> &Vec<Header> {
         &self.headers
     }
-    pub fn headers_mut(&mut self) -> &Vec<Header> {
+    pub fn headers_mut(&mut self) -> &mut Vec<Header> {
         &mut self.headers
     }
     pub fn header_get(&self, col: usize) -> Option<&Header> {
@@ -50,7 +50,14 @@ impl DataFrame {
     }
     pub fn parse_set(&mut self, row: usize, col: usize, value: &str) {
         if self.is_valid(row, col) {
-            let dtype_col = self.dtype_column(col).expect("col to be in range");
+            let mut dtype_col = self.dtype_column(col).expect("col to be in range");
+            if dtype_col == DataType::Null {
+                self.headers_mut()
+                    .get_mut(col)
+                    .expect("col to be valid")
+                    .set_dtype(DataType::String);
+                dtype_col = DataType::String;
+            }
             let value = dtype_col.parse(value);
             self.set(row, col, value);
         }
