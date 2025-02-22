@@ -16,7 +16,7 @@ use crate::{
 
 use super::{keymap_file, keymap_path};
 
-const DEFAULTS: &str = include_str!("default.yml");
+const DEFAULTS: &str = include_str!("../../../default_keybindings.yml");
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct KeyBindings {
