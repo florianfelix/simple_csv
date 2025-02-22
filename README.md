@@ -27,9 +27,8 @@ if delimiter is ommitted the default delimiter is `,` for now
 
 
 ## Keybindings
-`?` for help / keybindings
+`?` for help /  [keybindings](default_keybindings.yml)
 
-### keybindings file
 Save the default keybindings with ctrl-k into `$XDG_CONFIG_HOME/simple_csv/keymap.toml`.
 The config file is hot reloaded.
 
