@@ -3,8 +3,8 @@
 ![Alt text](simple_csv.png "Optional Title")
 
 Tui app to quickly create/edit small csv tables and export them into more useful formats.
-The main drawback is that atm all values are treated as strings.
-Typed columns maybe later. Also no mouse support yet.
+~~The main drawback is that atm all values are treated as strings.
+Typed columns maybe later.~~ Also no mouse support yet.
 
 ## v0.2.0
 - switch data layer to custom dataframe
