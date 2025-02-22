@@ -19,6 +19,13 @@ Typed columns maybe later.~~ Also no mouse support yet.
 
 if delimiter is ommitted the default delimiter is `,` for now
 
+### features
+- typed columns (int, float, bool, string, date)
+- create/move/delete columns and rows
+- export to csv, toml, json, yaml, ron
+- fuzzy matching suggestions on input
+
+
 ## Keybindings
 `?` for help / keybindings
 
