@@ -21,6 +21,8 @@ if delimiter is ommitted the default delimiter is `,` for now
 
 ### features
 - typed columns (int, float, bool, string, date)
+  - only accepting input parsable to type
+  - possible to convert column types, possibly lossy
 - create/move/delete columns and rows
 - export to csv, toml, json, yaml, ron
 - fuzzy matching suggestions on input
