@@ -20,7 +20,7 @@ Typed columns maybe later. Also no mouse support yet.
 if delimiter is ommitted the default delimiter is `,` for now
 
 ## Keybindings
-`?` for help
+`?` for help / keybindings
 
 ### keybindings file
 Save the default keybindings with ctrl-k into `$XDG_CONFIG_HOME/simple_csv/keymap.toml`.
