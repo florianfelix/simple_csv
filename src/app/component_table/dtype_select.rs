@@ -17,7 +17,7 @@ impl DTypeSelect {
         frame.render_widget(Clear, area);
         let block = Block::new()
             .borders(Borders::all())
-            .title("chnage column datatype")
+            .title("change column datatype")
             .title_style(Style::default().dim());
         let items = vec![
             // DataType::Null,
