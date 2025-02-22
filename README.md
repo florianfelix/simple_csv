@@ -6,6 +6,9 @@ Tui app to quickly create/edit small csv tables and export them into more useful
 ~~The main drawback is that atm all values are treated as strings.
 Typed columns maybe later.~~ Also no mouse support yet.
 
+## v0.2.1
+fix empty new dataframe with better defaults
+
 ## v0.2.0
 - switch data layer to custom dataframe
 - Added typed columns (int, float, bool, string, date)
