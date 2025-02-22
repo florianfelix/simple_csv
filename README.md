@@ -9,6 +9,7 @@ Typed columns maybe later. Also no mouse support yet.
 ## v0.2.0
 - switch data layer to custom dataframe
 - Added typed columns (int, float, bool, string, date)
+- some fixes and behaviour improvements
 
 ## Install
 `cargo install --git https://github.com/florianfelix/simple_csv --locked`

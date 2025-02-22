@@ -10,7 +10,6 @@ path = "src/main.rs"
 name = "scsv"
 
 [dependencies]
-# dataframe = { path = "dataframe" }
 crossterm = { version = "0.28.1", features = ["event-stream", "serde"] }
 futures = "0.3.31"
 ratatui = "0.29.0"
