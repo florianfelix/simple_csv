@@ -28,6 +28,12 @@ pub enum DataType {
     Date,
 }
 
+impl std::fmt::Display for DataType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 impl From<&DataValue> for DataType {
     fn from(value: &DataValue) -> Self {
         match value {

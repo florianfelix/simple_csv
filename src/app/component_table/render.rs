@@ -49,6 +49,15 @@ impl DataTable {
             .collect_vec();
         widgets::Row::new(cells).bold()
     }
+    pub fn rat_row_footer(&self) -> widgets::Row<'static> {
+        let cells = self
+            .df
+            .headers()
+            .iter()
+            .map(|s| widgets::Cell::new(Text::raw(s.dtype().to_string())))
+            .collect_vec();
+        widgets::Row::new(cells).bold()
+    }
     pub fn rat_rows(&self) -> Vec<widgets::Row<'static>> {
         let mut rows = vec![];
         for (i, r) in self.df.rows().iter().enumerate() {
@@ -107,13 +116,10 @@ impl DataTable {
             .title(title)
             .title_style(Style::default().light_green());
 
-        let header_row = self.rat_row_header();
-        let data_rows = self.rat_rows();
-        let _widths = self.equal_column_widths();
-        let widths = self.min_column_widths();
-        let table = Table::new(data_rows, widths)
-            .header(header_row)
-            // .row_highlight_style(Style::new())
+        let table = Table::new(self.rat_rows(), self.min_column_widths())
+            .header(self.rat_row_header())
+            .footer(self.rat_row_footer())
+            .row_highlight_style(Style::default().cyan().bold())
             // .column_highlight_style(Style::new())
             .cell_highlight_style(Style::new().bold().reversed());
         table.block(block)
@@ -122,6 +128,7 @@ impl DataTable {
         let widths = self.df.min_column_widths();
         widths.into_iter().map(Constraint::Length).collect_vec()
     }
+    #[allow(unused)]
     fn equal_column_widths(&self) -> Vec<Constraint> {
         let cols = self.df.width();
         let equal: u16 = (100 / cols) as u16;
