@@ -90,11 +90,6 @@ impl Skim {
     pub fn update(&mut self, pattern: &str) {
         self.pattern = pattern.to_owned();
         self.fmatch();
-        // if !self.matches.is_empty() && self.state.selected().is_none() {
-        //     self.state.select(Some(0));
-        // } else {
-        //     self.state.select(None);
-        // }
     }
     fn fmatch(&mut self) {
         let matcher = SkimMatcherV2::default();
