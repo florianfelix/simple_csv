@@ -13,6 +13,12 @@ struct Choice {
     text: String,
 }
 
+impl PartialEq for Choice {
+    fn eq(&self, other: &Self) -> bool {
+        self.text == other.text
+    }
+}
+
 impl From<String> for Choice {
     fn from(value: String) -> Self {
         Self {
@@ -104,10 +110,10 @@ impl Skim {
             })
             .filter(|c| c.score > 0)
             .sorted_unstable_by(|a, b| b.score.cmp(&a.score))
+            .dedup()
             .take(3)
             .map(|c| c.text.to_owned())
             .collect_vec();
-        res.dedup();
         self.matches = res;
     }
 }
