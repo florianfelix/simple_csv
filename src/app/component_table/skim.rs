@@ -99,7 +99,7 @@ impl Skim {
     fn fmatch(&mut self) {
         let matcher = SkimMatcherV2::default();
         #[allow(clippy::manual_inspect)]
-        let mut res = self
+        let res = self
             .choices
             .iter_mut()
             .map(|c| {
