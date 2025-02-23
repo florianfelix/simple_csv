@@ -1,6 +1,6 @@
 [package]
 name = "simple_csv"
-version = "0.2.0"
+version = "0.2.2"
 authors = ["felix <florianfelixmeyer@gmail.com>"]
 license = "MIT"
 edition = "2021"
